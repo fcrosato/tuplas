@@ -1,0 +1,24 @@
+#!/bin/bash
+
+
+#start rmiclient &
+
+while getopts ":s:c:r:" opt; do
+    case "${opt}" in
+        s)
+            NAME=${OPTARG}
+            java TuplaD $NAME
+            ;;
+        c)
+            HOST=${OPTARG}
+            java TuplaAdmin $HOST
+            ;;
+        r) 
+            PORT=${OPTARG}
+            rmiregistry $PORT &
+            ;;
+        *)
+            usage
+            ;;
+        esac
+done
