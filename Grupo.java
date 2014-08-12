@@ -1,32 +1,92 @@
+import java.util.List;
+import java.util.ArrayList;
 import java.net.MulticastSocket;
 import java.net.InetAddress;
 import java.net.DatagramPacket;
+import java.net.UnknownHostException;
 import java.io.IOException;
 
 public class Grupo implements Runnable {
+    private static final String MULTICAST = "235.1.1.1";
+    private static final int PORT = 6789;
+    private static final String SPLIT = "-";
+    private static final String SUBJECT_LEAVING = "Leaving";
+    private static final String SUBJECT_JOINING = "Joining";
+    private static final String SUBJECT_SET     = "Joining";
+    private MulticastSocket socket;
+    private InetAddress group;
+    private List<String> servers = new ArrayList<String>();
+    String myAddress;
+
+    private void print(Object msg) {
+        System.out.println(msg.toString());
+    }
+
+    public void join() throws IOException {
+        String msg = SUBJECT_JOINING + SPLIT + myAddress;
+        group = InetAddress.getByName(MULTICAST);
+        socket = new MulticastSocket(PORT);
+        socket.joinGroup(group);
+
+        System.out.println(SUBJECT_JOINING);
+        sendMsg(SUBJECT_JOINING);
+        servers.add(myAddress);
+    }
+
+    public void leave() throws IOException {
+        String msg = SUBJECT_LEAVING + SPLIT + myAddress;
+        System.out.println(SUBJECT_LEAVING);
+        sendMsg(SUBJECT_LEAVING);
+        socket.leaveGroup(group);
+    }
+
+    public void sendMsg(String msg) throws IOException {
+        DatagramPacket datagram = new DatagramPacket(msg.getBytes(), 
+                msg.length(), group, 6789);
+        socket.send(datagram);
+    }
+
+    public String receiveMsg() throws IOException {
+        byte[] buf = new byte[1000];
+        DatagramPacket recv = new DatagramPacket(buf, buf.length);
+        socket.receive(recv);
+        String recieved = new String(recv.getData());
+        System.out.println("Recieved> " + recieved);
+        return recieved;
+    }
+
+    private int getAction(String msg) {
+        String[] msg_split = msg.split(SPLIT);
+        String subject = msg_split[0];
+        String action = msg_split[1];
+        if (subject.equals(SUBJECT_LEAVING)) {
+            if (!action.equals(myAddress)) {
+                servers.remove(action);
+            }
+        } else if (subject.equals(SUBJECT_JOINING)) {
+            if (!action.equals(myAddress)) {
+                servers.add(action);
+            }
+        } else if (subject.equals(SUBJECT_SET)) {
+            if (!action.equals(myAddress)) {
+                servers.add(action);
+            }
+        }
+        return 0;    
+    }
 
     @Override
     public void run() {
         try {
-            // join a Multicast group and send the group salutations
-            String msg = "Hello";
-            InetAddress group = InetAddress.getByName("235.1.1.1");
-            MulticastSocket s = new MulticastSocket(6789);
-            s.joinGroup(group);
-
-            while(true) {
-                DatagramPacket hi = new DatagramPacket(msg.getBytes(), msg.length(),
-                        group, 6789);
-                s.send(hi);
-                // get their responses!
-                byte[] buf = new byte[1000];
-                DatagramPacket recv = new DatagramPacket(buf, buf.length);
-                s.receive(recv);
-                String recieved = new String(recv.getData());
-                System.out.println("MSG: " + recieved);
-                // OK, I'm done talking - leave the group...
+            byte[] localIp = InetAddress.getLocalHost().getAddress();
+            myAddress = InetAddress.getByAddress(localIp).getHostName();
+            join();
+            /*
+            while (true) {
+                String msg = receiveMsg();
+                int action = getAction(msg);
             }
-            //s.leaveGroup(group);
+            */
         } catch (IOException e) {
             e.printStackTrace();
         }

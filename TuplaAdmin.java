@@ -4,6 +4,8 @@ import java.rmi.RemoteException;
 import java.util.List;
 import java.util.ArrayList;
 import java.util.Scanner;
+import java.net.ConnectException;
+import java.rmi.NotBoundException;
 
 public class TuplaAdmin {
     List<String> tuplas;
@@ -99,7 +101,7 @@ public class TuplaAdmin {
         print(MSG_INPUT);
         int intentos = 0;
         int tipo = in.nextInt();
-        while (1 > tipo && tipo > 3 && intentos++ < 3) {
+        while ((1 > tipo || tipo > 3) && intentos++ < 3) {
             printErr(ERR_TIPO);
             print(MSG_INPUT);
             tipo = in.nextInt();
@@ -150,15 +152,19 @@ public class TuplaAdmin {
      *                   conjunto de tuplas.  
      * @return true si se crea satisfactoriamente, false en caso contrario.
      */
-    public static boolean crear(TuplaDInterfaz tuplad, Scanner in) {
+    public static boolean crear(TuplaDInterfaz tuplad, Scanner in) throws RemoteException {
         println(MSG_CREAR);
-        try {
-            String nombre = getNombre(in);
-            return tuplad.crear(nombre);
-        } catch (RemoteException e) {
-            e.printStackTrace();
+        String nombre = getNombre(in);
+        int dimension = getDimension(in);
+        if (dimension == -1) {
+            return false;
         }
-        return false;
+        int tipo = getTipo(in);
+        if (tipo == -1) {
+            return false;
+        }
+        List<String> servidores = getLista(in, MSG_SERVIDOR); 
+        return tuplad.crear(nombre, dimension, tipo, servidores);
     }
 
     /**
@@ -167,15 +173,10 @@ public class TuplaAdmin {
      * @param nombre Identificador del conjunto de tuplas
      * @return true si se elimina la tupla, false en caso de que no exista.
      */
-    public static boolean eliminar (TuplaDInterfaz tuplad, Scanner in) {
+    public static boolean eliminar (TuplaDInterfaz tuplad, Scanner in) throws RemoteException {
         println(MSG_ELIMINAR);
-        try {
-            String nombre = getNombre(in);
-            return tuplad.eliminar(nombre);
-        } catch (RemoteException e) {
-            e.printStackTrace();
-        }
-        return false;
+        String nombre = getNombre(in);
+        return tuplad.eliminar(nombre);
     } 
 
 
@@ -186,26 +187,11 @@ public class TuplaAdmin {
      * @param ti Tupla a insertar
      * @return true si se agrega la tupla, false en caso de fallas.
      */
-    public static boolean insertar (TuplaDInterfaz tuplad, Scanner in) {
+    public static boolean insertar (TuplaDInterfaz tuplad, Scanner in) throws RemoteException {
         println(MSG_INSERTAR);
-        try {
-            String nombre = getNombre(in);
-            int dimension = getDimension(in);
-            if (dimension == -1) {
-                return false;
-            }
-            int tipo = getTipo(in);
-            if (tipo == -1) {
-                return false;
-            }
-            List<String> elementos = getLista(in, MSG_ELEMENTO); 
-            List<String> servidores = getLista(in, MSG_SERVIDOR); 
-            Tupla tupla = new Tupla(dimension, tipo, elementos, servidores);
-            return tuplad.insertar(nombre, tupla); 
-        } catch (RemoteException e) {
-            e.printStackTrace();
-        }
-        return false;
+        String nombre = getNombre(in);
+        List<String> tupla = getLista(in, MSG_ELEMENTO); 
+        return tuplad.insertar(nombre, tupla); 
     }
 
 
@@ -216,16 +202,11 @@ public class TuplaAdmin {
      * @param clave Clave de la tupla a borrar.
      * @return true si se agrega la tupla, false en caso de fallas.
      */
-    public static boolean borrar(TuplaDInterfaz tupled, Scanner in){
+    public static boolean borrar(TuplaDInterfaz tuplad, Scanner in) throws RemoteException {
         println(MSG_BORRAR);
-        try {
-            String nombre = getNombre(in);
-            String clave = getClave(in);
-            return tupled.borrar(nombre, clave);
-        } catch (RemoteException e) {
-            e.printStackTrace();
-        }
-        return false;
+        String nombre = getNombre(in);
+        String clave = getClave(in);
+        return tuplad.borrar(nombre, clave);
     }
 
     /**
@@ -235,18 +216,13 @@ public class TuplaAdmin {
       * @param clave Clave de la tupla a actualizar
       * @return El conjunto de valores de la tupla.
       */
-    public static List<String> buscar (TuplaDInterfaz tupled, Scanner in) {
+    public static List<String> buscar (TuplaDInterfaz tuplad, Scanner in) throws RemoteException {
         println(MSG_BUSCAR);
-        try {
-            String nombre = getNombre(in);
-            String clave = getClave(in);
-            List<String> elem = tupled.buscar(nombre, clave);
-            println(elem.toString());
-            return elem;
-        } catch (RemoteException e) {
-            e.printStackTrace();
-        }
-        return (new ArrayList<String>());
+        String nombre = getNombre(in);
+        String clave = getClave(in);
+        List<String> elem = tuplad.buscar(nombre, clave);
+        println(elem.toString());
+        return elem;
     }
 
     /**
@@ -259,18 +235,13 @@ public class TuplaAdmin {
       * @return true si el valor se actualizó satisfactoriamente, 
                 false en caso contrario.
       */
-    public static boolean actualizar (TuplaDInterfaz tupled, Scanner in) {
+    public static boolean actualizar (TuplaDInterfaz tuplad, Scanner in) throws RemoteException {
         println(MSG_ACTUALIZAR);
-        try {
-            String nombre = getNombre(in);
-            String clave = getClave(in);
-            int posicion = getPosicion(in);
-            String valor = getValor(in);
-            return tupled.actualizar(nombre, clave, posicion, valor);
-        } catch (RemoteException e) {
-            e.printStackTrace();
-        }
-        return false;
+        String nombre = getNombre(in);
+        String clave = getClave(in);
+        int posicion = getPosicion(in);
+        String valor = getValor(in);
+        return tuplad.actualizar(nombre, clave, posicion, valor);
     }
 
     /**
@@ -279,21 +250,16 @@ public class TuplaAdmin {
       * @param nombre Identificador del conjunto de tuplas.
       * @return UInformación de configuración del conjunto de tuplas.
       */
-    public static String configuracion (TuplaDInterfaz tupled, Scanner in) {
+    public static String configuracion (TuplaDInterfaz tuplad, Scanner in) throws RemoteException {
         println(MSG_CONFIGURACION);
-        try {
-            String nombre = getNombre(in);
-            String result = tupled.configuracion(nombre);
-            println(result);
-            return result;
-        } catch (RemoteException e) {
-            e.printStackTrace();
-        }
-        return "No se pudo obtener la configuración.";
+        String nombre = getNombre(in);
+        String result = tuplad.configuracion(nombre);
+        println(result);
+        return result;
     }
 
 
-    private static void menu(TuplaDInterfaz tuplad) {
+    private static void menu(TuplaDInterfaz tuplad) throws RemoteException {
         try (Scanner in = new Scanner(System.in)){
             boolean exit = false;
             int option = -1;
@@ -332,9 +298,10 @@ public class TuplaAdmin {
 
             menu(tuplad);
 
-        } catch (Exception e) {
-            System.err.println("TuplaAdmin exception:");
-            e.printStackTrace();
+        } catch (RemoteException e) {
+            printErr("Remote exception");
+        } catch (NotBoundException e) {
+            printErr("Not bound");
         }
     }    
 }
