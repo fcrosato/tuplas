@@ -10,7 +10,7 @@ public class Grupo implements Runnable {
         try {
             // join a Multicast group and send the group salutations
             String msg = "Hello";
-            InetAddress group = InetAddress.getByName("228.5.6.7");
+            InetAddress group = InetAddress.getByName("235.1.1.1");
             MulticastSocket s = new MulticastSocket(6789);
             s.joinGroup(group);
 
@@ -22,6 +22,8 @@ public class Grupo implements Runnable {
                 byte[] buf = new byte[1000];
                 DatagramPacket recv = new DatagramPacket(buf, buf.length);
                 s.receive(recv);
+                String recieved = new String(recv.getData());
+                System.out.println("MSG: " + recieved);
                 // OK, I'm done talking - leave the group...
             }
             //s.leaveGroup(group);
