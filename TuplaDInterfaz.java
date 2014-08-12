@@ -14,7 +14,8 @@ public interface TuplaDInterfaz extends Remote
      *                   conjunto de tuplas.  
      * @return true si se crea satisfactoriamente, false en caso contrario.
      */
-    public boolean crear(String nombre) throws RemoteException; 
+    public boolean crear(String nombre, int dimension, int tipo, 
+            List<String> servidores) throws RemoteException; 
 
     /**
      * Método que elimina un conjunto de tuplas.
@@ -32,7 +33,7 @@ public interface TuplaDInterfaz extends Remote
      * @param ti Tupla a insertar
      * @return true si se agrega la tupla, false en caso de fallas.
      */
-    public boolean insertar (String nombre, Tupla ti) 
+    public boolean insertar (String nombre, List<String> ti) 
         throws RemoteException;
 
 

@@ -3,24 +3,24 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.io.Serializable;
 
-public class Tupla implements Serializable{
+public class ConjuntoTupla implements Serializable {
     private String _nombre;
     private int _dimension;
     private int _tipo;
-    private List<String> _elementos = new ArrayList<String>();
+    private HashMap<String, List<String>> _tuplas = new HashMap<String, List<String>>();
     private List<String> _servidores = new ArrayList<String>();
 
-    public Tupla() {}
+    public ConjuntoTupla() {}
 
-    public Tupla (int dimension, int tipo, List<String> elementos, List<String> servidores) { 
+    public ConjuntoTupla (String nombre, int dimension, int tipo, List<String> servidores) { 
+        _nombre = nombre;
         _dimension = dimension;
         _tipo = tipo;
-        _elementos = elementos;
         _servidores = servidores;
     }
 
-    public List<String> elementos() {
-        return _elementos;
+    public List<String> get(String clave) {
+        return _tuplas.get(clave);
     }
     
     public String nombreTipo(int tipo) {
@@ -42,30 +42,38 @@ public class Tupla implements Serializable{
         return resultado;
     }
 
+    public void add(String clave, List<String> elementos) {
+        _tuplas.put(clave, elementos);
+    }   
+
+    public void remove(String clave) {
+        _tuplas.remove(clave);
+    }
+
     public String listarElementos() {
-        return listar(_elementos);
+        String result = "";
+        for (String key : _tuplas.keySet()) {
+            result += (key + ">" + listar(_tuplas.get(key)) + "\n");
+        }
+        return result;
     }
 
     public String listarServidores() {
         return listar(_servidores);
     }
-
-    public void set(int posicion, String valor) {
-        if (0 <= posicion && posicion < _elementos.size()) {
-            String e = _elementos.set(posicion, valor);
+    public void set(String clave, int posicion, String valor) {
+        List<String> elementos = _tuplas.get(clave);
+        if (0 <= posicion && posicion < elementos.size()) {
+            String e = elementos.set(posicion, valor);
         }
     }
     
-    public void set(String valor) {
-        _elementos.add(valor);
-    } 
-
     @Override
     public String toString() {
         String tupla = "" +
             "Dimensión:  " + _dimension + "\n" +
             "Tipo:       " + nombreTipo(_tipo) + "\n" +
-            "Elementos:  " + listarElementos() + "\n" +
+          //  "Elementos:  " + listarElementos() + "\n" +
             "Servidores: " + listarServidores();
 
         return tupla;

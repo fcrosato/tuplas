@@ -11,7 +11,7 @@ import java.rmi.server.UnicastRemoteObject;
 public class TuplaD implements TuplaDInterfaz {
 
     private Servidor _servidor;
-    private ConjuntosTuplas _tuplas = new ConjuntosTuplas(); 
+    private Conjuntos _tuplas = new Conjuntos(); 
 
     public TuplaD() throws RemoteException {}
 
@@ -35,9 +35,9 @@ public class TuplaD implements TuplaDInterfaz {
      * @param servidores Nombre de las máquinas donde se desea que resida el conjunto de tuplas.  
      * @return true si se crea satisfactoriamente, false en caso contrario.
      */
-    public boolean crear(String nombre) {
+    public boolean crear(String nombre, int dimension, int tipo, List<String> servidores) {
         print("Creando conjunto " + nombre); 
-        _tuplas.addNew(nombre);
+        _tuplas.addNew(nombre, dimension, tipo, servidores);
         return true;    
     }
 
@@ -65,7 +65,7 @@ public class TuplaD implements TuplaDInterfaz {
      * @param ti Tupla a insertar
      * @return true si se agrega la tupla, false en caso de fallas.
      */
-    public boolean insertar (String nombre, Tupla ti) {
+    public boolean insertar (String nombre, List<String> ti) {
         if (_tuplas.exists(nombre)) {
             print("Insertando tupla en el conjunto " + nombre);
             print(ti);
