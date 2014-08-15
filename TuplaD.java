@@ -210,6 +210,8 @@ public class TuplaD implements TuplaDInterfaz {
                 registrarse();
             }
 
+
+            _servidores = new ArrayList<String>();
             byte[] localIp = InetAddress.getLocalHost().getAddress();
             _myAddress = InetAddress.getByAddress(localIp).getHostName();
             join();
