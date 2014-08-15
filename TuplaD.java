@@ -7,17 +7,30 @@ import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
 
+import java.net.MulticastSocket;
+import java.net.InetAddress;
+import java.net.DatagramPacket;
+import java.net.UnknownHostException;
+import java.io.IOException;
 
 public class TuplaD implements TuplaDInterfaz {
+    private static final String MULTICAST = "235.1.1.1";
+    private static final int PORT = 6789;
+    private static final String SPLIT = "-";
+    private static final String SUBJECT_LEAVING = "Leaving";
+    private static final String SUBJECT_JOINING = "Joining";
+    private static final String SUBJECT_SET     = "Joining";
+    private static MulticastSocket _socket;
+    private static InetAddress _group;
+    private static String _myAddress;
 
-    private Servidor _servidor;
+    public static boolean _coordinador;
+    public static List<String> _servidores;
+
+    private static String _nombre = "";
     private Conjuntos _tuplas = new Conjuntos(); 
 
     public TuplaD() throws RemoteException {}
-
-    public TuplaD(Servidor servidor) throws RemoteException {
-        _servidor = servidor;
-    }
 
     private static void print(Object msg) {
         System.out.println(msg.toString());
@@ -147,24 +160,66 @@ public class TuplaD implements TuplaDInterfaz {
         System.err.println(uso);
     }
 
-    public static void main(String args[]) {
-        /*
-        if (System.getSecurityManager() == null) {
-            System.setSecurityManager(new SecurityManager());
-        }
-        */
-        try {
-            
-            String nombre = args[0];
-            TuplaDInterfaz tuplad = new TuplaD();
-            TuplaDInterfaz stub =
-                (TuplaDInterfaz) UnicastRemoteObject.exportObject(tuplad, 0);
-            Registry registry = LocateRegistry.getRegistry();
-            registry.rebind(nombre, stub);
-            System.out.println("TuplaD registrado");
 
-            Runnable g = new Grupo();
-            g.run();
+    public static TuplaDInterfaz registrarse() throws RemoteException {
+        TuplaDInterfaz tuplad = new TuplaD();
+        TuplaDInterfaz stub =
+            (TuplaDInterfaz) UnicastRemoteObject.exportObject(tuplad, 0);
+        Registry registry = LocateRegistry.getRegistry();
+        registry.rebind(_nombre, stub);
+        System.out.println("TuplaD registrado");
+        return tuplad;
+    }
+
+    public static void join() throws IOException {
+        String msg = SUBJECT_JOINING + SPLIT + _myAddress;
+        _group = InetAddress.getByName(MULTICAST);
+        _socket = new MulticastSocket(PORT);
+        _socket.joinGroup(_group);
+
+        System.out.println(SUBJECT_JOINING);
+        sendMsg(SUBJECT_JOINING);
+        _servidores.add(_myAddress);
+    }
+
+    public static void sendMsg(String msg) throws IOException {
+        DatagramPacket datagram = new DatagramPacket(msg.getBytes(), 
+                msg.length(), _group, 6789);
+        _socket.send(datagram);
+    }
+
+    public static String receiveMsg() throws IOException {
+        byte[] buf = new byte[1000];
+        DatagramPacket recv = new DatagramPacket(buf, buf.length);
+        _socket.receive(recv);
+        String recieved = new String(recv.getData());
+        System.out.println("Recieved> " + recieved);
+        return recieved;
+    }
+
+
+    public static void main(String args[]) {
+        try {
+            _nombre = args[0];
+            if (args[1].equals("-c")) {
+                _coordinador = true;
+                System.out.println("COORDINADOR");
+            }
+
+            if (_coordinador) {
+                registrarse();
+            }
+
+            byte[] localIp = InetAddress.getLocalHost().getAddress();
+            _myAddress = InetAddress.getByAddress(localIp).getHostName();
+            join();
+
+            while (true) { 
+                print("Hello.");
+                String msg = receiveMsg();
+                Runnable g = new Grupo(msg);
+                g.run();
+            }
         } catch (ArrayIndexOutOfBoundsException e) {
             uso();
         } catch (Exception e) {

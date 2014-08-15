@@ -17,6 +17,11 @@ public class Grupo implements Runnable {
     private InetAddress group;
     private List<String> servers = new ArrayList<String>();
     String myAddress;
+    String _msg;
+
+    public Grupo(String msg) {
+        _msg = msg;
+    }
 
     private void print(Object msg) {
         System.out.println(msg.toString());
