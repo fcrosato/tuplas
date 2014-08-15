@@ -219,7 +219,7 @@ public class TuplaD implements TuplaDInterfaz {
                 registrarse();
             }
 
-
+/*
             _servidores = new ArrayList<String>();
             byte[] localIp = InetAddress.getLocalHost().getAddress();
             _myAddress = InetAddress.getByAddress(localIp).getHostName();
@@ -227,6 +227,7 @@ public class TuplaD implements TuplaDInterfaz {
             print(_myAddress);
 
             join();
+*/
 
             if (_coordinador) {
                 while (true) {
