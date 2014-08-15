@@ -66,15 +66,15 @@ public class Grupo implements Runnable {
         String action = msg_split[1];
         if (subject.equals(SUBJECT_LEAVING)) {
             if (!action.equals(myAddress)) {
-                servers.remove(action);
+                TuplaD._servidores.remove(action);
             }
         } else if (subject.equals(SUBJECT_JOINING)) {
             if (!action.equals(myAddress)) {
-                servers.add(action);
+                TuplaD._servidores.add(action);
             }
         } else if (subject.equals(SUBJECT_SET)) {
             if (!action.equals(myAddress)) {
-                servers.add(action);
+                TuplaD._servidores.add(action);
             }
         }
         return 0;    
@@ -87,6 +87,7 @@ public class Grupo implements Runnable {
             myAddress = InetAddress.getByAddress(localIp).getHostName();
 
             getAction(_msg);
+            System.out.println(_msg);
             //join();
             /*
             while (true) {

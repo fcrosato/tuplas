@@ -177,7 +177,7 @@ public class TuplaD implements TuplaDInterfaz {
         _socket = new MulticastSocket(PORT);
         _socket.joinGroup(_group);
 
-        System.out.println(SUBJECT_JOINING);
+        System.out.println(SUBJECT_JOINING + SPLIT + _myAddress);
         sendMsg(SUBJECT_JOINING);
         _servidores.add(_myAddress);
     }
