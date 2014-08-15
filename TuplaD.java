@@ -13,6 +13,9 @@ import java.net.DatagramPacket;
 import java.net.UnknownHostException;
 import java.io.IOException;
 
+
+import java.io.Console;
+
 public class TuplaD implements TuplaDInterfaz {
     private static final String MULTICAST = "235.1.1.1";
     private static final int PORT = 6789;
@@ -219,12 +222,20 @@ public class TuplaD implements TuplaDInterfaz {
 
             join();
 
-            while (true) { 
-                print("Hello.");
-                String msg = receiveMsg();
-                Runnable g = new Grupo(msg);
-                g.run();
+            if (_coordinador) {
+                while (true) { 
+                    print("Hello.");
+                    String msg = receiveMsg();
+                    Runnable g = new Grupo(msg);
+                    g.run();
+                }
             }
+            Console console = System.console();
+            while (true) {
+                sendMsg("Testing");
+                String input = console.readLine("Enter input:");
+            }
+
         } catch (ArrayIndexOutOfBoundsException e) {
             uso();
         } catch (Exception e) {
