@@ -249,6 +249,8 @@ public class TuplaD implements TuplaDInterfaz {
                     new InputStreamReader(kkSocket.getInputStream()));
 
 
+            out.println("Epale, que mas?");
+
             BufferedReader stdIn =
                 new BufferedReader(new InputStreamReader(System.in));
             String fromServer;
