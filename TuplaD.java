@@ -178,7 +178,7 @@ public class TuplaD implements TuplaDInterfaz {
         _socket.joinGroup(_group);
 
         System.out.println(SUBJECT_JOINING + SPLIT + _myAddress);
-        sendMsg(SUBJECT_JOINING);
+        sendMsg(msg);
         _servidores.add(_myAddress);
     }
 
@@ -214,6 +214,9 @@ public class TuplaD implements TuplaDInterfaz {
             _servidores = new ArrayList<String>();
             byte[] localIp = InetAddress.getLocalHost().getAddress();
             _myAddress = InetAddress.getByAddress(localIp).getHostName();
+            
+            print(_myAddress);
+
             join();
 
             while (true) { 
