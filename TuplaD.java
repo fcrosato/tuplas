@@ -13,6 +13,11 @@ import java.net.DatagramPacket;
 import java.net.UnknownHostException;
 import java.io.IOException;
 
+import java.net.ServerSocket;
+import java.net.Socket;
+import java.io.PrintWriter;
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
 
 import java.io.Console;
 
@@ -202,6 +207,7 @@ public class TuplaD implements TuplaDInterfaz {
 
 
     public static void main(String args[]) {
+        int portNumber = 10764;
         try {
             _nombre = args[0];
             if (args[1].equals("-c")) {
@@ -223,7 +229,44 @@ public class TuplaD implements TuplaDInterfaz {
             join();
 
             if (_coordinador) {
-                while (true) { 
+                while (true) {
+                    try (ServerSocket serverSocket = new ServerSocket(portNumber)) { 
+                        while (true) {
+                            new Grupo(serverSocket.accept()).run();
+                        }
+                    } catch (IOException e) {
+                        System.err.println("Could not listen on port " + portNumber);
+                        System.exit(-1);
+                    }                
+                }
+            }
+
+            Socket kkSocket = new Socket("anakin", portNumber);
+            PrintWriter out = new PrintWriter(kkSocket.getOutputStream(), true);
+            BufferedReader in = new BufferedReader(
+                    new InputStreamReader(kkSocket.getInputStream()));
+
+
+            BufferedReader stdIn =
+                new BufferedReader(new InputStreamReader(System.in));
+            String fromServer;
+            String fromUser;
+
+            while ((fromServer = in.readLine()) != null) {
+                System.out.println("Server: " + fromServer);
+                if (fromServer.equals("Bye."))
+                    break;
+
+                fromUser = stdIn.readLine();
+                if (fromUser != null) {
+                    System.out.println("Client: " + fromUser);
+                    out.println(fromUser);
+                }
+            }
+
+
+
+            /*
                     print("Hello.");
                     String msg = receiveMsg();
                     Runnable g = new Grupo(msg);
@@ -235,6 +278,7 @@ public class TuplaD implements TuplaDInterfaz {
                 sendMsg("Testing");
                 String input = console.readLine("Enter input:");
             }
+*/
 
         } catch (ArrayIndexOutOfBoundsException e) {
             uso();

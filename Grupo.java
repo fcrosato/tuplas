@@ -5,6 +5,8 @@ import java.net.InetAddress;
 import java.net.DatagramPacket;
 import java.net.UnknownHostException;
 import java.io.IOException;
+import java.io.*;
+import java.net.*;
 
 public class Grupo implements Runnable {
     private static final String MULTICAST = "235.1.1.1";
@@ -13,11 +15,16 @@ public class Grupo implements Runnable {
     private static final String SUBJECT_LEAVING = "Leaving";
     private static final String SUBJECT_JOINING = "Joining";
     private static final String SUBJECT_SET     = "Joining";
-    private MulticastSocket socket;
+    //private MulticastSocket socket;
     private InetAddress group;
     private List<String> servers = new ArrayList<String>();
     String myAddress;
     String _msg;
+    private Socket socket = null;
+
+    public Grupo(Socket socket) {
+        this.socket = socket;
+    }
 
     public Grupo(String msg) {
         _msg = msg;
@@ -26,6 +33,7 @@ public class Grupo implements Runnable {
     private void print(Object msg) {
         System.out.println(msg.toString());
     }
+/*
 
     public void join() throws IOException {
         String msg = SUBJECT_JOINING + SPLIT + myAddress;
@@ -79,7 +87,9 @@ public class Grupo implements Runnable {
         }
         return 0;    
     }
+*/
 
+/*
     @Override
     public void run() {
         try {
@@ -88,13 +98,26 @@ public class Grupo implements Runnable {
 
             getAction(_msg);
             System.out.println(_msg);
-            //join();
-            /*
-            while (true) {
-                String msg = receiveMsg();
-                int action = getAction(msg);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+    */
+    @Override
+    public void run() {
+
+        try (
+                PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
+                BufferedReader in = new BufferedReader(
+                    new InputStreamReader(
+                        socket.getInputStream()));
+            ) {
+            String inputLine, outputLine;
+
+            while ((inputLine = in.readLine()) != null) {
+                out.println(inputLine);
             }
-            */
+            socket.close();
         } catch (IOException e) {
             e.printStackTrace();
         }
