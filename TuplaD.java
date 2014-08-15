@@ -253,6 +253,8 @@ public class TuplaD implements TuplaDInterfaz {
             String fromServer;
             String fromUser;
 
+            out.print("Hello. <<Waving>>");
+
             while ((fromServer = in.readLine()) != null) {
                 System.out.println("Server: " + fromServer);
                 if (fromServer.equals("Bye."))
