@@ -234,6 +234,7 @@ public class TuplaD implements TuplaDInterfaz {
                     try (ServerSocket serverSocket = new ServerSocket(portNumber)) { 
                         while (true) {
                             new Grupo(serverSocket.accept()).run();
+                            print("Socket!");
                         }
                     } catch (IOException e) {
                         System.err.println("Could not listen on port " + portNumber);
@@ -253,7 +254,8 @@ public class TuplaD implements TuplaDInterfaz {
             String fromServer;
             String fromUser;
 
-            out.print("Hello. <<Waving>>");
+            out.println("Hello. <<Waving>>");
+            print("Socket!");
 
             while ((fromServer = in.readLine()) != null) {
                 System.out.println("Server: " + fromServer);
