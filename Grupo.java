@@ -85,7 +85,9 @@ public class Grupo implements Runnable {
         try {
             byte[] localIp = InetAddress.getLocalHost().getAddress();
             myAddress = InetAddress.getByAddress(localIp).getHostName();
-            join();
+
+            getAction(_msg);
+            //join();
             /*
             while (true) {
                 String msg = receiveMsg();
