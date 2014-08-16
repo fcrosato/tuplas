@@ -206,7 +206,7 @@ public class Nodo implements Runnable {
             String nombre = action;
             String[] elementos = msg_split[2].split(Data.SUBSPLIT);
             List<String> tupla = new ArrayList<String>();
-            for (int i=1; i < elementos.length; i++) {
+            for (int i=0; i < elementos.length; i++) {
                 tupla.add(elementos[i]);
             }
             insertar(nombre, tupla);
