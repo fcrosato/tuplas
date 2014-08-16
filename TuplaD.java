@@ -122,7 +122,7 @@ public class TuplaD implements TuplaDInterfaz {
         }
 
         if (tipo == Data.REPLICADO) {
-            String msg = Data.SUBJECT_INSERTAR + Data.SPLIT + tupla;
+            String msg = Data.SUBJECT_INSERTAR + Data.SPLIT + nombre + Data.SPLIT + tupla;
             for (String s: tuplaServidores) {
                 if (!s.equals(_myAddress)) {
                     Grupo g = socket_servidor.get(s);
@@ -134,7 +134,7 @@ public class TuplaD implements TuplaDInterfaz {
 
             }
         } else if (tipo == Data.PARTICIONADO) {
-            String msg = Data.SUBJECT_INSERTAR + Data.SPLIT + tupla;
+            String msg = Data.SUBJECT_INSERTAR + Data.SPLIT + nombre + Data.SPLIT + tupla;
             String servidor = servidorMenosCargado(tuplaServidores);
             if (!servidor.equals(_myAddress)) {
                 Grupo g = socket_servidor.get(servidor);
@@ -163,7 +163,11 @@ public class TuplaD implements TuplaDInterfaz {
                     tamConjuntos + modConjuntos : tamConjuntos;
                 for (int j = 1; j < tam; j++) {
                     System.out.println(i * tamConjuntos + j);
-                    tupla += (ti.get(i * tamConjuntos + j) + Data.SUBSPLIT);
+                    int tuplaIndex = i * tamConjuntos + j;
+                    if (tuplaIndex == ti.size()) {
+                        break;
+                    }
+                    tupla += (ti.get(tuplaIndex) + Data.SUBSPLIT);
                 }
                 i++;
 
