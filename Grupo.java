@@ -112,7 +112,7 @@ public class Grupo implements Runnable {
             System.err.println("Starting socket server");
             while ((inputLine = in.readLine()) != null) {
                 System.err.println("Client says: " + inputLine);
-                getAction(_msg);
+                getAction(inputLine);
                 out.println(inputLine);
             }
             socket.close();
