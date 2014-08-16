@@ -92,7 +92,7 @@ public class TuplaD implements TuplaDInterfaz {
     public boolean eliminar (String nombre) {
         List<String> tupla_servidores = _tuplas.servidores(nombre); 
         for (String s : tupla_servidores) {
-            print(s);
+            System.out.println("Servidor> " +s);
             if (!s.equals(_myAddress)) {
                 Grupo g = socket_servidor.get(s);
                 g.getAction(Data.SUBJECT_ELIMINAR + Data.SPLIT + nombre);
