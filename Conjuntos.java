@@ -19,8 +19,8 @@ public class Conjuntos {
         _conjuntos.put(nombre, cjto);
     }
 
-    public synchronized void clear() {
-        _conjuntos.clear();
+    public synchronized void clear(String nombre) {
+        _conjuntos.remove(nombre);
     }
 
     public synchronized void add(String nombre, List<String> ti) {

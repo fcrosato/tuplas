@@ -86,7 +86,7 @@ public class TuplaD implements TuplaDInterfaz {
                 g.getAction(Data.SUBJECT_ELIMINAR + Data.SPLIT + nombre);
                 print("Eliminando conjunto " + nombre); 
             } else {
-                _tuplas.clear();
+                _tuplas.clear(nombre);
                 print("Eliminando conjunto " + nombre); 
             }
         }

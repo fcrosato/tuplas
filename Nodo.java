@@ -60,7 +60,7 @@ public class Nodo implements Runnable {
     public boolean eliminar (String nombre) {
         if (TuplaD._tuplas.exists(nombre)) {
             Data.print("Eliminando conjunto " + nombre); 
-            TuplaD._tuplas.clear();
+            TuplaD._tuplas.clear(nombre);
             return true;
         }
         return false;
