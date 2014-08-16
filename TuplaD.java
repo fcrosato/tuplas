@@ -228,7 +228,10 @@ public class TuplaD implements TuplaDInterfaz {
                 while (true) {
                     try (ServerSocket serverSocket = new ServerSocket(portNumber)) { 
                         while (true) {
-                            new Grupo(serverSocket.accept()).run();
+                            print("Inicio del ciclo");
+                            Socket service = serverSocket.accept();
+                            print("Creé el servicio");
+                            new Grupo(service).run();
                             print("Socket!");
                         }
                     } catch (IOException e) {
