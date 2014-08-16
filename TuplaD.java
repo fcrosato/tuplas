@@ -170,8 +170,13 @@ public class TuplaD implements TuplaDInterfaz {
                     Grupo g = socket_servidor.get(s);
                     g.getAction(msg += tupla);
                 } else {
-                    print("Insertando conjunto " + nombre); 
-                    _tuplas.add(nombre, ti); 
+                    String[] t = tupla.split(Data.SUBSPLIT);
+                    List<String> listaTupla = new ArrayList<String>();
+                    for (int j=0; j<t.length; j++) {
+                        listaTupla.add(t[j]);
+                    }
+                    print("Insertando conjunto " + nombre + "> " + listaTupla.toString()); 
+                    _tuplas.add(nombre, listaTupla); 
                 }
             }
 
