@@ -11,10 +11,10 @@ import java.net.*;
 public class Grupo implements Runnable {
     private static final String MULTICAST = "235.1.1.1";
     private static final int PORT = 6789;
-    private static final String SPLIT = "-";
-    private static final String SUBJECT_LEAVING = "Leaving";
-    private static final String SUBJECT_JOINING = "Joining";
-    private static final String SUBJECT_SET     = "Joining";
+    public static final String SPLIT = "-";
+    public static final String SUBJECT_LEAVING = "Leaving";
+    public static final String SUBJECT_JOINING = "Joining";
+    public static final String SUBJECT_SET     = "Joining";
     //private MulticastSocket socket;
     private InetAddress group;
     private List<String> servers = new ArrayList<String>();
@@ -116,8 +116,8 @@ public class Grupo implements Runnable {
 
             System.out.println("Starting socket server");
             while ((inputLine = in.readLine()) != null) {
-                out.println(inputLine);
                 System.out.println("Client says: " + inputLine);
+                out.println(inputLine);
             }
             socket.close();
         } catch (IOException e) {

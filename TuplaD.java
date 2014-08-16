@@ -220,11 +220,6 @@ public class TuplaD implements TuplaDInterfaz {
             }
 
 /*
-            _servidores = new ArrayList<String>();
-            byte[] localIp = InetAddress.getLocalHost().getAddress();
-            _myAddress = InetAddress.getByAddress(localIp).getHostName();
-            
-            print(_myAddress);
 
             join();
 */
@@ -243,12 +238,18 @@ public class TuplaD implements TuplaDInterfaz {
                 }
             }
 
+            _servidores = new ArrayList<String>();
+            byte[] localIp = InetAddress.getLocalHost().getAddress();
+            _myAddress = InetAddress.getByAddress(localIp).getHostName();
+            
+            print(_myAddress);
+
             Socket kkSocket = new Socket("172.31.34.106", portNumber);
             PrintWriter out = new PrintWriter(kkSocket.getOutputStream(), true);
             BufferedReader in = new BufferedReader(
                     new InputStreamReader(kkSocket.getInputStream()));
 
-            out.println("Epale, que mas?");
+            out.println(Grupo.SUBJECT_JOINING + _myAddress);
 
             BufferedReader stdIn =
                 new BufferedReader(new InputStreamReader(System.in));
