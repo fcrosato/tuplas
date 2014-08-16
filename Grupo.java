@@ -72,6 +72,7 @@ public class Grupo implements Runnable {
     private int getAction(String msg) {
         String[] msg_split = msg.split(SPLIT);
         String subject = msg_split[0];
+        System.out.println("Subject> " + subject);
         String action = msg_split[1];
         if (subject.equals(SUBJECT_LEAVING)) {
             TuplaD._servidores.remove(action);
