@@ -226,8 +226,8 @@ public class Nodo implements Runnable {
             join();
 
             while ((fromServer = in.readLine()) != null) {
-                getAction(fromServer, in, out);
                 System.out.println("Server: " + fromServer);
+                getAction(fromServer, in, out);
             }
         } catch (Exception e) {
             System.err.println("TuplaD exception:");
