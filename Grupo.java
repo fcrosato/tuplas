@@ -21,6 +21,8 @@ public class Grupo implements Runnable {
     String myAddress;
     String _msg;
     private Socket socket = null;
+    private PrintWriter out;
+    private BufferedReader in;
 
     public Grupo(Socket socket) {
         this.socket = socket;
@@ -74,10 +76,14 @@ public class Grupo implements Runnable {
         String subject = msg_split[0];
         System.out.println("Subject> " + subject);
         String action = msg_split[1];
+
         if (subject.equals(SUBJECT_LEAVING)) {
             TuplaD._servidores.remove(action);
+
         } else if (subject.equals(SUBJECT_JOINING)) {
             TuplaD._servidores.add(action);
+            out.println(SUBJECT_JOINING + SPLIT + TuplaD.myAddress);
+            
         } else if (subject.equals(SUBJECT_SET)) {
             TuplaD._servidores.add(action);
         }
@@ -102,9 +108,8 @@ public class Grupo implements Runnable {
     public void run() {
 
         try (
-                PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
-                BufferedReader in = new BufferedReader(
-                    new InputStreamReader(
+                out = new PrintWriter(socket.getOutputStream(), true);
+                in = new BufferedReader(new InputStreamReader(
                         socket.getInputStream()));
             ) {
             String inputLine, outputLine;

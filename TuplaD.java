@@ -179,17 +179,6 @@ public class TuplaD implements TuplaDInterfaz {
         return tuplad;
     }
 
-    public static void join() throws IOException {
-        String msg = SUBJECT_JOINING + SPLIT + _myAddress;
-        _group = InetAddress.getByName(MULTICAST);
-        _socket = new MulticastSocket(PORT);
-        _socket.joinGroup(_group);
-
-        System.out.println(SUBJECT_JOINING + SPLIT + _myAddress);
-        sendMsg(msg);
-        _servidores.add(_myAddress);
-    }
-
     public static void sendMsg(String msg) throws IOException {
         DatagramPacket datagram = new DatagramPacket(msg.getBytes(), 
                 msg.length(), _group, 6789);
@@ -251,8 +240,6 @@ public class TuplaD implements TuplaDInterfaz {
             String fromServer;
             String fromUser;
 
-            out.println("Hello. <<Waving>>");
-            print("Socket!");
 
             while ((fromServer = in.readLine()) != null) {
                 System.out.println("Server: " + fromServer);
