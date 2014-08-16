@@ -21,19 +21,16 @@ import java.io.InputStreamReader;
 
 import java.io.Console;
 
-public class TuplaD implements TuplaDInterfaz {
+public class Nodo implements Runnable {
     public static final int SEGMENTADO   = 1;
     public static final int REPLICADO    = 2;
     public static final int PARTICIONADO = 3;
 
+    private Socket socket;
+
     public static HashMap<String, Grupo> socket_servidor = new HashMap<String, Grupo>();
     public static HashMap<String, Integer> carga = new HashMap<String, Integer>();
 
-    private static final String MULTICAST = "235.1.1.1";
-    private static final int PORT = 6789;
-
-    private static MulticastSocket _socket;
-    private static InetAddress _group;
     public static String _myAddress;
 
     public static boolean _coordinador;
@@ -41,11 +38,13 @@ public class TuplaD implements TuplaDInterfaz {
     public static List<Servidor> _servidores;
 
     private static String _nombre = "";
-    public static Conjuntos _tuplas = new Conjuntos(); 
+//    private Conjuntos _tuplas = new Conjuntos(); 
 
-    public TuplaD() throws RemoteException {}
+    public Nodo(String servidor, int puerto) throws UnknownHostException, IOException {
+        socket = new Socket(servidor, puerto);
+    }
 
-    public static void print(Object msg) {
+    private static void print(Object msg) {
         System.out.println(msg.toString());
     }
 
@@ -63,22 +62,9 @@ public class TuplaD implements TuplaDInterfaz {
      * @return true si se crea satisfactoriamente, false en caso contrario.
      */
     public boolean crear(String nombre, int dimension, int tipo, List<String> servidores) {
-        String tupla_servidores = "";
-        for (Servidor s : _servidores) {
-            tupla_servidores += (s.ip + Data.SUBSPLIT); 
-        }
-
-        String msg = (nombre + Data.SUBSPLIT + dimension + Data.SUBSPLIT +
-                tipo + Data.SUBSPLIT + tupla_servidores);
-
-
-        for (Grupo g : socket_servidor.values()) {
-            g.getAction(msg); 
-            //g.getAction();
-        }
-
         print("Creando conjunto " + nombre); 
-        _tuplas.addNew(nombre, dimension, tipo, servidores);
+        TuplaD._tuplas.addNew(nombre, dimension, tipo, servidores);
+        TuplaD.print(TuplaD._tuplas);
         return true;    
     }
 
@@ -90,9 +76,9 @@ public class TuplaD implements TuplaDInterfaz {
      * @return true si se elimina la tupla, false en caso de que no exista.
      */
     public boolean eliminar (String nombre) {
-        if (_tuplas.exists(nombre)) {
+        if (TuplaD._tuplas.exists(nombre)) {
             print("Eliminando conjunto " + nombre); 
-            _tuplas.clear();
+            TuplaD._tuplas.clear();
             return true;
         }
         return false;
@@ -108,10 +94,10 @@ public class TuplaD implements TuplaDInterfaz {
      */
     public boolean insertar (String nombre, List<String> ti) {
         
-        if (_tuplas.exists(nombre)) {
+        if (TuplaD._tuplas.exists(nombre)) {
             print("Insertando tupla en el conjunto " + nombre);
             print(ti);
-            _tuplas.add(nombre, ti); 
+            TuplaD._tuplas.add(nombre, ti); 
             return true;
         }
         return false;
@@ -126,9 +112,9 @@ public class TuplaD implements TuplaDInterfaz {
      * @return true si se agrega la tupla, false en caso de fallas.
      */
     public boolean borrar (String nombre, String clave) {
-        if (_tuplas.exists(nombre)) {
+        if (TuplaD._tuplas.exists(nombre)) {
             print("Eliminando tupla "+clave+" en el conjunto "+nombre);
-            _tuplas.remove(nombre, clave);
+            TuplaD._tuplas.remove(nombre, clave);
             return true;
         }
         return false;
@@ -143,9 +129,9 @@ public class TuplaD implements TuplaDInterfaz {
       */
     public List<String> buscar (String nombre, String clave) {
         List<String> result = new ArrayList<String>();
-        if (_tuplas.exists(nombre)) {
+        if (TuplaD._tuplas.exists(nombre)) {
             print("Buscando elementos de la tupla "+clave+" en el conjunto "+nombre);
-            result = _tuplas.getElements(nombre, clave);
+            result = TuplaD._tuplas.getElements(nombre, clave);
         }
         return result;
     }
@@ -161,13 +147,13 @@ public class TuplaD implements TuplaDInterfaz {
                 false en caso contrario.
       */
     public boolean actualizar (String nombre, String clave, int posicion, String valor) {
-        if (_tuplas.exists(nombre)) {
+        if (TuplaD._tuplas.exists(nombre)) {
             print("Actualizando: "+
                 "\tconjunto "+nombre +
                 "\tclave: "+clave +
                 "\tposicion: "+posicion +
                 "\tvalor: "+valor);
-            _tuplas.set(nombre, clave, posicion, valor);
+            TuplaD._tuplas.set(nombre, clave, posicion, valor);
         }
         return true;
     }
@@ -179,127 +165,77 @@ public class TuplaD implements TuplaDInterfaz {
       * @return UInformación de configuración del conjunto de tuplas.
       */
     public String configuracion (String nombre) {
-        String conf = _tuplas.config(nombre);
+        String conf = TuplaD._tuplas.config(nombre);
         //= Información de configuración del conjunto de tuplas
         return conf;
     }
 
-    private static void uso() {
-        String uso = "./tuplad [nombre]";
-        System.err.println(uso);
+
+    public void join(PrintWriter out, BufferedReader in) throws IOException {
+        out.println(Grupo.SUBJECT_JOINING + Grupo.SPLIT + _myAddress);
+        String fromServer = in.readLine();
+
+        String[] all_servers = fromServer.split(Grupo.SPLIT);
+        for (int i = 0; i < all_servers.length; i+=2) {
+            _servidores.add(new Servidor(all_servers[i], 
+                        Integer.parseInt(all_servers[i+1])));
+        } 
+
     }
 
+    public int getAction(String msg, BufferedReader in, PrintWriter out) {
+        String[] msg_split = msg.split(Data.SPLIT);
+        String subject = msg_split[0];
+        System.out.println("Subject> " + subject);
+        String action = msg_split[1];
 
-    public static TuplaDInterfaz registrarse() throws RemoteException {
-        TuplaDInterfaz tuplad = new TuplaD();
-        TuplaDInterfaz stub =
-            (TuplaDInterfaz) UnicastRemoteObject.exportObject(tuplad, 0);
-        Registry registry = LocateRegistry.getRegistry();
-        registry.rebind(_nombre, stub);
-        System.out.println("TuplaD registrado");
-        return tuplad;
-    }
+        if (subject.equals(Data.SUBJECT_LEAVING)) {
+            TuplaD._servidores.remove(action);
 
-    public static void sendMsg(String msg) throws IOException {
-        DatagramPacket datagram = new DatagramPacket(msg.getBytes(), 
-                msg.length(), _group, 6789);
-        _socket.send(datagram);
-    }
+        } else if (subject.equals(Data.SUBJECT_JOINING)) {
+           // TuplaD.socket_servidor.put(action, this);
 
-    public static String receiveMsg() throws IOException {
-        byte[] buf = new byte[1000];
-        DatagramPacket recv = new DatagramPacket(buf, buf.length);
-        _socket.receive(recv);
-        String recieved = new String(recv.getData());
-        System.out.println("Recieved> " + recieved);
-        return recieved;
-    }
-
-
-    public static void main(String args[]) {
-        int portNumber = 10764;
-        try {
-            _nombre = args[0];
-            if (args[1].equals("-c")) {
-                _coordinador = true;
-                System.out.println("COORDINADOR");
+        
+            StringBuilder all_servers = new StringBuilder();
+            for (Servidor s : TuplaD._servidores) {
+                all_servers.append(s.ip).append(Data.SPLIT).append(s.carga).append(Data.SPLIT);
             }
-//            _servidores = new ArrayList<String>();
-            _servidores = new ArrayList<Servidor>();
-            byte[] localIp = InetAddress.getLocalHost().getAddress();
-            _myAddress = InetAddress.getByAddress(localIp).getHostAddress();
-            _servidores.add(new Servidor(_myAddress, 0));
-
-            if (_coordinador) {
-                registrarse();
-                while (true) {
-                    try (ServerSocket serverSocket = new ServerSocket(portNumber)) { 
-                        while (true) {
-                            Socket service = serverSocket.accept();
-                            new Grupo(service).run();
-                        }
-                    } catch (IOException e) {
-                        System.err.println("Could not listen on port " + portNumber);
-                        System.exit(-1);
-                    }                
-                }
-            }
-
+            TuplaD._servidores.add(new Servidor(action, 0));
+            out.println(all_servers.toString());
             
-            print(_myAddress);
+        } else if (subject.equals(Data.SUBJECT_CREAR)) {
+            String[] crear = action.split(Data.SUBSPLIT);
+            String nombre = crear[0];
+            int dimension = Integer.parseInt(crear[1]);
+            int tipo      = Integer.parseInt(crear[2]);
+            
+            List<String> servidores = new ArrayList<String>();
+            for (int i = 3; i < crear.length; i++) {
+                servidores.add(crear[i]);
+            }
+            crear(nombre, dimension, tipo, servidores);
+        }
+        return 0;    
+    }
 
-            Socket kkSocket = new Socket(args[1], portNumber);
-            PrintWriter out = new PrintWriter(kkSocket.getOutputStream(), true);
-            BufferedReader in = new BufferedReader(
-                    new InputStreamReader(kkSocket.getInputStream()));
 
+
+    @Override
+    public void run() {
+        try (PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
+                BufferedReader in = new BufferedReader(
+                    new InputStreamReader(socket.getInputStream()));
+            ) {
             String fromServer;
             String fromUser;
 
-            out.println(Grupo.SUBJECT_JOINING + Grupo.SPLIT + _myAddress);
-            fromServer = in.readLine();
-            String[] all_servers = fromServer.split(Grupo.SPLIT);
-            for (int i = 0; i < all_servers.length; i+=2) {
-                _servidores.add(new Servidor(all_servers[i], 
-                            Integer.parseInt(all_servers[i+1])));
-            }
 
-
-            BufferedReader stdIn =
-                new BufferedReader(new InputStreamReader(System.in));
-
+            join(out, in);
 
             while ((fromServer = in.readLine()) != null) {
+                getAction(fromServer, in, out);
                 System.out.println("Server: " + fromServer);
-                if (fromServer.equals("Bye."))
-                    break;
-
-                fromUser = stdIn.readLine();
-                if (fromUser != null) {
-                    System.out.println("Client: " + fromUser);
-                    out.println(fromUser);
-                }
             }
-
-
-
-            new Nodo(args[1], portNumber);
-            /*
-                    print("Hello.");
-                    String msg = receiveMsg();
-                    Runnable g = new Grupo(msg);
-                    g.run();
-                }
-            }
-            Console console = System.console();
-            while (true) {
-                sendMsg("Testing");
-                String input = console.readLine("Enter input:");
-            }
-*/
-
-        } catch (ArrayIndexOutOfBoundsException e) {
-            uso();
         } catch (Exception e) {
             System.err.println("TuplaD exception:");
             e.printStackTrace();

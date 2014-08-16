@@ -1,15 +1,14 @@
 public class Servidor {
-    private String _dns;
+    public String ip;
+    public int carga;
 
-    public Servidor(String dns) {
-        _dns = dns;
+    Servidor (String _ip, int _carga) {
+        ip = _ip;
+        carga = _carga;
     }
 
-    public String nombre() {
-        return _dns;
-    }
-
-    public void setDns(String dns) {
-        _dns = dns;
+    @Override
+    public String toString() {
+        return ("ip: " + ip + " | carga: " + carga);
     }
 }

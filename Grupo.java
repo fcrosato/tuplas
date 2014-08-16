@@ -7,6 +7,7 @@ import java.net.UnknownHostException;
 import java.io.IOException;
 import java.io.*;
 import java.net.*;
+import java.lang.StringBuilder;
 
 public class Grupo implements Runnable {
     private static final String MULTICAST = "235.1.1.1";
@@ -21,6 +22,8 @@ public class Grupo implements Runnable {
     String myAddress;
     String _msg;
     private Socket socket = null;
+    PrintWriter out;
+    BufferedReader in;
 
     public Grupo(Socket socket) {
         this.socket = socket;
@@ -33,6 +36,9 @@ public class Grupo implements Runnable {
     private void print(Object msg) {
         System.out.println(msg.toString());
     }
+
+
+
 /*
 
     public void join() throws IOException {
@@ -69,7 +75,7 @@ public class Grupo implements Runnable {
     }
 
 */
-    private int getAction(String msg, BufferedReader in, PrintWriter out) {
+    public int getAction(String msg) {
         String[] msg_split = msg.split(SPLIT);
         String subject = msg_split[0];
         System.out.println("Subject> " + subject);
@@ -79,11 +85,17 @@ public class Grupo implements Runnable {
             TuplaD._servidores.remove(action);
 
         } else if (subject.equals(SUBJECT_JOINING)) {
-            TuplaD._servidores.add(action);
-            out.println(SUBJECT_JOINING + SPLIT + TuplaD._myAddress);
+            TuplaD.socket_servidor.put(action, this);
+        
+            StringBuilder all_servers = new StringBuilder();
+            for (Servidor s : TuplaD._servidores) {
+                all_servers.append(s.ip).append(SPLIT).append(s.carga).append(SPLIT);
+            }
+            TuplaD._servidores.add(new Servidor(action, 0));
+            out.println(all_servers.toString());
             
         } else if (subject.equals(SUBJECT_SET)) {
-            TuplaD._servidores.add(action);
+//            TuplaD._servidores.add(action);
         }
         return 0;    
     }
@@ -105,17 +117,15 @@ public class Grupo implements Runnable {
     @Override
     public void run() {
 
-        try (
-                PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
-                BufferedReader in = new BufferedReader(new InputStreamReader(
-                        socket.getInputStream()));
-            ) {
+        try { 
+            out = new PrintWriter(socket.getOutputStream(), true);
+            in = new BufferedReader(new InputStreamReader( socket.getInputStream()));
             String inputLine, outputLine;
 
             System.err.println("Starting socket server");
             while ((inputLine = in.readLine()) != null) {
                 System.err.println("Client says: " + inputLine);
-                getAction(inputLine, in, out);
+                getAction(inputLine); 
                 out.println(inputLine);
             }
             socket.close();
