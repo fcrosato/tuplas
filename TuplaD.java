@@ -66,6 +66,7 @@ public class TuplaD implements TuplaDInterfaz {
 
         print("Creando conjunto " + nombre); 
         _tuplas.addNew(nombre, dimension, tipo, servidores);
+        Data.print(_tuplas);
         return true;    
     }
 
@@ -89,6 +90,7 @@ public class TuplaD implements TuplaDInterfaz {
                 print("Eliminando conjunto " + nombre); 
             }
         }
+        Data.print(_tuplas);
         return true;
     }
 

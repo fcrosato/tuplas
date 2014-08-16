@@ -58,4 +58,13 @@ public class Conjuntos {
         return cjto.servidores();
     }
 
+    @Override
+    public synchronized String toString() {
+        String cjto = "" ;
+        for (String s : _conjuntos.keySet()) {
+            cjto += _conjuntos.get(s).toString() + "\n";
+        }
+        return cjto;    
+    }
+
 }
