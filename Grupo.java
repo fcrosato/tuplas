@@ -87,7 +87,6 @@ public class Grupo implements Runnable {
             TuplaD._servidores.remove(action);
 
         } else if (subject.equals(SUBJECT_JOINING)) {
-            System.out.println("Joining> Enviando " + msg);
             TuplaD.socket_servidor.put(action, this);
         
             StringBuilder all_servers = new StringBuilder();
@@ -95,6 +94,7 @@ public class Grupo implements Runnable {
                 all_servers.append(s.ip).append(SPLIT).append(s.carga).append(SPLIT);
             }
             TuplaD._servidores.add(new Servidor(action, 0));
+            System.out.println("Joining> Enviando " + all_servers.toString());
             out.println(all_servers.toString());
             
         } else if (subject.equals(Data.SUBJECT_CREAR)) {

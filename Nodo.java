@@ -180,7 +180,7 @@ public class Nodo implements Runnable {
         String fromServer = in.readLine();
         System.out.println("Joining> " + fromServer);
 
-        String[] all_servers = fromServer.split(Grupo.SPLIT);
+        String[] all_servers = fromServer.split(Data.SUBSPLIT);
         for (int i = 0; i < all_servers.length; i+=2) {
             _servidores.add(new Servidor(all_servers[i], 
                         Integer.parseInt(all_servers[i+1])));
