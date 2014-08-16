@@ -94,8 +94,9 @@ public class Grupo implements Runnable {
             TuplaD._servidores.add(new Servidor(action, 0));
             out.println(all_servers.toString());
             
-        } else if (subject.equals(SUBJECT_SET)) {
-//            TuplaD._servidores.add(action);
+        } else if (subject.equals(Data.SUBJECT_CREAR)) {
+            System.out.println("Crear> Enviando " + msg);
+            out.println(msg);
         }
         return 0;    
     }
