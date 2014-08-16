@@ -144,7 +144,7 @@ public class TuplaD implements TuplaDInterfaz {
                 _tuplas.add(nombre, ti);
             }
         } else if (tipo == Data.SEGMENTADO) {
-            String msg = Data.SUBJECT_INSERTAR + Data.SPLIT;
+            String msg = Data.SUBJECT_INSERTAR + Data.SPLIT + nombre + Data.SPLIT;
             int elementos = ti.size() - 1;
             int numeroServidores = tuplaServidores.size();
             int tamConjuntos = elementos / numeroServidores + 1;
