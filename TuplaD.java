@@ -29,15 +29,8 @@ public class TuplaD implements TuplaDInterfaz {
     public static HashMap<String, Grupo> socket_servidor = new HashMap<String, Grupo>();
     public static HashMap<String, Integer> carga = new HashMap<String, Integer>();
 
-    private static final String MULTICAST = "235.1.1.1";
-    private static final int PORT = 6789;
-
-    private static MulticastSocket _socket;
-    private static InetAddress _group;
     public static String _myAddress;
-
     public static boolean _coordinador;
-//    public static List<String> _servidores;
     public static List<Servidor> _servidores;
 
     private static String _nombre = "";
@@ -62,10 +55,13 @@ public class TuplaD implements TuplaDInterfaz {
      * @param servidores Nombre de las máquinas donde se desea que resida el conjunto de tuplas.  
      * @return true si se crea satisfactoriamente, false en caso contrario.
      */
-    public boolean crear(String nombre, int dimension, int tipo, List<String> servidores) {
+    public boolean crear(String nombre, int dimension, int tipo) {
+        List<String> servidores = new ArrayList<String>();
+
         String tupla_servidores = "";
         for (Servidor s : _servidores) {
             tupla_servidores += (s.ip + Data.SUBSPLIT); 
+            servidores.add(s.ip);
         }
 
         String msg = (nombre + Data.SUBSPLIT + dimension + Data.SUBSPLIT +
@@ -209,22 +205,6 @@ public class TuplaD implements TuplaDInterfaz {
         System.out.println("TuplaD registrado");
         return tuplad;
     }
-
-    public static void sendMsg(String msg) throws IOException {
-        DatagramPacket datagram = new DatagramPacket(msg.getBytes(), 
-                msg.length(), _group, 6789);
-        _socket.send(datagram);
-    }
-
-    public static String receiveMsg() throws IOException {
-        byte[] buf = new byte[1000];
-        DatagramPacket recv = new DatagramPacket(buf, buf.length);
-        _socket.receive(recv);
-        String recieved = new String(recv.getData());
-        System.out.println("Recieved> " + recieved);
-        return recieved;
-    }
-
 
     public static void main(String args[]) {
         int portNumber = 10764;

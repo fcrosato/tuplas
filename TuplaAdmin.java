@@ -163,8 +163,7 @@ public class TuplaAdmin {
         if (tipo == -1) {
             return false;
         }
-        List<String> servidores = getLista(in, MSG_SERVIDOR); 
-        return tuplad.crear(nombre, dimension, tipo, servidores);
+        return tuplad.crear(nombre, dimension, tipo);
     }
 
     /**
