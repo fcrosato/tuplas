@@ -182,12 +182,11 @@ public class Nodo implements Runnable {
 
         String[] all_servers = fromServer.split(Data.SPLIT);
 
-        for (int i = 0; i < all_servers.length; i++) {
-            System.out.println("Server " + i + "> " + all_servers[i]); 
-        }
-
         for (int i = 0; i < all_servers.length; i+=2) {
-            _servidores.add(new Servidor(all_servers[i], Integer.parseInt(all_servers[i+1])));
+            System.out.println(i+">");
+            String ip = all_servers[i];
+            int carga = Integer.parseInt(all_servers[i+1]);
+            TuplaD._servidores.add(new Servidor(ip, carga));
         } 
 
     }
