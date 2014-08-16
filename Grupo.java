@@ -116,6 +116,7 @@ public class Grupo implements Runnable {
 
             while ((inputLine = in.readLine()) != null) {
                 out.println(inputLine);
+                System.out.println(inputLine);
             }
             socket.close();
         } catch (IOException e) {
