@@ -156,6 +156,7 @@ public class TuplaD implements TuplaDInterfaz {
 
 
             int i = 0;
+            int tuplaIndex = 1;
             tupla = "";
             for (String s : tuplaServidores) {
                 tupla = (ti.get(0) + Data.SUBSPLIT);
@@ -163,11 +164,10 @@ public class TuplaD implements TuplaDInterfaz {
                     tamConjuntos + modConjuntos : tamConjuntos;
                 for (int j = 1; j < tam; j++) {
                     System.out.println(i * tamConjuntos + j);
-                    int tuplaIndex = i * tamConjuntos + j;
+                    tupla += (ti.get(tuplaIndex++) + Data.SUBSPLIT);
                     if (tuplaIndex == ti.size()) {
                         break;
                     }
-                    tupla += (ti.get(tuplaIndex) + Data.SUBSPLIT);
                 }
                 i++;
 
