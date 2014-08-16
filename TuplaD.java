@@ -283,7 +283,8 @@ public class TuplaD implements TuplaDInterfaz {
 
 
 
-            new Nodo(args[1], portNumber);
+            Nodo n = new Nodo(args[1], portNumber);
+            n.run();
             /*
                     print("Hello.");
                     String msg = receiveMsg();
