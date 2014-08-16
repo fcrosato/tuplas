@@ -53,6 +53,7 @@ public class TuplaD implements TuplaDInterfaz {
         for (Servidor s : _servidores) {
             tuplaServidores += (s.ip + Data.SUBSPLIT); 
             servidores.add(s.ip);
+            carga.put(s.ip, 0);
         }
 
         String msg = (nombre + Data.SUBSPLIT + dimension + Data.SUBSPLIT +
@@ -122,6 +123,7 @@ public class TuplaD implements TuplaDInterfaz {
         }
 
         if (tipo == Data.REPLICADO) {
+            int cargaServidor = ti.size() - 1;
             String msg = Data.SUBJECT_INSERTAR + Data.SPLIT + nombre + Data.SPLIT + tupla;
             for (String s: tuplaServidores) {
                 if (!s.equals(_myAddress)) {
@@ -131,9 +133,11 @@ public class TuplaD implements TuplaDInterfaz {
                     print("Insertando conjunto " + nombre); 
                     _tuplas.add(nombre, ti); 
                 }
+                carga.put(s, cargaServidor);
 
             }
         } else if (tipo == Data.PARTICIONADO) {
+            int cargaServidor = ti.size() - 1;
             String msg = Data.SUBJECT_INSERTAR + Data.SPLIT + nombre + Data.SPLIT + tupla;
             String servidor = servidorMenosCargado(tuplaServidores);
             if (!servidor.equals(_myAddress)) {
@@ -143,6 +147,7 @@ public class TuplaD implements TuplaDInterfaz {
                 print("Insertando conjunto " + nombre); 
                 _tuplas.add(nombre, ti);
             }
+            carga.put(servidor, cargaServidor);
         } else if (tipo == Data.SEGMENTADO) {
             String msg = Data.SUBJECT_INSERTAR + Data.SPLIT + nombre + Data.SPLIT;
             int elementos = ti.size() - 1;
@@ -159,12 +164,14 @@ public class TuplaD implements TuplaDInterfaz {
             int tuplaIndex = 1;
             tupla = "";
             for (String s : tuplaServidores) {
+                int cargaServidor = 0;
                 tupla = (ti.get(0) + Data.SUBSPLIT);
                 int tam = modConjuntos != 0 && i == (numeroServidores - 1) ? 
                     tamConjuntos + modConjuntos : tamConjuntos;
                 for (int j = 1; j < tam; j++) {
                     System.out.println(i * tamConjuntos + j);
                     tupla += (ti.get(tuplaIndex++) + Data.SUBSPLIT);
+                    cargaServidor++;
                     if (tuplaIndex == ti.size()) {
                         break;
                     }
@@ -183,6 +190,7 @@ public class TuplaD implements TuplaDInterfaz {
                     print("Insertando conjunto " + nombre + "> " + listaTupla.toString()); 
                     _tuplas.add(nombre, listaTupla); 
                 }
+                carga.put(s, cargaServidor);
             }
 
         }
