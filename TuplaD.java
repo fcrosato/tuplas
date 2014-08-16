@@ -244,7 +244,7 @@ public class TuplaD implements TuplaDInterfaz {
             
             print(_myAddress);
 
-            Socket kkSocket = new Socket("172.31.34.106", portNumber);
+            Socket kkSocket = new Socket(args[1], portNumber);
             PrintWriter out = new PrintWriter(kkSocket.getOutputStream(), true);
             BufferedReader in = new BufferedReader(
                     new InputStreamReader(kkSocket.getInputStream()));
