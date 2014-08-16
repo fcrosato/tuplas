@@ -9,6 +9,10 @@ public class Conjuntos {
     public Conjuntos() {
 
     }
+
+    public synchronized int tipo(String nombre) {
+        return _conjuntos.get(nombre).tipo();
+    }
     
     public synchronized void addNew(String nombre, int dimension, int tipo, List<String> servidores) {
        ConjuntoTupla cjto = new ConjuntoTupla(nombre, dimension, tipo, servidores); 

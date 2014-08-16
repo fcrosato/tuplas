@@ -22,6 +22,10 @@ public class ConjuntoTupla implements Serializable {
     public List<String> get(String clave) {
         return _tuplas.get(clave);
     }
+
+    public int tipo() {
+        return _tipo;
+    }
     
     public String nombreTipo(int tipo) {
         if (tipo == 1) {

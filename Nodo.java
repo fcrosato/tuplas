@@ -22,21 +22,6 @@ import java.io.InputStreamReader;
 import java.io.Console;
 
 public class Nodo implements Runnable {
-    public static final int SEGMENTADO   = 1;
-    public static final int REPLICADO    = 2;
-    public static final int PARTICIONADO = 3;
-
-    public static HashMap<String, Grupo> socket_servidor = new HashMap<String, Grupo>();
-    public static HashMap<String, Integer> carga = new HashMap<String, Integer>();
-
-    public static String _myAddress;
-
-    public static boolean _coordinador;
-    public static List<Servidor> _servidores;
-
-    private static String _nombre = "";
-
-
     private Socket socket;
     private PrintWriter out;
     private BufferedReader in;
@@ -48,13 +33,6 @@ public class Nodo implements Runnable {
                 new InputStreamReader(socket.getInputStream()));
     }
 
-    private static void print(Object msg) {
-        System.out.println(msg.toString());
-    }
-
-
-
-    //Las operaciones sobre las tuplas pueden manejar un esquema de locking centralizado para proveer la exclusión mutua.
 
     /**
      * Método que crea una tupla nueva.
@@ -66,9 +44,9 @@ public class Nodo implements Runnable {
      * @return true si se crea satisfactoriamente, false en caso contrario.
      */
     public boolean crear(String nombre, int dimension, int tipo, List<String> servidores) {
-        print("Creando conjunto " + nombre); 
+        Data.print("Creando conjunto " + nombre); 
         TuplaD._tuplas.addNew(nombre, dimension, tipo, servidores);
-        TuplaD.print(TuplaD._tuplas);
+        Data.print(TuplaD._tuplas);
         return true;    
     }
 
@@ -81,7 +59,7 @@ public class Nodo implements Runnable {
      */
     public boolean eliminar (String nombre) {
         if (TuplaD._tuplas.exists(nombre)) {
-            print("Eliminando conjunto " + nombre); 
+            Data.print("Eliminando conjunto " + nombre); 
             TuplaD._tuplas.clear();
             return true;
         }
@@ -99,8 +77,8 @@ public class Nodo implements Runnable {
     public boolean insertar (String nombre, List<String> ti) {
         
         if (TuplaD._tuplas.exists(nombre)) {
-            print("Insertando tupla en el conjunto " + nombre);
-            print(ti);
+            Data.print("Insertando tupla en el conjunto " + nombre);
+            Data.print(ti);
             TuplaD._tuplas.add(nombre, ti); 
             return true;
         }
@@ -117,7 +95,7 @@ public class Nodo implements Runnable {
      */
     public boolean borrar (String nombre, String clave) {
         if (TuplaD._tuplas.exists(nombre)) {
-            print("Eliminando tupla "+clave+" en el conjunto "+nombre);
+            Data.print("Eliminando tupla "+clave+" en el conjunto "+nombre);
             TuplaD._tuplas.remove(nombre, clave);
             return true;
         }
@@ -134,7 +112,7 @@ public class Nodo implements Runnable {
     public List<String> buscar (String nombre, String clave) {
         List<String> result = new ArrayList<String>();
         if (TuplaD._tuplas.exists(nombre)) {
-            print("Buscando elementos de la tupla "+clave+" en el conjunto "+nombre);
+            Data.print("Buscando elementos de la tupla "+clave+" en el conjunto "+nombre);
             result = TuplaD._tuplas.getElements(nombre, clave);
         }
         return result;
@@ -152,7 +130,7 @@ public class Nodo implements Runnable {
       */
     public boolean actualizar (String nombre, String clave, int posicion, String valor) {
         if (TuplaD._tuplas.exists(nombre)) {
-            print("Actualizando: "+
+            Data.print("Actualizando: "+
                 "\tconjunto "+nombre +
                 "\tclave: "+clave +
                 "\tposicion: "+posicion +
@@ -220,8 +198,19 @@ public class Nodo implements Runnable {
                 servidores.add(crear[i]);
             }
             crear(nombre, dimension, tipo, servidores);
+
         } else if (subject.equals(Data.SUBJECT_ELIMINAR)) {
             eliminar(action);
+
+        } else if (subject.equals(Data.SUBJECT_INSERTAR)) {
+            String[] insertar = action.split(Data.SUBSPLIT);
+            String nombre = insertar[0];
+            String[] elementos = insertar[1].split(Data.SUBSPLIT);
+            List<String> tupla = new ArrayList<String>();
+            for (int i=1; i < elementos.length; i++) {
+                tupla.add(elementos[i]);
+            }
+            insertar(nombre, tupla);
         }
         return 0;    
     }

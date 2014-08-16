@@ -7,9 +7,7 @@ import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
 
-import java.net.MulticastSocket;
 import java.net.InetAddress;
-import java.net.DatagramPacket;
 import java.net.UnknownHostException;
 import java.io.IOException;
 
@@ -17,15 +15,8 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.io.PrintWriter;
 import java.io.BufferedReader;
-import java.io.InputStreamReader;
-
-import java.io.Console;
 
 public class TuplaD implements TuplaDInterfaz {
-    public static final int SEGMENTADO   = 1;
-    public static final int REPLICADO    = 2;
-    public static final int PARTICIONADO = 3;
-
     public static HashMap<String, Grupo> socket_servidor = new HashMap<String, Grupo>();
     public static HashMap<String, Integer> carga = new HashMap<String, Integer>();
 
@@ -58,14 +49,14 @@ public class TuplaD implements TuplaDInterfaz {
     public boolean crear(String nombre, int dimension, int tipo) {
         List<String> servidores = new ArrayList<String>();
 
-        String tupla_servidores = "";
+        String tuplaServidores = "";
         for (Servidor s : _servidores) {
-            tupla_servidores += (s.ip + Data.SUBSPLIT); 
+            tuplaServidores += (s.ip + Data.SUBSPLIT); 
             servidores.add(s.ip);
         }
 
         String msg = (nombre + Data.SUBSPLIT + dimension + Data.SUBSPLIT +
-                tipo + Data.SUBSPLIT + tupla_servidores);
+                tipo + Data.SUBSPLIT + tuplaServidores);
 
 
         for (Grupo g : socket_servidor.values()) {
@@ -86,22 +77,32 @@ public class TuplaD implements TuplaDInterfaz {
      * @return true si se elimina la tupla, false en caso de que no exista.
      */
     public boolean eliminar (String nombre) {
-        List<String> tupla_servidores = _tuplas.servidores(nombre); 
-        for (String s : tupla_servidores) {
+        List<String> tuplaServidores = _tuplas.servidores(nombre); 
+        for (String s : tuplaServidores) {
             System.out.println("Servidor> " +s);
             if (!s.equals(_myAddress)) {
                 Grupo g = socket_servidor.get(s);
                 g.getAction(Data.SUBJECT_ELIMINAR + Data.SPLIT + nombre);
                 print("Eliminando conjunto " + nombre); 
+            } else {
+                _tuplas.clear();
+                print("Eliminando conjunto " + nombre); 
             }
         }
+        return true;
+    }
 
-        if (_tuplas.exists(nombre)) {
-            print("Eliminando conjunto " + nombre); 
-            _tuplas.clear();
-            return true;
+
+    private String servidorMenosCargado(List<String> servidores) {
+        String minServidor = servidores.get(0);
+        int minCarga = carga.get(minServidor);
+        for (String s : servidores) {
+            if (carga.get(s) < minCarga) {
+                minCarga = carga.get(s);
+                minServidor = s;
+            }
         }
-        return false;
+        return minServidor;
     }
 
 
@@ -113,14 +114,70 @@ public class TuplaD implements TuplaDInterfaz {
      * @return true si se agrega la tupla, false en caso de fallas.
      */
     public boolean insertar (String nombre, List<String> ti) {
-        
-        if (_tuplas.exists(nombre)) {
-            print("Insertando tupla en el conjunto " + nombre);
-            print(ti);
-            _tuplas.add(nombre, ti); 
-            return true;
+        int tipo = _tuplas.tipo(nombre);
+        List<String> tuplaServidores = _tuplas.servidores(nombre); 
+        String tupla = "";
+        for (String t : ti) {
+            tupla += t + Data.SUBSPLIT;
         }
-        return false;
+
+        if (tipo == Data.REPLICADO) {
+            String msg = Data.SUBJECT_INSERTAR + Data.SPLIT + tupla;
+            for (String s: tuplaServidores) {
+                if (!s.equals(_myAddress)) {
+                    Grupo g = socket_servidor.get(s);
+                    g.getAction(msg);
+                } else {
+                    print("Insertando conjunto " + nombre); 
+                    _tuplas.add(nombre, ti); 
+                }
+
+            }
+        } else if (tipo == Data.PARTICIONADO) {
+            String msg = Data.SUBJECT_INSERTAR + Data.SPLIT + tupla;
+            String servidor = servidorMenosCargado(tuplaServidores);
+            if (!servidor.equals(_myAddress)) {
+                Grupo g = socket_servidor.get(servidor);
+                g.getAction(msg);
+            } else {
+                print("Insertando conjunto " + nombre); 
+                _tuplas.add(nombre, ti);
+            }
+        } else if (tipo == Data.SEGMENTADO) {
+            String msg = Data.SUBJECT_INSERTAR + Data.SPLIT;
+            int elementos = ti.size() - 1;
+            int numeroServidores = tuplaServidores.size();
+            int tamConjuntos = elementos / numeroServidores;
+            int modConjuntos = elementos % numeroServidores;
+
+            if (tamConjuntos == 0) {
+                numeroServidores = 1;
+            }
+
+
+            int i = 0;
+            tupla = "";
+            for (String s : tuplaServidores) {
+                tupla = (ti.get(0) + Data.SUBSPLIT);
+                int tam = modConjuntos != 0 && i == (numeroServidores - 1) ? 
+                    tamConjuntos + modConjuntos : tamConjuntos;
+                for (int j = 1; j < tam; j++) {
+                    tupla += ti.get(i * tamConjuntos + j);
+                }
+                i++;
+
+                if (!s.equals(_myAddress)) {
+                    Grupo g = socket_servidor.get(s);
+                    g.getAction(msg += tupla);
+                } else {
+                    print("Insertando conjunto " + nombre); 
+                    _tuplas.add(nombre, ti); 
+                }
+            }
+
+        }
+
+        return true;
     }
 
 
