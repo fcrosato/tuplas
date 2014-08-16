@@ -203,9 +203,8 @@ public class Nodo implements Runnable {
             eliminar(action);
 
         } else if (subject.equals(Data.SUBJECT_INSERTAR)) {
-            String[] insertar = action.split(Data.SPLIT);
-            String nombre = insertar[0];
-            String[] elementos = insertar[1].split(Data.SUBSPLIT);
+            String nombre = action;
+            String[] elementos = msg_split[2].split(Data.SUBSPLIT);
             List<String> tupla = new ArrayList<String>();
             for (int i=1; i < elementos.length; i++) {
                 tupla.add(elementos[i]);
