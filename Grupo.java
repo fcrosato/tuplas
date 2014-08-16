@@ -68,28 +68,22 @@ public class Grupo implements Runnable {
         return recieved;
     }
 
+*/
     private int getAction(String msg) {
         String[] msg_split = msg.split(SPLIT);
         String subject = msg_split[0];
         String action = msg_split[1];
         if (subject.equals(SUBJECT_LEAVING)) {
-            if (!action.equals(myAddress)) {
-                TuplaD._servidores.remove(action);
-            }
+            TuplaD._servidores.remove(action);
         } else if (subject.equals(SUBJECT_JOINING)) {
-            if (!action.equals(myAddress)) {
-                TuplaD._servidores.add(action);
-            }
+            TuplaD._servidores.add(action);
         } else if (subject.equals(SUBJECT_SET)) {
-            if (!action.equals(myAddress)) {
-                TuplaD._servidores.add(action);
-            }
+            TuplaD._servidores.add(action);
         }
         return 0;    
     }
-*/
 
-/*
+    /*
     @Override
     public void run() {
         try {
@@ -117,6 +111,7 @@ public class Grupo implements Runnable {
             System.err.println("Starting socket server");
             while ((inputLine = in.readLine()) != null) {
                 System.err.println("Client says: " + inputLine);
+                getAction(_msg);
                 out.println(inputLine);
             }
             socket.close();

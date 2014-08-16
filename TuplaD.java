@@ -228,11 +228,11 @@ public class TuplaD implements TuplaDInterfaz {
                 while (true) {
                     try (ServerSocket serverSocket = new ServerSocket(portNumber)) { 
                         while (true) {
-                            print("Inicio del ciclo");
+                            System.out.println("Inicio del ciclo");
                             Socket service = serverSocket.accept();
-                            print("Creé el servicio");
+                            System.out.println("Creé el servicio");
                             new Grupo(service).run();
-                            print("Socket!");
+                            System.out.println("Socket!");
                         }
                     } catch (IOException e) {
                         System.err.println("Could not listen on port " + portNumber);
@@ -252,7 +252,7 @@ public class TuplaD implements TuplaDInterfaz {
             BufferedReader in = new BufferedReader(
                     new InputStreamReader(kkSocket.getInputStream()));
 
-            out.println(Grupo.SUBJECT_JOINING + _myAddress);
+            out.println(Grupo.SUBJECT_JOINING + Grupo.SPLIT + _myAddress);
 
             BufferedReader stdIn =
                 new BufferedReader(new InputStreamReader(System.in));
