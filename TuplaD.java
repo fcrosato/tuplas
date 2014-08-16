@@ -162,6 +162,7 @@ public class TuplaD implements TuplaDInterfaz {
                 int tam = modConjuntos != 0 && i == (numeroServidores - 1) ? 
                     tamConjuntos + modConjuntos : tamConjuntos;
                 for (int j = 1; j < tam; j++) {
+                    System.out.println(i * tamConjuntos + j);
                     tupla += (ti.get(i * tamConjuntos + j) + Data.SUBSPLIT);
                 }
                 i++;
