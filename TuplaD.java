@@ -147,10 +147,10 @@ public class TuplaD implements TuplaDInterfaz {
             String msg = Data.SUBJECT_INSERTAR + Data.SPLIT;
             int elementos = ti.size() - 1;
             int numeroServidores = tuplaServidores.size();
-            int tamConjuntos = elementos / numeroServidores;
+            int tamConjuntos = elementos / numeroServidores + 1;
             int modConjuntos = elementos % numeroServidores;
 
-            if (tamConjuntos == 0) {
+            if (tamConjuntos == 1) {
                 numeroServidores = 1;
             }
 
