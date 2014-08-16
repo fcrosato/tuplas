@@ -21,8 +21,6 @@ public class Grupo implements Runnable {
     String myAddress;
     String _msg;
     private Socket socket = null;
-    private PrintWriter out;
-    private BufferedReader in;
 
     public Grupo(Socket socket) {
         this.socket = socket;
@@ -71,7 +69,7 @@ public class Grupo implements Runnable {
     }
 
 */
-    private int getAction(String msg) {
+    private int getAction(String msg, BufferedReader in, PrintWriter out) {
         String[] msg_split = msg.split(SPLIT);
         String subject = msg_split[0];
         System.out.println("Subject> " + subject);
@@ -82,7 +80,7 @@ public class Grupo implements Runnable {
 
         } else if (subject.equals(SUBJECT_JOINING)) {
             TuplaD._servidores.add(action);
-            out.println(SUBJECT_JOINING + SPLIT + TuplaD.myAddress);
+            out.println(SUBJECT_JOINING + SPLIT + TuplaD._myAddress);
             
         } else if (subject.equals(SUBJECT_SET)) {
             TuplaD._servidores.add(action);
@@ -108,8 +106,8 @@ public class Grupo implements Runnable {
     public void run() {
 
         try (
-                out = new PrintWriter(socket.getOutputStream(), true);
-                in = new BufferedReader(new InputStreamReader(
+                PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
+                BufferedReader in = new BufferedReader(new InputStreamReader(
                         socket.getInputStream()));
             ) {
             String inputLine, outputLine;
@@ -117,7 +115,7 @@ public class Grupo implements Runnable {
             System.err.println("Starting socket server");
             while ((inputLine = in.readLine()) != null) {
                 System.err.println("Client says: " + inputLine);
-                getAction(inputLine);
+                getAction(inputLine, in, out);
                 out.println(inputLine);
             }
             socket.close();

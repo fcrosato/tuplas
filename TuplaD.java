@@ -30,7 +30,7 @@ public class TuplaD implements TuplaDInterfaz {
     private static final String SUBJECT_SET     = "Joining";
     private static MulticastSocket _socket;
     private static InetAddress _group;
-    private static String _myAddress;
+    public static String _myAddress;
 
     public static boolean _coordinador;
     public static List<String> _servidores;
