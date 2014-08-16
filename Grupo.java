@@ -76,6 +76,7 @@ public class Grupo implements Runnable {
             TuplaD._servidores.add(new Servidor(action, 0));
             System.out.println("Joining> Enviando " + all_servers.toString());
             out.println(all_servers.toString());
+            TuplaD.carga.put(action, 0);
             
         } else if (subject.equals(Data.SUBJECT_CREAR) || 
                       subject.equals(Data.SUBJECT_ELIMINAR) ||

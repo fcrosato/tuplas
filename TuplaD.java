@@ -53,7 +53,6 @@ public class TuplaD implements TuplaDInterfaz {
         for (Servidor s : _servidores) {
             tuplaServidores += (s.ip + Data.SUBSPLIT); 
             servidores.add(s.ip);
-            carga.put(s.ip, 0);
         }
 
         String msg = (nombre + Data.SUBSPLIT + dimension + Data.SUBSPLIT +
@@ -207,6 +206,7 @@ public class TuplaD implements TuplaDInterfaz {
      * @return true si se agrega la tupla, false en caso de fallas.
      */
     public boolean borrar (String nombre, String clave) {
+        
         if (_tuplas.exists(nombre)) {
             print("Eliminando tupla "+clave+" en el conjunto "+nombre);
             _tuplas.remove(nombre, clave);
