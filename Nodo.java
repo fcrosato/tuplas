@@ -194,8 +194,6 @@ public class Nodo implements Runnable {
 
         } else if (subject.equals(Data.SUBJECT_JOINING)) {
            // TuplaD.socket_servidor.put(action, this);
-
-        
             StringBuilder all_servers = new StringBuilder();
             for (Servidor s : TuplaD._servidores) {
                 all_servers.append(s.ip).append(Data.SPLIT).append(s.carga).append(Data.SPLIT);

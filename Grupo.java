@@ -25,8 +25,10 @@ public class Grupo implements Runnable {
     PrintWriter out;
     BufferedReader in;
 
-    public Grupo(Socket socket) {
+    public Grupo(Socket socket) throws IOException {
         this.socket = socket;
+        out = new PrintWriter(socket.getOutputStream(), true);
+        in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
     }
 
     public Grupo(String msg) {
@@ -85,6 +87,7 @@ public class Grupo implements Runnable {
             TuplaD._servidores.remove(action);
 
         } else if (subject.equals(SUBJECT_JOINING)) {
+            System.out.println("Joining> Enviando " + msg);
             TuplaD.socket_servidor.put(action, this);
         
             StringBuilder all_servers = new StringBuilder();
@@ -101,33 +104,17 @@ public class Grupo implements Runnable {
         return 0;    
     }
 
-    /*
-    @Override
-    public void run() {
-        try {
-            byte[] localIp = InetAddress.getLocalHost().getAddress();
-            myAddress = InetAddress.getByAddress(localIp).getHostName();
-
-            getAction(_msg);
-            System.out.println(_msg);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-    */
     @Override
     public void run() {
 
         try { 
-            out = new PrintWriter(socket.getOutputStream(), true);
-            in = new BufferedReader(new InputStreamReader( socket.getInputStream()));
             String inputLine, outputLine;
 
             System.err.println("Starting socket server");
             while ((inputLine = in.readLine()) != null) {
                 System.err.println("Client says: " + inputLine);
                 getAction(inputLine); 
-                out.println(inputLine);
+                //out.println(inputLine);
             }
             socket.close();
         } catch (IOException e) {
