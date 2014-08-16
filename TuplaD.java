@@ -73,7 +73,7 @@ public class TuplaD implements TuplaDInterfaz {
 
 
         for (Grupo g : socket_servidor.values()) {
-            g.getAction(msg); 
+            g.getAction(Data.SUBJECT_CREAR + Data.SPLIT + msg); 
             //g.getAction();
         }
 
