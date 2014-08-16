@@ -243,11 +243,10 @@ public class TuplaD implements TuplaDInterfaz {
                 }
             }
 
-            Socket kkSocket = new Socket("anakin", portNumber);
+            Socket kkSocket = new Socket("172.31.34.106", portNumber);
             PrintWriter out = new PrintWriter(kkSocket.getOutputStream(), true);
             BufferedReader in = new BufferedReader(
                     new InputStreamReader(kkSocket.getInputStream()));
-
 
             out.println("Epale, que mas?");
 
