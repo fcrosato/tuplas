@@ -208,13 +208,20 @@ public class TuplaD implements TuplaDInterfaz {
      * @return true si se agrega la tupla, false en caso de fallas.
      */
     public boolean borrar (String nombre, String clave) {
-        
-        if (_tuplas.exists(nombre)) {
-            print("Eliminando tupla "+clave+" en el conjunto "+nombre);
-            _tuplas.remove(nombre, clave);
-            return true;
+         List<String> tuplaServidores = _tuplas.servidores(nombre); 
+        for (String s : tuplaServidores) {
+            System.out.println("Servidor> " +s);
+            if (!s.equals(_myAddress)) {
+                Grupo g = socket_servidor.get(s);
+                g.getAction(Data.SUBJECT_ELIMINAR + Data.SPLIT + nombre);
+                print("Eliminando conjunto " + nombre); 
+            } else {
+                _tuplas.remove(nombre, clave);
+                print("Eliminando conjunto " + nombre); 
+            }
         }
-        return false;
+        Data.print(_tuplas);
+        return true;
     }
 
     /**
