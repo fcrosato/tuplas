@@ -90,6 +90,12 @@ public class TuplaD implements TuplaDInterfaz {
      * @return true si se elimina la tupla, false en caso de que no exista.
      */
     public boolean eliminar (String nombre) {
+        List<String> tupla_servidores = _tuplas.servidores(nombre); 
+        for (String s : tupla_servidores) {
+            Grupo g = socket_servidor.get(s);
+            g.getAction(Data.SUBJECT_ELIMINAR + Data.SPLIT + nombre);
+        }
+
         if (_tuplas.exists(nombre)) {
             print("Eliminando conjunto " + nombre); 
             _tuplas.clear();
@@ -245,40 +251,10 @@ public class TuplaD implements TuplaDInterfaz {
                     }                
                 }
             }
-
             
-
             Socket kkSocket = new Socket(args[1], portNumber);
-
-
             Nodo n = new Nodo(kkSocket);
             n.run();
-
-            /*
-            PrintWriter out = new PrintWriter(kkSocket.getOutputStream(), true);
-            BufferedReader in = new BufferedReader(
-                    new InputStreamReader(kkSocket.getInputStream()));
-
-            String fromServer;
-            String fromUser;
-
-            out.println(Grupo.SUBJECT_JOINING + Grupo.SPLIT + _myAddress);
-            fromServer = in.readLine();
-            String[] all_servers = fromServer.split(Grupo.SPLIT);
-            for (int i = 0; i < all_servers.length; i+=2) {
-                _servidores.add(new Servidor(all_servers[i], 
-                            Integer.parseInt(all_servers[i+1])));
-            }
-
-
-            while ((fromServer = in.readLine()) != null) {
-                System.out.println("Server: " + fromServer);
-                }
-            }
-            */
-
-
-
 
         } catch (ArrayIndexOutOfBoundsException e) {
             uso();

@@ -97,8 +97,9 @@ public class Grupo implements Runnable {
             System.out.println("Joining> Enviando " + all_servers.toString());
             out.println(all_servers.toString());
             
-        } else if (subject.equals(Data.SUBJECT_CREAR)) {
-            System.out.println("Crear> Enviando " + msg);
+        } else if (subject.equals(Data.SUBJECT_CREAR) | 
+                      subject.equals(Data.SUBJECT_ELIMINAR)) {
+            System.out.println("Enviando> " + msg);
             out.println(msg);
         }
         return 0;    

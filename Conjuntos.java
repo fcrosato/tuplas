@@ -49,4 +49,9 @@ public class Conjuntos {
         return cjto.toString();
     }
 
+    public synchronized List<String> servidores(String nombre) {
+        ConjuntoTupla cjto = _conjuntos.get(nombre);
+        return cjto.servidores();
+    }
+
 }

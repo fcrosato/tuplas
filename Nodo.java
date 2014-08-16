@@ -220,6 +220,8 @@ public class Nodo implements Runnable {
                 servidores.add(crear[i]);
             }
             crear(nombre, dimension, tipo, servidores);
+        } else if (subject.equals(Data.SUBJECT_ELIMINAR)) {
+            eliminar(action);
         }
         return 0;    
     }

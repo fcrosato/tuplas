@@ -67,6 +67,10 @@ public class ConjuntoTupla implements Serializable {
             String e = elementos.set(posicion, valor);
         }
     }
+
+    public List<String> servidores() {
+        return _servidores;
+    }
     
     @Override
     public String toString() {
