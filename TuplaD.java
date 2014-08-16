@@ -204,6 +204,8 @@ public class TuplaD implements TuplaDInterfaz {
                 System.out.println("COORDINADOR");
             }
             _servidores = new ArrayList<String>();
+            byte[] localIp = InetAddress.getLocalHost().getAddress();
+            _myAddress = InetAddress.getByAddress(localIp).getHostAddress();
 
             if (_coordinador) {
                 registrarse();
@@ -223,8 +225,6 @@ public class TuplaD implements TuplaDInterfaz {
                 }
             }
 
-            byte[] localIp = InetAddress.getLocalHost().getAddress();
-            _myAddress = InetAddress.getByAddress(localIp).getHostAddress();
             
             print(_myAddress);
 
