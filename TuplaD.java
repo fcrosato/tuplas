@@ -229,6 +229,7 @@ public class TuplaD implements TuplaDInterfaz {
             byte[] localIp = InetAddress.getLocalHost().getAddress();
             _myAddress = InetAddress.getByAddress(localIp).getHostAddress();
             _servidores.add(new Servidor(_myAddress, 0));
+            print(_myAddress);
 
             if (_coordinador) {
                 registrarse();
@@ -246,9 +247,14 @@ public class TuplaD implements TuplaDInterfaz {
             }
 
             
-            print(_myAddress);
 
             Socket kkSocket = new Socket(args[1], portNumber);
+
+
+            Nodo n = new Nodo(kkSocket);
+            n.run();
+
+            /*
             PrintWriter out = new PrintWriter(kkSocket.getOutputStream(), true);
             BufferedReader in = new BufferedReader(
                     new InputStreamReader(kkSocket.getInputStream()));
@@ -265,39 +271,14 @@ public class TuplaD implements TuplaDInterfaz {
             }
 
 
-            BufferedReader stdIn =
-                new BufferedReader(new InputStreamReader(System.in));
-
-
             while ((fromServer = in.readLine()) != null) {
                 System.out.println("Server: " + fromServer);
-                if (fromServer.equals("Bye."))
-                    break;
-
-                fromUser = stdIn.readLine();
-                if (fromUser != null) {
-                    System.out.println("Client: " + fromUser);
-                    out.println(fromUser);
                 }
             }
+            */
 
 
 
-            Nodo n = new Nodo(args[1], portNumber);
-            n.run();
-            /*
-                    print("Hello.");
-                    String msg = receiveMsg();
-                    Runnable g = new Grupo(msg);
-                    g.run();
-                }
-            }
-            Console console = System.console();
-            while (true) {
-                sendMsg("Testing");
-                String input = console.readLine("Enter input:");
-            }
-*/
 
         } catch (ArrayIndexOutOfBoundsException e) {
             uso();

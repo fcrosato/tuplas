@@ -26,22 +26,26 @@ public class Nodo implements Runnable {
     public static final int REPLICADO    = 2;
     public static final int PARTICIONADO = 3;
 
-    private Socket socket;
-
     public static HashMap<String, Grupo> socket_servidor = new HashMap<String, Grupo>();
     public static HashMap<String, Integer> carga = new HashMap<String, Integer>();
 
     public static String _myAddress;
 
     public static boolean _coordinador;
-//    public static List<String> _servidores;
     public static List<Servidor> _servidores;
 
     private static String _nombre = "";
-//    private Conjuntos _tuplas = new Conjuntos(); 
 
-    public Nodo(String servidor, int puerto) throws UnknownHostException, IOException {
-        socket = new Socket(servidor, puerto);
+
+    private Socket socket;
+    private PrintWriter out;
+    private BufferedReader in;
+
+    public Nodo(Socket socket) throws IOException {
+        this.socket = socket;
+        out = new PrintWriter(socket.getOutputStream(), true);
+        in = new BufferedReader(
+                new InputStreamReader(socket.getInputStream()));
     }
 
     private static void print(Object msg) {
@@ -171,9 +175,10 @@ public class Nodo implements Runnable {
     }
 
 
-    public void join(PrintWriter out, BufferedReader in) throws IOException {
-        out.println(Grupo.SUBJECT_JOINING + Grupo.SPLIT + _myAddress);
+    public void join() throws IOException {
+        out.println(Data.SUBJECT_JOINING + Data.SPLIT + TuplaD._myAddress);
         String fromServer = in.readLine();
+        System.out.println("Joining> " + fromServer);
 
         String[] all_servers = fromServer.split(Grupo.SPLIT);
         for (int i = 0; i < all_servers.length; i+=2) {
@@ -220,15 +225,11 @@ public class Nodo implements Runnable {
 
     @Override
     public void run() {
-        try (PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
-                BufferedReader in = new BufferedReader(
-                    new InputStreamReader(socket.getInputStream()));
-            ) {
+        try {
             String fromServer;
             String fromUser;
 
-
-            join(out, in);
+            join();
 
             while ((fromServer = in.readLine()) != null) {
                 getAction(fromServer, in, out);
