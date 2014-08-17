@@ -248,6 +248,7 @@ public class TuplaD implements TuplaDInterfaz {
             }
         }
 
+        System.out.println("Buscando tupla> " + tupla);
         List<String> resultado = new ArrayList<String>();
         String[] elementos = tupla.split(Data.SUBSPLIT);
         for (int i = 0; i < elementos.length; i++) {
