@@ -326,6 +326,7 @@ public class TuplaD implements TuplaDInterfaz {
             byte[] localIp = InetAddress.getLocalHost().getAddress();
             _myAddress = InetAddress.getByAddress(localIp).getHostAddress();
             _servidores.add(new Servidor(_myAddress, 0));
+            carga.put(_myAddress, 0);
             print(_myAddress);
 
             if (_coordinador) {
