@@ -243,7 +243,10 @@ public class TuplaD implements TuplaDInterfaz {
                 tupla += g.getAction(msg);
                 print("Eliminando conjunto " + nombre); 
             } else {
-                tupla += _tuplas.getElements(nombre, clave);
+                List<String> tuplaLocal = _tuplas.getElements(nombre, clave);
+                for (String t : tuplaLocal) {
+                    tupla += t + Data.SUBSPLIT;
+                }
                 print("Eliminando conjunto " + nombre); 
             }
         }
