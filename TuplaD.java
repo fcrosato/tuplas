@@ -273,14 +273,66 @@ public class TuplaD implements TuplaDInterfaz {
                 false en caso contrario.
       */
     public boolean actualizar (String nombre, String clave, int posicion, String valor) {
-        if (_tuplas.exists(nombre)) {
-            print("Actualizando: "+
-                "\tconjunto "+nombre +
-                "\tclave: "+clave +
-                "\tposicion: "+posicion +
-                "\tvalor: "+valor);
-            _tuplas.set(nombre, clave, posicion, valor);
+        String msg = Data.SUBJECT_ACTUALIZAR + Data.SPLIT + nombre + Data.SUBSPLIT + clave + 
+            Data.SUBSPLIT + posicion + Data.SUBSPLIT + valor;
+
+        int tipo = _tuplas.tipo(nombre);
+        List<String> tuplaServidores = _tuplas.servidores(nombre); 
+        if (tipo == Data.REPLICADO) {
+            for (String s : tuplaServidores) {
+                if (!s.equals(_myAddress)) {
+                    Grupo g = socket_servidor.get(s);
+                    g.getAction(msg);
+                } else {
+                    print("Actualizando: "+
+                            "\tconjunto "+nombre +
+                            "\tclave: "+clave +
+                            "\tposicion: "+posicion +
+                            "\tvalor: "+valor);
+                    _tuplas.set(nombre, clave, posicion, valor);
+                }
+            }
+            Data.print(_tuplas);
+        } else if (tipo == Data.PARTICIONADO) {
+            for (String s : tuplaServidores) {
+                if (!s.equals(_myAddress)) {
+                    Grupo g = socket_servidor.get(s);
+                    g.getAction(msg);
+                } else {
+                    print("Actualizando: "+
+                            "\tconjunto "+nombre +
+                            "\tclave: "+clave +
+                            "\tposicion: "+posicion +
+                            "\tvalor: "+valor);
+                    _tuplas.set(nombre, clave, posicion, valor);
+                }
+            }
+            Data.print(_tuplas);
+        } else if (tipo == Data.SEGMENTADO) {
+            int offset = 0;
+            String getCantidad = Data.SUBJECT_CARDINALIDAD + Data.SPLIT + 
+                nombre + Data.SUBSPLIT + clave;
+            for (String s : tuplaServidores) {
+                if (!s.equals(_myAddress)) {
+                    Grupo g = socket_servidor.get(s);
+                    offset += Integer.parseInt(g.getAction(msg));
+                    if (posicion < offset) {
+                        msg += Data.SUBSPLIT + offset;
+                        g.getAction(msg);
+                        break;
+                    }
+                } else {
+                    offset += _tuplas.cardinalidad(nombre, clave);
+                    if (posicion < offset) {
+                        _tuplas.set(nombre, clave, offset - posicion, valor);
+                        break;
+                    }
+                }
+            }
+            Data.print(_tuplas);
+
         }
+
         return true;
     }
 

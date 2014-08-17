@@ -220,7 +220,12 @@ public class TuplaAdmin {
         String nombre = getNombre(in);
         String clave = getClave(in);
         List<String> elem = tuplad.buscar(nombre, clave);
-        println(elem.toString());
+        if (elem != null) {
+            println(elem.toString());
+        } else {
+            println("No se encontraron sus datos. Pudo haber ocurrido algún problema con algún servidor");
+        }
+
         return elem;
     }
 

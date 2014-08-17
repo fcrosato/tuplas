@@ -152,6 +152,10 @@ public class Nodo implements Runnable {
         return conf;
     }
 
+   public int cardinalidad (String nombre, String clave) {
+        return TuplaD._tuplas.cardinalidad(nombre, clave);
+    }
+
 
     public void join() throws IOException {
         out.println(Data.SUBJECT_JOINING + Data.SPLIT + TuplaD._myAddress);
@@ -178,6 +182,12 @@ public class Nodo implements Runnable {
         if (subject.equals(Data.SUBJECT_LEAVING)) {
             TuplaD._servidores.remove(action);
 
+        } else if (subject.equals(Data.SUBJECT_CARDINALIDAD)) {
+            String[] cardinalidad = action.split(Data.SUBSPLIT);
+            String nombre = cardinalidad[0];
+            String clave = cardinalidad[1];
+            int card = cardinalidad(nombre, clave);
+            out.println(card);
         } else if (subject.equals(Data.SUBJECT_JOINING)) {
            // TuplaD.socket_servidor.put(action, this);
             StringBuilder all_servers = new StringBuilder();
@@ -230,6 +240,17 @@ public class Nodo implements Runnable {
                 tupla += respuesta.get(i) + Data.SUBSPLIT;
             }
             out.println(tupla);
+        } else if (subject.equals(Data.SUBJECT_ACTUALIZAR)) {
+            String[] actualizar = action.split(Data.SUBSPLIT);
+            String nombre = actualizar[0];
+            String clave = actualizar[1];
+            int posicion = Integer.parseInt(actualizar[2]);
+            String valor = actualizar[3];
+            int offset = 0;
+            if (actualizar.length > 4) {
+                offset = Integer.parseInt(actualizar[4]);
+            }
+            actualizar(nombre, clave, offset - posicion, valor);
         }
         return 0;    
     }

@@ -26,6 +26,11 @@ public class ConjuntoTupla implements Serializable {
     public int tipo() {
         return _tipo;
     }
+
+    public int cardinalidad(String clave) {
+        List<String> elementos = _tuplas.get(clave);
+        return elementos.size();
+    }
     
     public String nombreTipo(int tipo) {
         if (tipo == 1) {
