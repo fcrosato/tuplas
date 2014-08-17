@@ -244,8 +244,10 @@ public class TuplaD implements TuplaDInterfaz {
                 print("Eliminando conjunto " + nombre); 
             } else {
                 List<String> tuplaLocal = _tuplas.getElements(nombre, clave);
-                for (String t : tuplaLocal) {
-                    tupla += t + Data.SUBSPLIT;
+                if (tuplaLocal != null) {
+                    for (String t : tuplaLocal) {
+                        tupla += t + Data.SUBSPLIT;
+                    }
                 }
                 print("Eliminando conjunto " + nombre); 
             }
