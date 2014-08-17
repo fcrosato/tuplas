@@ -220,6 +220,7 @@ public class Nodo implements Runnable {
             String nombre = borrar[0];
             String clave = borrar[1];
             List<String> respuesta = buscar(nombre, clave);
+            System.out.println("RESPUESTA> " + respuesta);
             String tupla = "";
             for (int i=0; i<respuesta.size(); i++) {
                 tupla += respuesta.get(i) + Data.SUBSPLIT;
