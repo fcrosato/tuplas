@@ -78,6 +78,9 @@ public class Grupo implements Runnable {
                 System.out.println("Joining> Enviando " + all_servers.toString());
                 out.println(all_servers.toString());
                 TuplaD.carga.put(action, 0);
+                for (String s : TuplaD.carga.keySet()) {
+                    System.out.println("serv> " + s + " | " + TuplaD.carga.get(s));
+                }
 
             } else if (subject.equals(Data.SUBJECT_CREAR) || 
                     subject.equals(Data.SUBJECT_ELIMINAR) ||

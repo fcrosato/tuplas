@@ -47,7 +47,9 @@ public class ConjuntoTupla implements Serializable {
     }
 
     public void add(String clave, List<String> elementos) {
-        _tuplas.put(clave, elementos);
+        List<String> old = _tuplas.get(clave);
+        old.addAll(elementos);
+        _tuplas.put(clave, old);
     }   
 
     public void remove(String clave) {
