@@ -233,15 +233,14 @@ public class TuplaD implements TuplaDInterfaz {
       * @return El conjunto de valores de la tupla.
       */
     public List<String> buscar (String nombre, String clave) {
+        int tipo = _tuplas.tipo(nombre);
         String tupla = "";
         List<String> tuplaServidores = _tuplas.servidores(nombre); 
         String msg = Data.SUBJECT_BUSCAR + Data.SPLIT + nombre + Data.SUBSPLIT + clave;
         for (String s : tuplaServidores) {
-            System.out.println("Servidor> " +s);
             if (!s.equals(_myAddress)) {
                 Grupo g = socket_servidor.get(s);
                 tupla += g.getAction(msg);
-                print("Eliminando conjunto " + nombre); 
             } else {
                 List<String> tuplaLocal = _tuplas.getElements(nombre, clave);
                 if (tuplaLocal != null) {
@@ -249,11 +248,11 @@ public class TuplaD implements TuplaDInterfaz {
                         tupla += t + Data.SUBSPLIT;
                     }
                 }
-                print("Eliminando conjunto " + nombre); 
+            }
+            if(!tupla.equals("") && tipo == Data.REPLICADO) {
+                break;
             }
         }
-
-        System.out.println("Buscando tupla> " + tupla);
         List<String> resultado = new ArrayList<String>();
         String[] elementos = tupla.split(Data.SUBSPLIT);
         for (int i = 0; i < elementos.length; i++) {
