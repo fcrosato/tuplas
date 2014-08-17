@@ -209,11 +209,12 @@ public class TuplaD implements TuplaDInterfaz {
      */
     public boolean borrar (String nombre, String clave) {
          List<String> tuplaServidores = _tuplas.servidores(nombre); 
+         String msg = Data.SUBJECT_BORRAR + Data.SPLIT + nombre + Data.SUBSPLIT + clave;
         for (String s : tuplaServidores) {
             System.out.println("Servidor> " +s);
             if (!s.equals(_myAddress)) {
                 Grupo g = socket_servidor.get(s);
-                g.getAction(Data.SUBJECT_ELIMINAR + Data.SPLIT + nombre);
+                g.getAction(msg);
                 print("Eliminando conjunto " + nombre); 
             } else {
                 _tuplas.remove(nombre, clave);
@@ -232,12 +233,28 @@ public class TuplaD implements TuplaDInterfaz {
       * @return El conjunto de valores de la tupla.
       */
     public List<String> buscar (String nombre, String clave) {
-        List<String> result = new ArrayList<String>();
-        if (_tuplas.exists(nombre)) {
-            print("Buscando elementos de la tupla "+clave+" en el conjunto "+nombre);
-            result = _tuplas.getElements(nombre, clave);
+        String tupla = "";
+        List<String> tuplaServidores = _tuplas.servidores(nombre); 
+        String msg = Data.SUBJECT_BUSCAR + Data.SPLIT + nombre + Data.SUBSPLIT + clave;
+        for (String s : tuplaServidores) {
+            System.out.println("Servidor> " +s);
+            if (!s.equals(_myAddress)) {
+                Grupo g = socket_servidor.get(s);
+                tupla += g.getAction(msg);
+                print("Eliminando conjunto " + nombre); 
+            } else {
+                tupla += _tuplas.getElements(nombre, clave);
+                print("Eliminando conjunto " + nombre); 
+            }
         }
-        return result;
+
+        List<String> resultado = new ArrayList<String>();
+        String[] elementos = tupla.split(Data.SUBSPLIT);
+        for (int i = 0; i < elementos.length; i++) {
+            resultado.add(elementos[i]);
+        }
+        Data.print(_tuplas);
+        return resultado;
     }
 
     /**

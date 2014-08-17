@@ -57,34 +57,43 @@ public class Grupo implements Runnable {
     }
 
 */
-    public int getAction(String msg) {
-        String[] msg_split = msg.split(Data.SPLIT);
-        String subject = msg_split[0];
-        System.out.println("Subject> " + subject);
-        String action = msg_split[1];
+    public String getAction(String msg) {
+        try {
+            String[] msg_split = msg.split(Data.SPLIT);
+            String subject = msg_split[0];
+            System.out.println("Subject> " + subject);
+            String action = msg_split[1];
 
-        if (subject.equals(Data.SUBJECT_LEAVING)) {
-            TuplaD._servidores.remove(action);
+            if (subject.equals(Data.SUBJECT_LEAVING)) {
+                TuplaD._servidores.remove(action);
 
-        } else if (subject.equals(Data.SUBJECT_JOINING)) {
-            TuplaD.socket_servidor.put(action, this);
-        
-            StringBuilder all_servers = new StringBuilder();
-            for (Servidor s : TuplaD._servidores) {
-                all_servers.append(s.ip).append(Data.SPLIT).append(s.carga).append(Data.SPLIT);
+            } else if (subject.equals(Data.SUBJECT_JOINING)) {
+                TuplaD.socket_servidor.put(action, this);
+
+                StringBuilder all_servers = new StringBuilder();
+                for (Servidor s : TuplaD._servidores) {
+                    all_servers.append(s.ip).append(Data.SPLIT).append(s.carga).append(Data.SPLIT);
+                }
+                TuplaD._servidores.add(new Servidor(action, 0));
+                System.out.println("Joining> Enviando " + all_servers.toString());
+                out.println(all_servers.toString());
+                TuplaD.carga.put(action, 0);
+
+            } else if (subject.equals(Data.SUBJECT_CREAR) || 
+                    subject.equals(Data.SUBJECT_ELIMINAR) ||
+                    subject.equals(Data.SUBJECT_INSERTAR)) {
+                System.out.println("Enviando> " + msg);
+                out.println(msg);
+            } else if (subject.equals(Data.SUBJECT_BUSCAR)) {
+                System.out.println("Enviando> " + msg);
+                out.println(msg);
+                String inputLine = in.readLine();
+                return inputLine;
             }
-            TuplaD._servidores.add(new Servidor(action, 0));
-            System.out.println("Joining> Enviando " + all_servers.toString());
-            out.println(all_servers.toString());
-            TuplaD.carga.put(action, 0);
-            
-        } else if (subject.equals(Data.SUBJECT_CREAR) || 
-                      subject.equals(Data.SUBJECT_ELIMINAR) ||
-                      subject.equals(Data.SUBJECT_INSERTAR)) {
-            System.out.println("Enviando> " + msg);
-            out.println(msg);
+        } catch (IOException e) {
+            e.printStackTrace();
         }
-        return 0;    
+        return "";    
     }
 
     @Override

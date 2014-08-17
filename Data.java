@@ -7,6 +7,8 @@ public class Data {
     public static final String SUBJECT_CREAR    = "Crear";
     public static final String SUBJECT_ELIMINAR = "Eliminar";
     public static final String SUBJECT_INSERTAR = "Insertar";
+    public static final String SUBJECT_BUSCAR   = "Buscar";
+    public static final String SUBJECT_BORRAR   = "Borrar";
 
     public static final int SEGMENTADO   = 1;
     public static final int REPLICADO    = 2;

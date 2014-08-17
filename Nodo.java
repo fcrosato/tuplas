@@ -186,13 +186,13 @@ public class Nodo implements Runnable {
             }
             TuplaD._servidores.add(new Servidor(action, 0));
             out.println(all_servers.toString());
-            
+
         } else if (subject.equals(Data.SUBJECT_CREAR)) {
             String[] crear = action.split(Data.SUBSPLIT);
             String nombre = crear[0];
             int dimension = Integer.parseInt(crear[1]);
             int tipo      = Integer.parseInt(crear[2]);
-            
+
             List<String> servidores = new ArrayList<String>();
             for (int i = 3; i < crear.length; i++) {
                 servidores.add(crear[i]);
@@ -210,6 +210,22 @@ public class Nodo implements Runnable {
                 tupla.add(elementos[i]);
             }
             insertar(nombre, tupla);
+        } else if (subject.equals(Data.SUBJECT_BORRAR)) {
+            String borrar[] = action.split(Data.SUBSPLIT);
+            String nombre = borrar[0];
+            String clave = borrar[1];
+            borrar(nombre, clave);
+        } else if (subject.equals(Data.SUBJECT_BUSCAR)) {
+            String borrar[] = action.split(Data.SUBSPLIT);
+            String nombre = borrar[0];
+            String clave = borrar[1];
+            List<String> respuesta = buscar(nombre, clave);
+            String tupla = "";
+            for (int i=0; i<respuesta.size(); i++) {
+                tupla += respuesta.get(i) + Data.SUBSPLIT;
+            }
+            out.println(tupla);
+
         }
         return 0;    
     }
