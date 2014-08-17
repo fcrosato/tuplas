@@ -315,7 +315,7 @@ public class TuplaD implements TuplaDInterfaz {
             for (String s : tuplaServidores) {
                 if (!s.equals(_myAddress)) {
                     Grupo g = socket_servidor.get(s);
-                    offset += Integer.parseInt(g.getAction(msg));
+                    offset += Integer.parseInt(g.getAction(getCantidad));
                     if (posicion < offset) {
                         msg += Data.SUBSPLIT + offset;
                         g.getAction(msg);
