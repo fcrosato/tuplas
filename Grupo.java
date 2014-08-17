@@ -84,9 +84,12 @@ public class Grupo implements Runnable {
 
             } else if (subject.equals(Data.SUBJECT_CREAR) || 
                     subject.equals(Data.SUBJECT_ELIMINAR) ||
+                    subject.equals(Data.SUBJECT_CARDINALIDAD) ||
                     subject.equals(Data.SUBJECT_INSERTAR)) {
                 System.out.println("Enviando> " + msg);
                 out.println(msg);
+                String card = in.readLine();
+                return card;
             } else if (subject.equals(Data.SUBJECT_BUSCAR)) {
                 System.out.println("Enviando> " + msg);
                 out.println(msg);
@@ -94,7 +97,7 @@ public class Grupo implements Runnable {
                 String inputLine = in.readLine();
                 System.out.println("===///////======" + inputLine);
                 return inputLine;
-            }
+            } 
         } catch (IOException e) {
             e.printStackTrace();
         }
