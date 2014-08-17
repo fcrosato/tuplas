@@ -40,7 +40,7 @@ public class Conjuntos {
     
     public synchronized List<String> getElements(String nombre, String clave) {
         ConjuntoTupla cjto = _conjuntos.get(nombre);
-        return cjto.exists(clave);
+        return cjto.get(clave);
     }
 
     public synchronized void set(String nombre, String clave, int posicion, String valor) {
