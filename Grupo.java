@@ -89,7 +89,7 @@ public class Grupo implements Runnable {
                 out.println(msg);
                 System.out.println("=========Hello");
                 String inputLine = in.readLine();
-                System.out.println("===///////======");
+                System.out.println("===///////======" + inputLine);
                 return inputLine;
             }
         } catch (IOException e) {
@@ -105,11 +105,17 @@ public class Grupo implements Runnable {
             String inputLine, outputLine;
 
             System.err.println("Starting socket server");
+            /*
             while ((inputLine = in.readLine()) != null) {
                 System.err.println("Client says: " + inputLine);
                 getAction(inputLine); 
             }
-            socket.close();
+            */
+            inputLine = in.readLine();
+            System.err.println("Client says: " + inputLine);
+            getAction(inputLine); 
+            while(true) {}
+//            socket.close();
         } catch (IOException e) {
             e.printStackTrace();
         }
