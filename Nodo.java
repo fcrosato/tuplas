@@ -224,8 +224,7 @@ public class Nodo implements Runnable {
             for (int i=0; i<respuesta.size(); i++) {
                 tupla += respuesta.get(i) + Data.SUBSPLIT;
             }
-            out.println(tupla);
-
+            out.println(Data.SUBJECT_BUSCAR + Data.SPLIT + tupla);
         }
         return 0;    
     }
