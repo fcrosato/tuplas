@@ -46,6 +46,10 @@ public class ConjuntoTupla implements Serializable {
         return resultado;
     }
 
+    public boolean exists(String key) {
+        return _tuplas.containsKey(key);
+    }
+
     public void add(String clave, List<String> elementos) {
         List<String> old = _tuplas.get(clave);
         if (old != null) {
