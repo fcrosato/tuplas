@@ -245,6 +245,7 @@ public class TuplaAdmin {
         String clave = getClave(in);
         int posicion = getPosicion(in);
         String valor = getValor(in);
+        System.out.println("Actualizando");
         return tuplad.actualizar(nombre, clave, posicion, valor);
     }
 

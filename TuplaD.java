@@ -273,6 +273,8 @@ public class TuplaD implements TuplaDInterfaz {
                 false en caso contrario.
       */
     public boolean actualizar (String nombre, String clave, int posicion, String valor) {
+
+        System.out.println("\n\n    <ACTUALIZANDO>    \n");
         String msg = Data.SUBJECT_ACTUALIZAR + Data.SPLIT + nombre + Data.SUBSPLIT + clave + 
             Data.SUBSPLIT + posicion + Data.SUBSPLIT + valor;
 
