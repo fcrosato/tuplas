@@ -20,12 +20,21 @@ import java.io.BufferedReader;
 import java.io.InputStreamReader;
 
 import java.io.Console;
-
+/**
+ * Clase que implementa el hilo del servidor nodo para atender peticiones
+ * de distribución de carga.
+ * @author Fabiola Rosato
+ * @author José Delgado
+ */
 public class Nodo implements Runnable {
     private Socket socket;
     private PrintWriter out;
     private BufferedReader in;
 
+    /**
+     * Constructor de la clase, especificando el socket de la conexión 
+     * con el servidor coordinador.
+     */
     public Nodo(Socket socket) throws IOException {
         this.socket = socket;
         out = new PrintWriter(socket.getOutputStream(), true);
@@ -75,7 +84,7 @@ public class Nodo implements Runnable {
      * @return true si se agrega la tupla, false en caso de fallas.
      */
     public boolean insertar (String nombre, List<String> ti) {
-        
+
         if (TuplaD._tuplas.exists(nombre)) {
             Data.print("Insertando tupla en el conjunto " + nombre);
             Data.print(ti);
@@ -103,12 +112,12 @@ public class Nodo implements Runnable {
     }
 
     /**
-      * Método que busca una tupla dentro de un conjunto de tuplas.
-      *
-      * @param nombre Identificador del conjunto de tuplas
-      * @param clave Clave de la tupla a actualizar
-      * @return El conjunto de valores de la tupla.
-      */
+     * Método que busca una tupla dentro de un conjunto de tuplas.
+     *
+     * @param nombre Identificador del conjunto de tuplas
+     * @param clave Clave de la tupla a actualizar
+     * @return El conjunto de valores de la tupla.
+     */
     public List<String> buscar (String nombre, String clave) {
         List<String> result = new ArrayList<String>();
         if (TuplaD._tuplas.exists(nombre)) {
@@ -119,44 +128,54 @@ public class Nodo implements Runnable {
     }
 
     /**
-      * Método que actualiza un valor de una tupla.
-      *
-      * @param nombre Identificador del conjunto de tuplas
-      * @param clave Clave de la tupla a actualizar
-      * @param posicion Posición del valor a actualizar
-      * @param valor Valor nuevo del elemento de la tupla.
-      * @return true si el valor se actualizó satisfactoriamente, 
-                false en caso contrario.
-      */
+     * Método que actualiza un valor de una tupla.
+     *
+     * @param nombre Identificador del conjunto de tuplas
+     * @param clave Clave de la tupla a actualizar
+     * @param posicion Posición del valor a actualizar
+     * @param valor Valor nuevo del elemento de la tupla.
+     * @return true si el valor se actualizó satisfactoriamente, 
+     false en caso contrario.
+     */
     public boolean actualizar (String nombre, String clave, int posicion, String valor) {
         if (TuplaD._tuplas.exists(nombre)) {
             Data.print("Actualizando: "+
-                "\tconjunto "+nombre +
-                "\tclave: "+clave +
-                "\tposicion: "+posicion +
-                "\tvalor: "+valor);
+                    "\tconjunto "+nombre +
+                    "\tclave: "+clave +
+                    "\tposicion: "+posicion +
+                    "\tvalor: "+valor);
             TuplaD._tuplas.set(nombre, clave, posicion, valor);
         }
         return true;
     }
 
     /**
-      * Método para consultar la configuración de un conjunto de tuplas
-      *
-      * @param nombre Identificador del conjunto de tuplas.
-      * @return UInformación de configuración del conjunto de tuplas.
-      */
+     * Método para consultar la configuración de un conjunto de tuplas
+     *
+     * @param nombre Identificador del conjunto de tuplas.
+     * @return UInformación de configuración del conjunto de tuplas.
+     */
     public String configuracion (String nombre) {
         String conf = TuplaD._tuplas.config(nombre);
         //= Información de configuración del conjunto de tuplas
         return conf;
     }
 
-   public int cardinalidad (String nombre, String clave) {
+    /**
+     * Método que obtiene la cardinalidad de una tupla
+     * 
+     * @param nombre Nombre del conjunto donde reside la tupla
+     * @param clave Clave de la tupla
+     * @return la cardinalidad de la tupla
+     */
+    public int cardinalidad (String nombre, String clave) {
         return TuplaD._tuplas.cardinalidad(nombre, clave);
     }
 
 
+    /**
+     * Método para realizar el protocolo de ingreso al sistema distribuido.
+     */
     public void join() throws IOException {
         out.println(Data.SUBJECT_JOINING + Data.SPLIT + TuplaD._myAddress);
         String fromServer = in.readLine();
@@ -173,6 +192,13 @@ public class Nodo implements Runnable {
 
     }
 
+    /**
+     * Método que dado un mensaje, realiza una acción
+     *
+     * @param msg Mensaje a ser procesado.
+     * @return retorna la respuesta del servidor al que se está conectado,
+     *         si aplica.
+     */
     public int getAction(String msg, BufferedReader in, PrintWriter out) {
         String[] msg_split = msg.split(Data.SPLIT);
         String subject = msg_split[0];
@@ -190,7 +216,7 @@ public class Nodo implements Runnable {
             System.out.println("CARDINALIDAD> " + card);
             out.println(card);
         } else if (subject.equals(Data.SUBJECT_JOINING)) {
-           // TuplaD.socket_servidor.put(action, this);
+            // TuplaD.socket_servidor.put(action, this);
             StringBuilder all_servers = new StringBuilder();
             for (Servidor s : TuplaD._servidores) {
                 all_servers.append(s.ip).append(Data.SPLIT).append(s.carga).append(Data.SPLIT);

@@ -8,55 +8,34 @@ import java.io.IOException;
 import java.io.*;
 import java.net.*;
 import java.lang.StringBuilder;
-
-public class Grupo implements Runnable {
+/**
+ * Clase que implementa el hilo que se encargará de la conexión con algún
+ * servidor a través de sockets para realizar trabajos de distribución de
+ * cargas.
+ * @author Fabiola Rosato
+ * @author José Delgado
+ */
+class Coordinador implements Runnable {
     private Socket socket = null;
     PrintWriter out;
     BufferedReader in;
 
-    public Grupo(Socket socket) throws IOException {
+    /** 
+      * Constructor de la clase indicando el socket de la conexión
+      */
+    public Coordinador(Socket socket) throws IOException {
         this.socket = socket;
         out = new PrintWriter(socket.getOutputStream(), true);
         in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
     }
 
-
-/*
-
-    public void join() throws IOException {
-        String msg = SUBJECT_JOINING + SPLIT + myAddress;
-        group = InetAddress.getByName(MULTICAST);
-        socket = new MulticastSocket(PORT);
-        socket.joinGroup(group);
-
-        System.out.println(SUBJECT_JOINING);
-        sendMsg(SUBJECT_JOINING);
-        servers.add(myAddress);
-    }
-
-    public void leave() throws IOException {
-        String msg = SUBJECT_LEAVING + SPLIT + myAddress;
-        System.out.println(SUBJECT_LEAVING);
-        sendMsg(SUBJECT_LEAVING);
-        socket.leaveGroup(group);
-    }
-
-    public void sendMsg(String msg) throws IOException {
-        DatagramPacket datagram = new DatagramPacket(msg.getBytes(), 
-                msg.length(), group, 6789);
-        socket.send(datagram);
-    }
-
-    public String receiveMsg() throws IOException {
-        byte[] buf = new byte[1000];
-        DatagramPacket recv = new DatagramPacket(buf, buf.length);
-        socket.receive(recv);
-        String recieved = new String(recv.getData());
-        System.out.println("Recieved> " + recieved);
-        return recieved;
-    }
-
-*/
+    /**
+     * Método que dado un mensaje, realiza una acción
+     *
+     * @param msg Mensaje a ser procesado.
+     * @return retorna la respuesta del servidor al que se está conectado,
+     *         si aplica.
+     */
     public String getAction(String msg) {
         try {
             String[] msg_split = msg.split(Data.SPLIT);
@@ -112,17 +91,10 @@ public class Grupo implements Runnable {
             String inputLine, outputLine;
 
             System.err.println("Starting socket server");
-            /*
-            while ((inputLine = in.readLine()) != null) {
-                System.err.println("Client says: " + inputLine);
-                getAction(inputLine); 
-            }
-            */
             inputLine = in.readLine();
             System.err.println("Client says: " + inputLine);
             getAction(inputLine); 
             while(true) {}
-//            socket.close();
         } catch (IOException e) {
             e.printStackTrace();
         }
