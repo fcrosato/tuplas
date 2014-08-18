@@ -187,6 +187,7 @@ public class Nodo implements Runnable {
             String nombre = cardinalidad[0];
             String clave = cardinalidad[1];
             int card = cardinalidad(nombre, clave);
+            System.out.println("CARDINALIDAD> " + card);
             out.println(card);
         } else if (subject.equals(Data.SUBJECT_JOINING)) {
            // TuplaD.socket_servidor.put(action, this);

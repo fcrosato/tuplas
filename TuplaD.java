@@ -298,6 +298,7 @@ public class TuplaD implements TuplaDInterfaz {
                 if (!s.equals(_myAddress)) {
                     Grupo g = socket_servidor.get(s);
                     g.getAction(msg);
+                    
                 } else {
                     print("Actualizando: "+
                             "\tconjunto "+nombre +
@@ -316,6 +317,7 @@ public class TuplaD implements TuplaDInterfaz {
                 if (!s.equals(_myAddress)) {
                     Grupo g = socket_servidor.get(s);
                     offset += Integer.parseInt(g.getAction(getCantidad));
+                    System.out.println("OFFSET> " + offset);
                     if (posicion < offset) {
                         msg += Data.SUBSPLIT + offset;
                         g.getAction(msg);
