@@ -274,7 +274,6 @@ public class TuplaD implements TuplaDInterfaz {
       */
     public boolean actualizar (String nombre, String clave, int posicion, String valor) {
 
-        System.out.println("\n\n    <ACTUALIZANDO>    \n");
         String msg = Data.SUBJECT_ACTUALIZAR + Data.SPLIT + nombre + Data.SUBSPLIT + clave + 
             Data.SUBSPLIT + posicion + Data.SUBSPLIT + valor;
 
@@ -312,6 +311,7 @@ public class TuplaD implements TuplaDInterfaz {
             }
             Data.print(_tuplas);
         } else if (tipo == Data.SEGMENTADO) {
+            System.out.println("\n\n    <ACTUALIZANDO>    \n");
             int offset = 0;
             String getCantidad = Data.SUBJECT_CARDINALIDAD + Data.SPLIT + 
                 nombre + Data.SUBSPLIT + clave;
@@ -326,7 +326,10 @@ public class TuplaD implements TuplaDInterfaz {
                         break;
                     }
                 } else {
+                    System.out.println("OFFSET BEFORE " + offset);
                     offset += _tuplas.cardinalidad(nombre, clave);
+                    System.out.println("OFFSET AFTER " + offset);
+
                     if (posicion < offset) {
                         System.out.println("Actualizando... > " + (offset - posicion));
                         _tuplas.set(nombre, clave, offset - posicion, valor);
