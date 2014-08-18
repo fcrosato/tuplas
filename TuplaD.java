@@ -408,8 +408,8 @@ public class TuplaD implements TuplaDInterfaz {
 
                 } else if (args[i].equals("-p")) {
                     System.out.println(args[i]);
-                    i++;
                     _puerto = Integer.parseInt(args[i+1]);
+                    i++;
                 }
             }
         } catch (ArrayIndexOutOfBoundsException | NumberFormatException e) {
