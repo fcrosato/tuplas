@@ -79,11 +79,13 @@ public class TuplaD implements TuplaDInterfaz {
      * @return true si se elimina la tupla, false en caso de que no exista.
      */
     public boolean eliminar (String nombre) {
+        String msg = Data.SUBJECT_ELIMINAR + Data.SPLIT + nombre;
+
         List<String> tuplaServidores = _tuplas.servidores(nombre); 
         for (String s : tuplaServidores) {
             if (!s.equals(_myAddress)) {
                 Coordinador g = socket_servidor.get(s);
-                g.getAction(Data.SUBJECT_ELIMINAR + Data.SPLIT + nombre);
+                g.getAction(msg);
                 Data.print("Eliminando conjunto " + nombre); 
             } else {
                 _tuplas.clear(nombre);
@@ -387,13 +389,10 @@ public class TuplaD implements TuplaDInterfaz {
         try {
             for (int i = 0; i < args.length; i++) {
                 if (args[i].equals("-s")) {
-                    System.out.println(args[i]);
                     _nombre = args[i+1];
-                    System.out.println(args[i] + " | " + _nombre);
                     i++;
 
                 } else if (args[i].equals("-c")) {
-                    System.out.println(args[i]);
                     if (args.length < 5) {
                         return false;
                     }
@@ -404,12 +403,10 @@ public class TuplaD implements TuplaDInterfaz {
                         return false;
                     }
                     _hostCoordinador = args[i+1];
-                    System.out.println(args[i] + " | " + _hostCoordinador);
                     i++;
 
                 } else if (args[i].equals("-p")) {
                     _puerto = Integer.parseInt(args[i+1]);
-                    System.out.println(args[i] + " | " + _puerto);
                     i++;
                 }
             }
@@ -442,6 +439,7 @@ public class TuplaD implements TuplaDInterfaz {
                     try (ServerSocket serverSocket = new ServerSocket(_puerto)) { 
                         while (true) {
                             Socket service = serverSocket.accept();
+                            System.out.println("Conexión aceptada");
                             new Coordinador(service).run();
                         }
                     } catch (IOException e) {
