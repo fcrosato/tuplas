@@ -388,8 +388,9 @@ public class TuplaD implements TuplaDInterfaz {
             for (int i = 0; i < args.length; i++) {
                 if (args[i].equals("-s")) {
                     System.out.println(args[i]);
-                    i++;
                     _nombre = args[i+1];
+                    System.out.println(args[i] + " | " + _nombre);
+                    i++;
 
                 } else if (args[i].equals("-c")) {
                     System.out.println(args[i]);
@@ -399,16 +400,16 @@ public class TuplaD implements TuplaDInterfaz {
                     _coordinador = true;
 
                 } else if (args[i].equals("-n")) {
-                    System.out.println(args[i]);
                     if (args.length < 6) {
                         return false;
                     }
-                    i++;
                     _hostCoordinador = args[i+1];
+                    System.out.println(args[i] + " | " + _hostCoordinador);
+                    i++;
 
                 } else if (args[i].equals("-p")) {
-                    System.out.println(args[i]);
                     _puerto = Integer.parseInt(args[i+1]);
+                    System.out.println(args[i] + " | " + _puerto);
                     i++;
                 }
             }
