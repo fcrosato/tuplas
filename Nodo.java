@@ -251,7 +251,7 @@ public class Nodo implements Runnable {
             if (actualizar.length > 4) {
                 offset = Integer.parseInt(actualizar[4]);
             }
-            actualizar(nombre, clave, offset - posicion, valor);
+            actualizar(nombre, clave, posicion - offset, valor);
         }
         return 0;    
     }
