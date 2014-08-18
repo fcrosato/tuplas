@@ -78,10 +78,13 @@ public class ConjuntoTupla implements Serializable {
     public String listarServidores() {
         return listar(_servidores);
     }
+
     public void set(String clave, int posicion, String valor) {
         List<String> elementos = _tuplas.get(clave);
+        System.out.println("\nELEMENTOS " + elementos + " // posicion " + posicion);
         if (0 <= posicion && posicion < elementos.size()) {
             String e = elementos.set(posicion, valor);
+            System.out.println("\tPrevious: " + e + " | now: " + valor);
         }
     }
 
