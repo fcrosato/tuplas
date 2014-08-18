@@ -1,0 +1,46 @@
+################################################################
+# UNIVERSIDAD SIMÓN BOLÍVAR                                    #
+#                                                              #
+# Departamento de Computación y Tecnología de la Información   #
+# Sistemas de Operación II - CI4821                            #
+#                                                              #
+#   Proyecto II - Servidores TUPLAS 
+#                                                              #
+#                                                              #
+# Fabiola Rosato - 09-10764                                    #
+# José Delgado   - 09-10764                                    #
+#                                                              #
+################################################################
+
+
+I. Archivos:
+
+    1)  ConjuntoTupla.java
+    2)  Conjuntos.java
+    3)  Coordinador.java
+    4)  Data.java
+    5)  Makefile
+    6)  Nodo.java
+    7)  Servidor.java
+    8)  TuplaAdmin.java
+    9)  TuplaD.java
+    10) TuplaDInterfaz.java
+    11) java.security
+    12) list
+    13) tuplad
+
+
+
+II. Para correr el programa:
+
+    1) Para correr el cliente:
+        java TuplaAdmin [servidorHostName]
+
+    2) Para correr un servidor RMI coordinador:
+        java TuplaD -s [nombreServicio] -p [puerto] -c
+
+    3) Para correr un servidor nodo:
+        java TuplaD -s [nombreServicio] -p [puerto] -n [hostCoordinador]
+
+III. Documentación:
+  La documentación del programa está disponible en doc/index.html
