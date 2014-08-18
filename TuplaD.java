@@ -328,6 +328,7 @@ public class TuplaD implements TuplaDInterfaz {
                 } else {
                     offset += _tuplas.cardinalidad(nombre, clave);
                     if (posicion < offset) {
+                        System.out.println("Actualizando... > " + (offset - posicion));
                         _tuplas.set(nombre, clave, offset - posicion, valor);
                         break;
                     }
