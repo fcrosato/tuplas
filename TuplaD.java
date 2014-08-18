@@ -318,21 +318,23 @@ public class TuplaD implements TuplaDInterfaz {
             for (String s : tuplaServidores) {
                 if (!s.equals(_myAddress)) {
                     Grupo g = socket_servidor.get(s);
-                    offset += Integer.parseInt(g.getAction(getCantidad));
+                    int cardinalidad = Integer.parseInt(g.getAction(getCantidad));
+                    offset += cardinalidad;
                     System.out.println("OFFSET> " + offset);
                     if (posicion < offset) {
-                        msg += Data.SUBSPLIT + offset;
+                        msg += Data.SUBSPLIT +  (posicion - (offset - cardinalidad));
                         g.getAction(msg);
                         break;
                     }
                 } else {
                     System.out.println("OFFSET BEFORE " + offset);
-                    offset += _tuplas.cardinalidad(nombre, clave);
+                    int cardinalidad =  _tuplas.cardinalidad(nombre, clave);
+                    offset += cardinalidad;
                     System.out.println("OFFSET AFTER " + offset);
 
                     if (posicion < offset) {
                         System.out.println("Actualizando... > " + (offset - posicion));
-                        _tuplas.set(nombre, clave, offset - posicion, valor);
+                        _tuplas.set(nombre, clave, posicion - (offset - cardinalidad), valor);
                         break;
                     }
                 }
