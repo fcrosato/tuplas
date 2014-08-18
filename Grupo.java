@@ -95,9 +95,7 @@ public class Grupo implements Runnable {
             } else if (subject.equals(Data.SUBJECT_BUSCAR)) {
                 System.out.println("Enviando> " + msg);
                 out.println(msg);
-                System.out.println("=========Hello");
                 String inputLine = in.readLine();
-                System.out.println("===///////======" + inputLine);
                 return inputLine;
             } 
         } catch (IOException e) {

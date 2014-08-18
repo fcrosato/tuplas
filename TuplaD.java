@@ -322,7 +322,8 @@ public class TuplaD implements TuplaDInterfaz {
                     offset += cardinalidad;
                     System.out.println("OFFSET> " + offset);
                     if (posicion < offset) {
-                        msg += Data.SUBSPLIT +  (posicion - (offset - cardinalidad));
+                        System.out.println("ENVIANDO  >>>>>>> " + msg);
+                        msg += Data.SUBSPLIT + (offset - cardinalidad);
                         g.getAction(msg);
                         break;
                     }
