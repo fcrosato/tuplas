@@ -45,7 +45,7 @@ public class Conjuntos {
 
     public synchronized void set(String nombre, String clave, int posicion, String valor) {
         ConjuntoTupla cjto = _conjuntos.get(nombre);
-        if (cjto.exists(nombre)) {
+        if (cjto.exists(clave)) {
             cjto.set(clave, posicion, valor);
         }
     }
