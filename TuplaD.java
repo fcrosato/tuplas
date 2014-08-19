@@ -441,7 +441,8 @@ public class TuplaD implements TuplaDInterfaz {
                             System.out.println("Esperando conexión");
                             Socket service = serverSocket.accept();
                             System.out.println("Conexión aceptada");
-                            new Coordinador(service).run();
+                            Thread c = new Thread(new Coordinador(service));
+                            c.start();
                         }
                     } catch (IOException e) {
                         System.err.println("Error escuchando por el puerto " + _puerto);
