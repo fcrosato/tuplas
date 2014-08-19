@@ -438,6 +438,7 @@ public class TuplaD implements TuplaDInterfaz {
                 while (true) {
                     try (ServerSocket serverSocket = new ServerSocket(_puerto)) { 
                         while (true) {
+                            System.out.println("Esperando conexión");
                             Socket service = serverSocket.accept();
                             System.out.println("Conexión aceptada");
                             new Coordinador(service).run();
