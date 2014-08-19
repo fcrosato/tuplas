@@ -300,14 +300,8 @@ public class TuplaD implements TuplaDInterfaz {
                 if (!s.equals(_myAddress)) {
                     Coordinador g = socket_servidor.get(s);
                     g.getAction(msg);
-                    if (tipo == Data.PARTICIONADO) {
-                        break;
-                    }
                 } else {
                     _tuplas.set(nombre, clave, posicion, valor);
-                    if (tipo == Data.PARTICIONADO) {
-                        break;
-                    }
                 }
             }
         } else if (tipo == Data.SEGMENTADO) {
