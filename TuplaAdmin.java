@@ -238,7 +238,7 @@ public class TuplaAdmin {
      * @param in Scanner para obtener la entrada del usuario
      * @return true si se agrega la tupla, false en caso de fallas.
      */
-    public static boolean insertar (TuplaDInterfaz tuplad, Scanner in) throws RemoteException {
+    public static String insertar (TuplaDInterfaz tuplad, Scanner in) throws RemoteException {
         println(Data.MSG_INSERTAR);
         String nombre = getNombre(in);
         List<String> tupla = getLista(in, Data.MSG_ELEMENTO); 

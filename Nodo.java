@@ -20,6 +20,7 @@ import java.io.BufferedReader;
 import java.io.InputStreamReader;
 
 import java.io.Console;
+import java.io.RandomAccessFile;
 /**
  * Clase que implementa el hilo del servidor nodo para atender peticiones
  * de distribución de carga.
@@ -30,6 +31,7 @@ public class Nodo implements Runnable {
     private Socket socket;
     private PrintWriter out;
     private BufferedReader in;
+    private String lastMsg = Data.SUBJECT_INICIO + Data.SPLIT;
 
     /**
      * Constructor de la clase, especificando el socket de la conexión 
@@ -198,6 +200,7 @@ public class Nodo implements Runnable {
      *         si aplica.
      */
     public int getAction(String msg, BufferedReader in, PrintWriter out) {
+        lastMsg = msg;
         String[] msg_split = msg.split(Data.SPLIT);
         String subject = msg_split[0];
         System.out.println("Subject> " + subject);
@@ -278,10 +281,75 @@ public class Nodo implements Runnable {
                 offset = Integer.parseInt(actualizar[4]);
             }
             actualizar(nombre, clave, posicion - offset, valor);
+        } else if (subject.equals(Data.SUBJECT_INICIO)) {
+            // No hacer nada.
+        } else if (subject.equals(Data.SUBJECT_ROLLBACK)) {
+            return rollback(msg);
         }
+
         return 0;    
     }
 
+    public int rollback(String msg) {
+        lastMsg = msg;
+        String[] msg_split = msg.split(Data.SPLIT);
+        String subject = msg_split[0];
+        System.out.println("Subject> " + subject);
+        String action = msg_split[1];
+
+        if (subject.equals(Data.SUBJECT_LEAVING)) {
+
+        } else if (subject.equals(Data.SUBJECT_CARDINALIDAD)) {
+        } else if (subject.equals(Data.SUBJECT_JOINING)) {
+        } else if (subject.equals(Data.SUBJECT_CREAR)) {
+            String[] rollbackCrear = action.split(Data.SUBSPLIT);
+            String nombre = rollbackCrear[0];
+            eliminar(nombre);
+
+        } else if (subject.equals(Data.SUBJECT_ELIMINAR)) {
+            // buscar en el log el valor de la tupla;
+            // return dimension de la tupla;
+
+        } else if (subject.equals(Data.SUBJECT_INSERTAR)) {
+            String nombre = action;
+            String[] elementos = msg_split[2].split(Data.SUBSPLIT);
+            List<String> tupla = new ArrayList<String>();
+            for (int i=0; i < elementos.length; i++) {
+                tupla.add(elementos[i]);
+            }
+            int eliminados = TuplaD._tuplas.rollback(nombre, tupla);
+            out.println(eliminados);
+
+        } else if (subject.equals(Data.SUBJECT_BORRAR)) {
+            // buscar en el log el valor de la tupla;
+            // devolver el tamaño de la tupla;
+            String rollbackBorrar[] = action.split(Data.SUBSPLIT);
+            String nombre = rollbackBorrar[0];
+            String clave = rollbackBorrar[1];
+            int borrados = 0; // buscar en el log aquí.
+            out.println(borrados);
+
+        } else if (subject.equals(Data.SUBJECT_BUSCAR)) {
+        } else if (subject.equals(Data.SUBJECT_ACTUALIZAR)) {
+            String[] actualizar = action.split(Data.SUBSPLIT);
+            String nombre = actualizar[0];
+            String clave = actualizar[1];
+            int posicion = Integer.parseInt(actualizar[2]);
+            String valor = actualizar[3];
+            int offset = 0;
+            if (actualizar.length > 4) {
+                offset = Integer.parseInt(actualizar[4]);
+            }
+            // buscar posicion - valor anterior en el log
+            actualizar(nombre, clave, posicion - offset, valor);
+        } else if (subject.equals(Data.SUBJECT_INICIO)) {
+            // 
+        } else if (subject.equals(Data.SUBJECT_ROLLBACK)) {
+            //
+        }
+        out.println("0");
+        return 0;
+    }
 
 
     @Override

@@ -121,6 +121,18 @@ public class ConjuntoTupla implements Serializable {
         return elementos.size();
     }   
 
+    public int del(List<String> elementos) {
+        String clave = elementos.get(0);
+        if (exists(clave)) {
+            return 0;
+        }
+        List<String> elementos_tupla = _tuplas.get(clave);
+        for (int i = 1; i < elementos.size(); i++) {
+            elementos_tupla.remove(elementos.get(i));
+        }   
+        return (elementos.size() - 1);
+    }
+
     /**
       * Método que elimina una tupla de un conjunto.
       *

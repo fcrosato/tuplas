@@ -7,16 +7,18 @@
 public class Data {
     public static final String SPLIT = "-";
     public static final String SUBSPLIT = ",";
-    public static final String SUBJECT_LEAVING    = "Leaving";
-    public static final String SUBJECT_JOINING    = "Joining";
-    public static final String SUBJECT_SET        = "Set";
-    public static final String SUBJECT_CREAR      = "Crear";
-    public static final String SUBJECT_ELIMINAR   = "Eliminar";
-    public static final String SUBJECT_INSERTAR   = "Insertar";
-    public static final String SUBJECT_BUSCAR     = "Buscar";
-    public static final String SUBJECT_BORRAR     = "Borrar";
-    public static final String SUBJECT_ACTUALIZAR = "Actualizar";
+    public static final String SUBJECT_ACTUALIZAR   = "Actualizar";
+    public static final String SUBJECT_BORRAR       = "Borrar";
+    public static final String SUBJECT_BUSCAR       = "Buscar";
     public static final String SUBJECT_CARDINALIDAD = "Cardinalidad";
+    public static final String SUBJECT_CREAR        = "Crear";
+    public static final String SUBJECT_ELIMINAR     = "Eliminar";
+    public static final String SUBJECT_INICIO       = "Inicio";
+    public static final String SUBJECT_INSERTAR     = "Insertar";
+    public static final String SUBJECT_JOINING      = "Joining";
+    public static final String SUBJECT_LEAVING      = "Leaving";
+    public static final String SUBJECT_ROLLBACK     = "Rollback";
+    public static final String SUBJECT_SET          = "Set";
 
     public static final String MSG_ACTUALIZAR    = "Para actualizar una tupla de un conjunto, ingrese:";
     public static final String MSG_BORRAR        = "Para borrar una tupla de un conjunto, ingrese:";

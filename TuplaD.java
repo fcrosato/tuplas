@@ -60,7 +60,8 @@ public class TuplaD implements TuplaDInterfaz {
         String msg = (nombre + Data.SUBSPLIT + tipo + Data.SUBSPLIT + tuplaServidores);
 
         for (Coordinador g : socket_servidor.values()) {
-            g.getAction(Data.SUBJECT_CREAR + Data.SPLIT + msg);
+            String commit = g.getAction(Data.SUBJECT_CREAR + Data.SPLIT + msg);
+
         }
 
         Data.print("Creando conjunto " + nombre);
@@ -179,7 +180,8 @@ public class TuplaD implements TuplaDInterfaz {
      * @param ti Tupla a insertar
      * @return true si se agrega la tupla, false en caso de fallas.
      */
-    public boolean insertar (String nombre, List<String> ti) {
+    public String insertar (String nombre, List<String> ti) {
+        boolean commit = true;
         int tipo = _tuplas.tipo(nombre);
         List<String> tuplaServidores = _tuplas.servidores(nombre); 
         String tupla = "";
@@ -194,7 +196,12 @@ public class TuplaD implements TuplaDInterfaz {
             for (String s: tuplaServidores) {
                 if (!s.equals(_myAddress)) {
                     Coordinador g = socket_servidor.get(s);
-                    insertados = Integer.parseInt(g.getAction(msg));
+                    try {
+                        insertados = Integer.parseInt(g.getAction(msg));
+                    } catch (NumberFormatException e) {
+                        commit = false;
+                        break;
+                    }
                 } else {
                     Data.print("Insertando conjunto " + nombre); 
                     insertados = _tuplas.add(nombre, ti); 
@@ -218,9 +225,26 @@ public class TuplaD implements TuplaDInterfaz {
 
         }
 
-        return true;
+        if (! commit ) {
+            int eliminados = _tuplas.rollback(nombre, ti);
+            actualizarCarga(_myAddress, -eliminados);
+            rollback (tuplaServidores);
+            return "Ocurrió alguna falla en nuestros servidores. Intente de nuevo más tarde.";
+        }
+        return "La tupla se agregó satisfactoriamente";
     }
 
+    public void rollback(List<String> servidores) {
+        for (String s : servidores) {
+            try {
+                Coordinador g = socket_servidor.get(s);
+                int eliminados = Integer.parseInt(g.getAction(Data.SUBJECT_ROLLBACK));
+                actualizarCarga(s, -eliminados);
+            } catch (NumberFormatException e) {
+                System.err.println("Falla en el servidor: " + s);
+            }
+        }
+    }
 
     /**
      * Método que borra una tupla de un conjunto de tuplas

@@ -33,7 +33,7 @@ public interface TuplaDInterfaz extends Remote
      * @param ti Tupla a insertar
      * @return true si se agrega la tupla, false en caso de fallas.
      */
-    public boolean insertar (String nombre, List<String> ti) 
+    public String insertar (String nombre, List<String> ti) 
         throws RemoteException;
 
 

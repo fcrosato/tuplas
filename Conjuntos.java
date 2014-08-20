@@ -52,6 +52,11 @@ public class Conjuntos {
         return cleared;
     }
 
+    public synchronized int rollback(String nombre, List<String> ti) {
+        ConjuntoTupla cjto = _conjuntos.get(nombre);
+        return cjto.del(ti);
+    }
+
     /**
       * Método que agrega una tupla a un conjunto de tuplas
       *
