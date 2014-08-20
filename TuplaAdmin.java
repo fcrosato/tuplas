@@ -210,15 +210,11 @@ public class TuplaAdmin {
     public static boolean crear(TuplaDInterfaz tuplad, Scanner in) throws RemoteException {
         println(Data.MSG_CREAR);
         String nombre = getNombre(in);
-        int dimension = getDimension(in);
-        if (dimension == -1) {
-            return false;
-        }
         int tipo = getTipo(in);
         if (tipo == -1) {
             return false;
         }
-        return tuplad.crear(nombre, dimension, tipo);
+        return tuplad.crear(nombre, tipo);
     }
 
     /**
