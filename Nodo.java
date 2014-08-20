@@ -225,7 +225,7 @@ public class Nodo implements Runnable {
         } else if (subject.equals(Data.SUBJECT_CREAR)) {
             String[] crear = action.split(Data.SUBSPLIT);
             String nombre = crear[0];
-            int tipo      = Integer.parseInt(crear[2]);
+            int tipo      = Integer.parseInt(crear[1]);
 
             List<String> servidores = new ArrayList<String>();
             for (int i = 3; i < crear.length; i++) {
