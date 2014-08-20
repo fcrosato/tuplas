@@ -66,13 +66,12 @@ public class Nodo implements Runnable {
      * @param nombre Identificador del conjunto de tuplas
      * @return true si se elimina la tupla, false en caso de que no exista.
      */
-    public boolean eliminar (String nombre) {
+    public int eliminar (String nombre) {
         if (TuplaD._tuplas.exists(nombre)) {
             Data.print("Eliminando conjunto " + nombre); 
-            TuplaD._tuplas.clear(nombre);
-            return true;
+            return TuplaD._tuplas.clear(nombre);
         }
-        return false;
+        return 0;
     }
 
 
@@ -83,15 +82,14 @@ public class Nodo implements Runnable {
      * @param ti Tupla a insertar
      * @return true si se agrega la tupla, false en caso de fallas.
      */
-    public boolean insertar (String nombre, List<String> ti) {
+    public int insertar (String nombre, List<String> ti) {
 
         if (TuplaD._tuplas.exists(nombre)) {
             Data.print("Insertando tupla en el conjunto " + nombre);
             Data.print(ti);
-            TuplaD._tuplas.add(nombre, ti); 
-            return true;
+            return TuplaD._tuplas.add(nombre, ti); 
         }
-        return false;
+        return 0;
     }
 
 
@@ -102,13 +100,13 @@ public class Nodo implements Runnable {
      * @param clave Clave de la tupla a borrar.
      * @return true si se agrega la tupla, false en caso de fallas.
      */
-    public boolean borrar (String nombre, String clave) {
+    public int borrar (String nombre, String clave) {
         if (TuplaD._tuplas.exists(nombre)) {
             Data.print("Eliminando tupla "+clave+" en el conjunto "+nombre);
-            TuplaD._tuplas.remove(nombre, clave);
-            return true;
+            int borrados = TuplaD._tuplas.remove(nombre, clave);
+            return borrados;
         }
-        return false;
+        return 0;
     }
 
     /**
@@ -227,17 +225,17 @@ public class Nodo implements Runnable {
         } else if (subject.equals(Data.SUBJECT_CREAR)) {
             String[] crear = action.split(Data.SUBSPLIT);
             String nombre = crear[0];
-            int dimension = Integer.parseInt(crear[1]);
             int tipo      = Integer.parseInt(crear[2]);
 
             List<String> servidores = new ArrayList<String>();
             for (int i = 3; i < crear.length; i++) {
                 servidores.add(crear[i]);
             }
-            crear(nombre, dimension, tipo, servidores);
+            crear(nombre, 0, tipo, servidores);
 
         } else if (subject.equals(Data.SUBJECT_ELIMINAR)) {
-            eliminar(action);
+            int eliminados = eliminar(action);
+            out.println(eliminados);
 
         } else if (subject.equals(Data.SUBJECT_INSERTAR)) {
             String nombre = action;
@@ -246,16 +244,18 @@ public class Nodo implements Runnable {
             for (int i=0; i < elementos.length; i++) {
                 tupla.add(elementos[i]);
             }
-            insertar(nombre, tupla);
+            int insertados = insertar(nombre, tupla);
+            out.println(insertados);
         } else if (subject.equals(Data.SUBJECT_BORRAR)) {
             String borrar[] = action.split(Data.SUBSPLIT);
             String nombre = borrar[0];
             String clave = borrar[1];
-            borrar(nombre, clave);
+            int borrados = borrar(nombre, clave);
+            out.println(borrados);
         } else if (subject.equals(Data.SUBJECT_BUSCAR)) {
-            String borrar[] = action.split(Data.SUBSPLIT);
-            String nombre = borrar[0];
-            String clave = borrar[1];
+            String buscar[] = action.split(Data.SUBSPLIT);
+            String nombre = buscar[0];
+            String clave = buscar[1];
             List<String> respuesta = buscar(nombre, clave);
             if (respuesta == null) {
                 out.println("");

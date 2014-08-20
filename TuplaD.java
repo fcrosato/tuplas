@@ -36,8 +36,8 @@ public class TuplaD implements TuplaDInterfaz {
     private static int _puerto;
 
     /**
-      * Constructor por defecto de la clase.
-      */
+     * Constructor por defecto de la clase.
+     */
     public TuplaD() throws RemoteException {}
 
 
@@ -45,12 +45,10 @@ public class TuplaD implements TuplaDInterfaz {
      * Método que crea una tupla nueva.
      * 
      * @param nombre Identificador del conjunto de tuplas
-     * @param dimension Número de elementos de una tupla (debe ser mayor que 2)
      * @param tipo  Indica si es segmentado, replicado o particionado.
-     * @param servidores Nombre de las máquinas donde se desea que resida el conjunto de tuplas.  
      * @return true si se crea satisfactoriamente, false en caso contrario.
      */
-    public boolean crear(String nombre, int dimension, int tipo) {
+    public boolean crear(String nombre, int tipo) {
         List<String> servidores = new ArrayList<String>();
 
         String tuplaServidores = "";
@@ -59,18 +57,21 @@ public class TuplaD implements TuplaDInterfaz {
             tuplaServidores += (s.ip + Data.SUBSPLIT); 
         }
 
-        String msg = (nombre + Data.SUBSPLIT + dimension + Data.SUBSPLIT +
-                tipo + Data.SUBSPLIT + tuplaServidores);
+        String msg = (nombre + Data.SUBSPLIT + tipo + Data.SUBSPLIT + tuplaServidores);
 
         for (Coordinador g : socket_servidor.values()) {
-            g.getAction(Data.SUBJECT_CREAR + Data.SPLIT + msg); 
+            g.getAction(Data.SUBJECT_CREAR + Data.SPLIT + msg);
         }
 
-        Data.print("Creando conjunto " + nombre); 
-        _tuplas.addNew(nombre, dimension, tipo, servidores);
-        return true;    
+        Data.print("Creando conjunto " + nombre);
+        _tuplas.addNew(nombre, 0, tipo, servidores);
+        return true;
     }
 
+    private void actualizarCarga(String servidor, int delta) {
+        int cargaServidor = carga.get(servidor) + delta;
+        carga.put(servidor, cargaServidor);
+    }
 
     /**
      * Método que elimina un conjunto de tuplas.
@@ -80,17 +81,18 @@ public class TuplaD implements TuplaDInterfaz {
      */
     public boolean eliminar (String nombre) {
         String msg = Data.SUBJECT_ELIMINAR + Data.SPLIT + nombre;
-
         List<String> tuplaServidores = _tuplas.servidores(nombre); 
+        int eliminados = 0;
         for (String s : tuplaServidores) {
             if (!s.equals(_myAddress)) {
                 Coordinador g = socket_servidor.get(s);
-                g.getAction(msg);
+                eliminados = Integer.parseInt(g.getAction(msg));
                 Data.print("Eliminando conjunto " + nombre); 
             } else {
-                _tuplas.clear(nombre);
+                eliminados = _tuplas.clear(nombre);
                 Data.print("Eliminando conjunto " + nombre); 
             }
+            actualizarCarga(s, -eliminados);
         }
         return true;
     }
@@ -151,9 +153,10 @@ public class TuplaD implements TuplaDInterfaz {
             }
             i++;
 
+            int insertados = 0;
             if (!s.equals(_myAddress)) {
                 Coordinador g = socket_servidor.get(s);
-                g.getAction(msg += tupla);
+                insertados = Integer.parseInt(g.getAction(msg += tupla));
             } else {
                 String[] t = tupla.split(Data.SUBSPLIT);
                 List<String> listaTupla = new ArrayList<String>();
@@ -161,9 +164,9 @@ public class TuplaD implements TuplaDInterfaz {
                     listaTupla.add(t[j]);
                 }
                 Data.print("Insertando conjunto " + nombre + "> " + listaTupla.toString()); 
-                _tuplas.add(nombre, listaTupla); 
+                insertados = _tuplas.add(nombre, listaTupla); 
             }
-            carga.put(s, cargaServidor);
+            actualizarCarga(s, insertados);
         }
         return true;
     }
@@ -187,28 +190,29 @@ public class TuplaD implements TuplaDInterfaz {
 
         if (tipo == Data.REPLICADO) {
             int cargaServidor = ti.size() - 1;
+            int insertados;
             for (String s: tuplaServidores) {
                 if (!s.equals(_myAddress)) {
                     Coordinador g = socket_servidor.get(s);
-                    g.getAction(msg);
+                    insertados = Integer.parseInt(g.getAction(msg));
                 } else {
                     Data.print("Insertando conjunto " + nombre); 
-                    _tuplas.add(nombre, ti); 
+                    insertados = _tuplas.add(nombre, ti); 
                 }
-                carga.put(s, cargaServidor);
+                actualizarCarga(s, insertados);
 
             }
         } else if (tipo == Data.PARTICIONADO) {
-            int cargaServidor = ti.size() - 1;
+            int insertados = 0;
             String servidor = servidorMenosCargado(tuplaServidores);
             if (!servidor.equals(_myAddress)) {
                 Coordinador g = socket_servidor.get(servidor);
-                g.getAction(msg);
+                insertados = Integer.parseInt(g.getAction(msg));
             } else {
                 Data.print("Insertando conjunto " + nombre); 
-                _tuplas.add(nombre, ti);
+                insertados = _tuplas.add(nombre, ti);
             }
-            carga.put(servidor, cargaServidor);
+            actualizarCarga(servidor, insertados);
         } else if (tipo == Data.SEGMENTADO) {
             insertarSegmentado(nombre, ti, tuplaServidores);
 
@@ -226,28 +230,30 @@ public class TuplaD implements TuplaDInterfaz {
      * @return true si se agrega la tupla, false en caso de fallas.
      */
     public boolean borrar (String nombre, String clave) {
-         List<String> tuplaServidores = _tuplas.servidores(nombre); 
-         String msg = Data.SUBJECT_BORRAR + Data.SPLIT + nombre + Data.SUBSPLIT + clave;
+        List<String> tuplaServidores = _tuplas.servidores(nombre); 
+        String msg = Data.SUBJECT_BORRAR + Data.SPLIT + nombre + Data.SUBSPLIT + clave;
+        int borrados = 0;
         for (String s : tuplaServidores) {
             if (!s.equals(_myAddress)) {
                 Coordinador g = socket_servidor.get(s);
-                g.getAction(msg);
+                borrados = Integer.parseInt(g.getAction(msg));
                 Data.print("Eliminando conjunto " + nombre); 
             } else {
-                _tuplas.remove(nombre, clave);
+                borrados = _tuplas.remove(nombre, clave);
                 Data.print("Eliminando conjunto " + nombre); 
             }
+            actualizarCarga(s, borrados);
         }
         return true;
     }
 
     /**
-      * Método que busca una tupla dentro de un conjunto de tuplas.
-      *
-      * @param nombre Identificador del conjunto de tuplas
-      * @param clave Clave de la tupla a actualizar
-      * @return El conjunto de valores de la tupla.
-      */
+     * Método que busca una tupla dentro de un conjunto de tuplas.
+     *
+     * @param nombre Identificador del conjunto de tuplas
+     * @param clave Clave de la tupla a actualizar
+     * @return El conjunto de valores de la tupla.
+     */
     public List<String> buscar (String nombre, String clave) {
         int tipo = _tuplas.tipo(nombre);
         String tupla = "";
@@ -333,19 +339,19 @@ public class TuplaD implements TuplaDInterfaz {
     }
 
     /**
-      * Método para consultar la configuración de un conjunto de tuplas
-      *
-      * @param nombre Identificador del conjunto de tuplas.
-      * @return Información de configuración del conjunto de tuplas.
-      */
+     * Método para consultar la configuración de un conjunto de tuplas
+     *
+     * @param nombre Identificador del conjunto de tuplas.
+     * @return Información de configuración del conjunto de tuplas.
+     */
     public String configuracion (String nombre) {
         String conf = _tuplas.config(nombre);
         return conf;
     }
 
     /**
-      * Método que imprime el uso correcto del programa
-      */
+     * Método que imprime el uso correcto del programa
+     */
     private static void uso() {
         String uso = "java TuplaD -s [nombre] -p [puerto] -c \n" +
             "java TuplaD -s [nombre] -p [puerto] -n [coordinador]";
@@ -354,8 +360,8 @@ public class TuplaD implements TuplaDInterfaz {
 
 
     /**
-      * Método que registra el servicio RMI.
-      */
+     * Método que registra el servicio RMI.
+     */
     public static TuplaDInterfaz registrarse() throws RemoteException {
         TuplaDInterfaz tuplad = new TuplaD();
         TuplaDInterfaz stub =
@@ -369,13 +375,13 @@ public class TuplaD implements TuplaDInterfaz {
 
 
     /** 
-      * Método que chequea si los parámetros de entrada son 
-      * correctos.
-      * 
-      * @param args Argumentos a revisar
-      * @return true si los parámetros son correctos, false
-      *         en caso contrario.
-      */
+     * Método que chequea si los parámetros de entrada son 
+     * correctos.
+     * 
+     * @param args Argumentos a revisar
+     * @return true si los parámetros son correctos, false
+     *         en caso contrario.
+     */
     private static boolean argsOk(String args[]) {
         if (args.length <= 0) {
             return false;
@@ -411,8 +417,8 @@ public class TuplaD implements TuplaDInterfaz {
     }
 
     /** 
-      * Main del programa.
-      */
+     * Main del programa.
+     */
     public static void main(String args[]) {
         if (! argsOk(args) ) {
             uso();

@@ -46,8 +46,10 @@ public class Conjuntos {
       *
       * @param nombre Nombre del conjunto
       */
-    public synchronized void clear(String nombre) {
+    public synchronized int clear(String nombre) {
+        int cleared = _conjuntos.get(nombre).dimension();
         _conjuntos.remove(nombre);
+        return cleared;
     }
 
     /**
@@ -56,10 +58,10 @@ public class Conjuntos {
       * @param nombre Nombre del conjunto   
       * @param ti Tupla a agregar
       */
-    public synchronized void add(String nombre, List<String> ti) {
+    public synchronized int add(String nombre, List<String> ti) {
         ConjuntoTupla cjto = _conjuntos.get(nombre);
         String clave = ti.remove(0);
-        cjto.add(clave, ti);
+        return cjto.add(clave, ti);
     }
 
     /**
@@ -68,9 +70,9 @@ public class Conjuntos {
       * @param nombre Nombre del conjunto
       * @param clave Clave de la tupla a eliminar
       */
-    public synchronized void remove(String nombre, String clave) {
+    public synchronized int remove(String nombre, String clave) {
         ConjuntoTupla cjto = _conjuntos.get(nombre);
-        cjto.remove(clave);
+        return cjto.remove(clave);
     }
 
     /**

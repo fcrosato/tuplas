@@ -62,11 +62,16 @@ class Coordinador implements Runnable {
                 }
 
             } else if (subject.equals(Data.SUBJECT_CREAR) || 
-                    subject.equals(Data.SUBJECT_ELIMINAR) ||
-                    subject.equals(Data.SUBJECT_ACTUALIZAR) ||
+                    subject.equals(Data.SUBJECT_ACTUALIZAR)) { 
+                System.out.println("Enviando> " + msg);
+                out.println(msg);
+            } else if (subject.equals(Data.SUBJECT_ELIMINAR) ||
+                    subject.equals(Data.SUBJECT_BORRAR) ||
                     subject.equals(Data.SUBJECT_INSERTAR)) {
                 System.out.println("Enviando> " + msg);
                 out.println(msg);
+                String modificados = in.readLine();
+                return modificados;
             } else if (subject.equals(Data.SUBJECT_CARDINALIDAD)) {
                 System.out.println("Enviando> " + msg);
                 out.println(msg);

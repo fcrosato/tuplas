@@ -31,6 +31,10 @@ public class ConjuntoTupla implements Serializable {
         _servidores = servidores;
     }
 
+    public int dimension() {
+        return _dimension;
+    }
+
     /** 
       * Método que devuelve el conjunto de elementos de una tupla del
       * conjunto.
@@ -107,12 +111,14 @@ public class ConjuntoTupla implements Serializable {
       * @param clave Clave de la tupla a agregar
       * @param elementos Elementos de la tupla a agregar
       */
-    public void add(String clave, List<String> elementos) {
+    public int add(String clave, List<String> elementos) {
+        _dimension += elementos.size();
         List<String> old = _tuplas.get(clave);
         if (old != null) {
             elementos.addAll(old);
         }
         _tuplas.put(clave, elementos);
+        return elementos.size();
     }   
 
     /**
@@ -120,8 +126,11 @@ public class ConjuntoTupla implements Serializable {
       *
       * @param clave Clave de la tupla a eliminar 
       */
-    public void remove(String clave) {
+    public int remove(String clave) {
+        int removed =  _tuplas.get(clave).size();
+        _dimension -= removed;
         _tuplas.remove(clave);
+        return removed;
     }
 
     /**
