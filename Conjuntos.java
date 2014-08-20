@@ -72,7 +72,10 @@ public class Conjuntos {
       */
     public synchronized int remove(String nombre, String clave) {
         ConjuntoTupla cjto = _conjuntos.get(nombre);
-        return cjto.remove(clave);
+        if (cjto.exists(clave)) {
+            return cjto.remove(clave);
+        }
+        return 0;
     }
 
     /**
