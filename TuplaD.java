@@ -156,7 +156,7 @@ public class TuplaD implements TuplaDInterfaz {
             int insertados = 0;
             if (!s.equals(_myAddress)) {
                 Coordinador g = socket_servidor.get(s);
-                insertados = Integer.parseInt(g.getAction(msg += tupla));
+                insertados = Integer.parseInt(g.getAction(msg + tupla));
             } else {
                 String[] t = tupla.split(Data.SUBSPLIT);
                 List<String> listaTupla = new ArrayList<String>();
