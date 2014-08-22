@@ -31,6 +31,10 @@ public class ConjuntoTupla implements Serializable {
         _servidores = servidores;
     }
 
+    public String nombre() {
+        return _nombre;
+    }
+
     public int dimension() {
         return _dimension;
     }
@@ -192,6 +196,13 @@ public class ConjuntoTupla implements Serializable {
         return _servidores;
     }
     
+    public String log() {
+        String tupla = "" + 
+            _dimension + Data.SUBSPLIT + _tipo + Data.SUBSPLIT + listarElementos() +
+            Data.SUBSPLIT + listarServidores();
+        return tupla;
+    }
+
     @Override
     public String toString() {
         String tupla = "" +

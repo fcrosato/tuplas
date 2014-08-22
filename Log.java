@@ -3,12 +3,10 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 
 public class Log {
-    private static String _fileName = "";
     private static RandomAccessFile log;
 
-    Log(String fileName) throws FileNotFoundException {
-        _fileName = fileName;
-        log = new RandomAccessFile(_fileName, "r");
+    Log() throws FileNotFoundException {
+        log = new RandomAccessFile(Data.LOG_PATH, "rw");
     }
 
     public void writeLog(String logEntry) throws IOException {

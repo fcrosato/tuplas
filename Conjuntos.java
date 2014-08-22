@@ -18,6 +18,10 @@ public class Conjuntos {
 
     }
 
+    public synchronized ConjuntoTupla get(String nombre) {
+        return _conjuntos.get(nombre);
+    }
+
     /**
       * Método que devuelve el tipo de un conjunto.
       *
@@ -36,9 +40,10 @@ public class Conjuntos {
       * @param tipo Tipo del conjunto 
       * @param servidores Servidores del conjunto
       */
-    public synchronized void addNew(String nombre, int dimension, int tipo, List<String> servidores) {
+    public synchronized ConjuntoTupla addNew(String nombre, int dimension, int tipo, List<String> servidores) {
        ConjuntoTupla cjto = new ConjuntoTupla(nombre, dimension, tipo, servidores); 
         _conjuntos.put(nombre, cjto);
+        return cjto;
     }
 
     /**

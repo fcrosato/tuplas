@@ -54,11 +54,11 @@ public class Nodo implements Runnable {
      * @param servidores Nombre de las máquinas donde se desea que resida el conjunto de tuplas.  
      * @return true si se crea satisfactoriamente, false en caso contrario.
      */
-    public boolean crear(String nombre, int dimension, int tipo, List<String> servidores) {
+    public ConjuntoTupla crear(String nombre, int dimension, int tipo, List<String> servidores) {
         Data.print("Creando conjunto " + nombre); 
-        TuplaD._tuplas.addNew(nombre, dimension, tipo, servidores);
+        ConjuntoTupla cjto = TuplaD._tuplas.addNew(nombre, dimension, tipo, servidores);
         Data.print(TuplaD._tuplas);
-        return true;    
+        return cjto;    
     }
 
 
@@ -234,11 +234,14 @@ public class Nodo implements Runnable {
             for (int i = 3; i < crear.length; i++) {
                 servidores.add(crear[i]);
             }
-            crear(nombre, 0, tipo, servidores);
+            ConjuntoTupla cjto = crear(nombre, 0, tipo, servidores);
+            TuplaD.writeLog(Data.SUBJECT_CREAR + Data.SPLIT + cjto.log());
 
         } else if (subject.equals(Data.SUBJECT_ELIMINAR)) {
+            ConjuntoTupla cjto = TuplaD._tuplas.get(action);
             int eliminados = eliminar(action);
             out.println(eliminados);
+            TuplaD.writeLog(Data.SUBJECT_ELIMINAR + Data.SPLIT + cjto.log());
 
         } else if (subject.equals(Data.SUBJECT_INSERTAR)) {
             String nombre = action;

@@ -47,6 +47,8 @@ public class Data {
         "\t7 - Obtener la configuración de un conjunto\n\n" +
         "\t0 - Salir";
 
+    public static final String LOG_PATH          = "tuplas.log";
+
     public static final String ERR_DIMENSION     = "El número de elementos de una tupla debe ser mayor o igual a 2.";
     public static final String ERR_INTENTOS      = "Demasiados intentos fallidos. Intente de nuevo";
     public static final String ERR_TIPO          = "Tipo inválido. Opciones -\n\t1 - segmentado\n\t2 - replicado\n\t3 - particionado";

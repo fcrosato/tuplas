@@ -25,6 +25,7 @@ import java.io.BufferedReader;
 public class TuplaD implements TuplaDInterfaz {
     public static HashMap<String, Coordinador> socket_servidor = new HashMap<String, Coordinador>();
     public static HashMap<String, Integer> carga = new HashMap<String, Integer>();
+    public static Log log;
 
     public static String _myAddress;
     public static List<Servidor> _servidores;
@@ -35,6 +36,13 @@ public class TuplaD implements TuplaDInterfaz {
     public static boolean _coordinador     = false;
     private static int _puerto;
 
+    public static void writeLog(String accion) {
+        try {
+            log.writeLog(accion);
+        } catch(IOException e) {
+            System.err.println("Error escribiendo en el log.");
+        }
+    }
     /**
      * Constructor por defecto de la clase.
      */
@@ -48,9 +56,10 @@ public class TuplaD implements TuplaDInterfaz {
      * @param tipo  Indica si es segmentado, replicado o particionado.
      * @return true si se crea satisfactoriamente, false en caso contrario.
      */
-    public boolean crear(String nombre, int tipo) {
+    public String crear(String nombre, int tipo) {
         List<String> servidores = new ArrayList<String>();
 
+        boolean commit = true;
         String tuplaServidores = "";
         for (Servidor s : _servidores) {
             servidores.add(s.ip);
@@ -60,13 +69,17 @@ public class TuplaD implements TuplaDInterfaz {
         String msg = (nombre + Data.SUBSPLIT + tipo + Data.SUBSPLIT + tuplaServidores);
 
         for (Coordinador g : socket_servidor.values()) {
-            String commit = g.getAction(Data.SUBJECT_CREAR + Data.SPLIT + msg);
-
+            try {
+                int exito = Integer.parseInt(g.getAction(Data.SUBJECT_CREAR + Data.SPLIT + msg));
+            } catch (NumberFormatException e) {
+                commit = false;
+            }
         }
 
         Data.print("Creando conjunto " + nombre);
-        _tuplas.addNew(nombre, 0, tipo, servidores);
-        return true;
+        ConjuntoTupla cjto = _tuplas.addNew(nombre, 0, tipo, servidores);
+        writeLog(Data.SUBJECT_CREAR + Data.SPLIT + cjto.log());
+        return "Tupla " + nombre + " fue creada satisfactoriamente";
     }
 
     private void actualizarCarga(String servidor, int delta) {
@@ -80,22 +93,35 @@ public class TuplaD implements TuplaDInterfaz {
      * @param nombre Identificador del conjunto de tuplas
      * @return true si se elimina la tupla, false en caso de que no exista.
      */
-    public boolean eliminar (String nombre) {
+    public String eliminar (String nombre) {
+        ConjuntoTupla cjto = _tuplas.get(nombre);
         String msg = Data.SUBJECT_ELIMINAR + Data.SPLIT + nombre;
+        int tipo = _tuplas.tipo(nombre);
+        boolean commit = true;
         List<String> tuplaServidores = _tuplas.servidores(nombre); 
         int eliminados = 0;
         for (String s : tuplaServidores) {
             if (!s.equals(_myAddress)) {
-                Coordinador g = socket_servidor.get(s);
-                eliminados = Integer.parseInt(g.getAction(msg));
-                Data.print("Eliminando conjunto " + nombre); 
+                try {
+                    Coordinador g = socket_servidor.get(s);
+                    eliminados = Integer.parseInt(g.getAction(msg));
+                    Data.print("Eliminando conjunto " + nombre); 
+                } catch (NumberFormatException e) {
+                    commit = false || tipo != Data.REPLICADO;
+                }
             } else {
                 eliminados = _tuplas.clear(nombre);
+                writeLog(Data.SUBJECT_ELIMINAR + Data.SPLIT + cjto.log());
                 Data.print("Eliminando conjunto " + nombre); 
+            }
+            if (! commit) {
+                _tuplas.addNew(cjto.nombre(), cjto.dimension(), cjto.tipo(), cjto.servidores());
+                rollback(cjto.servidores());
+                return "La operación falló: Ocurrió un problema en los servidores.";
             }
             actualizarCarga(s, -eliminados);
         }
-        return true;
+        return "Se eliminó satisfactoriamente la tupla " + nombre;
     }
 
     /**
@@ -450,6 +476,7 @@ public class TuplaD implements TuplaDInterfaz {
         }
 
         try {
+            log = new Log();
             _servidores = new ArrayList<Servidor>();
             byte[] localIp = InetAddress.getLocalHost().getAddress();
             _myAddress = InetAddress.getByAddress(localIp).getHostAddress();
