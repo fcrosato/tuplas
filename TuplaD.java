@@ -151,19 +151,6 @@ public class TuplaD implements TuplaDInterfaz {
     }
 
 
-    private String armarTupla(List<String> ti, int modConjuntos, 
-            int tamConjuntos, int numeroServidores, int tuplaIndex, int index) {
-        String tupla = (ti.get(0) + Data.SUBSPLIT);
-        int tam = modConjuntos != 0 && index == (numeroServidores - 1) ? 
-            tamConjuntos + modConjuntos : tamConjuntos;
-        for (int j = 1; j < tam; j++) {
-            tupla += (ti.get(tuplaIndex++) + Data.SUBSPLIT);
-            if (tuplaIndex == ti.size()) {
-                break;
-            }
-        }
-        return tupla;
-    }
 
     /**
      * Método que inserta una tupla cuando su conjunto es de tipo segmentado     
@@ -188,8 +175,15 @@ public class TuplaD implements TuplaDInterfaz {
 
         String tupla = "";
         for (String s : tuplaServidores) {
-            tupla = armarTupla(ti, modConjuntos, tamConjuntos, numeroServidores, tuplaIndex, i);
-            tuplaIndex += tupla.length();
+            tupla = (ti.get(0) + Data.SUBSPLIT);
+            int tam = modConjuntos != 0 && i == (numeroServidores - 1) ? 
+                tamConjuntos + modConjuntos : tamConjuntos;
+            for (int j = 1; j < tam; j++) {
+                tupla += (ti.get(tuplaIndex++) + Data.SUBSPLIT);
+                if (tuplaIndex == ti.size()) {
+                    break;
+                }
+            }
             i++;
 
             int insertados = 0;
@@ -217,8 +211,6 @@ public class TuplaD implements TuplaDInterfaz {
         }
         if (! commit) {
             rollback(servidores, Data.MSG_INSERTAR);
-            int eliminados = _tuplas.rollback(nombre, ti);
-            actualizarCarga(_myAddress, -eliminados);
         }
         return true;
     }
