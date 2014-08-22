@@ -130,10 +130,14 @@ public class ConjuntoTupla implements Serializable {
     }   
 
     public int del(List<String> elementos) {
+        if (elementos.isEmpty()) 
+            return 0;
+
         String clave = elementos.get(0);
-        if (exists(clave)) {
+        if (!exists(clave)) {
             return 0;
         }
+
         List<String> elementos_tupla = _tuplas.get(clave);
         for (int i = 1; i < elementos.size(); i++) {
             elementos_tupla.remove(elementos.get(i));

@@ -253,7 +253,6 @@ public class TuplaD implements TuplaDInterfaz {
                         commit = false;
                     }
                 } else {
-                    Data.print("Insertando conjunto " + nombre); 
                     writeLog(msg);
                     insertados = _tuplas.add(nombre, ti); 
                 }
@@ -271,7 +270,6 @@ public class TuplaD implements TuplaDInterfaz {
                     commit = false;
                 }
             } else {
-                Data.print("Insertando conjunto " + nombre); 
                 writeLog(msg);
                 insertados = _tuplas.add(nombre, ti);
             }
