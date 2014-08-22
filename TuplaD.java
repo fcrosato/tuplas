@@ -620,14 +620,14 @@ public class TuplaD implements TuplaDInterfaz {
                 while (true) {
                     try (ServerSocket serverSocket = new ServerSocket(_puerto)) { 
                         while (true) {
-                            System.out.println("Esperando conexión");
+                            Data.print("Esperando conexión");
                             Socket service = serverSocket.accept();
-                            System.out.println("Conexión aceptada");
+                            Data.print("Conexión aceptada");
                             Thread c = new Thread(new Coordinador(service));
                             c.start();
                         }
                     } catch (IOException e) {
-                        System.err.println("Error escuchando por el puerto " + _puerto);
+                        Data.printErr("Error escuchando por el puerto " + _puerto);
                         System.exit(-1);
                     }                
                 }
@@ -640,7 +640,7 @@ public class TuplaD implements TuplaDInterfaz {
         } catch (ArrayIndexOutOfBoundsException e) {
             uso();
         } catch (Exception e) {
-            System.err.println("TuplaD exception:");
+            Data.printErr("TuplaD exception:");
             e.printStackTrace();
         }
     }
