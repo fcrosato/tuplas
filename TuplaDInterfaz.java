@@ -44,7 +44,7 @@ public interface TuplaDInterfaz extends Remote
      * @param clave Clave de la tupla a borrar.
      * @return true si se agrega la tupla, false en caso de fallas.
      */
-    public boolean borrar (String nombre, String clave) 
+    public String borrar (String nombre, String clave) 
         throws RemoteException; 
 
     /**

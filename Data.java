@@ -60,6 +60,7 @@ public class Data {
     public static final String EXITO_CREAR       = "El conjunto se creó satisfactoriamente.";
     public static final String EXITO_ELIMINAR    = "El conjunto se eliminó satisfactoriamente.";
     public static final String EXITO_INSERTAR    = "La tupla se agregó satisfactoriamente.";
+    public static final String EXITO_BORRAR      = "La tupla se borró satisfactoriamente.";
 
     public static final int SEGMENTADO   = 1;
     public static final int REPLICADO    = 2;

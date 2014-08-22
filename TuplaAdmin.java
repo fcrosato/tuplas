@@ -261,7 +261,8 @@ public class TuplaAdmin {
         println(Data.MSG_BORRAR);
         String nombre = getNombre(in);
         String clave = getClave(in);
-        return tuplad.borrar(nombre, clave);
+        println(tuplad.borrar(nombre, clave));
+        return true;
     }
 
     /**

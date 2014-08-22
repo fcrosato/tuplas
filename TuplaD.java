@@ -70,7 +70,6 @@ public class TuplaD implements TuplaDInterfaz {
                 int exito = Integer.parseInt(c.getAction(msg));
                 servidores.add(s);
             } catch (NumberFormatException e) {
-                if (c != null) c.leave();
                 servidoresFallidos.add(s);
                 Data.printErr(Data.ERR_SERVIDOR + s);
             }
@@ -117,7 +116,6 @@ public class TuplaD implements TuplaDInterfaz {
                     eliminados = Integer.parseInt(c.getAction(msg));
                 } catch (NumberFormatException e) {
                     Data.printErr(Data.ERR_SERVIDOR + s);
-                    if (c != null) c.leave();
                     socket_servidor.remove(s);
                 }
             } else {
@@ -194,27 +192,115 @@ public class TuplaD implements TuplaDInterfaz {
                     insertados = Integer.parseInt(g.getAction(msg + tupla));
                 } catch (NumberFormatException e) {
                     commit = false;
-                    Data.printErr(Data.ERR_SERVIDOR + s);
                     socket_servidor.remove(s);
-                    if (g != null) g.leave();
+                    carga.remove(s);
+                    Data.printErr(Data.ERR_SERVIDOR + s);
                 }
             } else {
-                String[] t = tupla.split(Data.SUBSPLIT);
-                List<String> listaTupla = new ArrayList<String>();
-                for (int j=0; j<t.length; j++) {
-                    listaTupla.add(t[j]);
-                }
                 writeLog(msg + tupla);
-                insertados = _tuplas.add(nombre, listaTupla); 
+                String[] t = tupla.split(Data.SUBSPLIT);
+                insertados = _tuplas.add(nombre, Arrays.asList(t)); 
             }
             actualizarCarga(s, insertados);
         }
         if (! commit) {
+            int eliminados = _tuplas.rollback(nombre, ti);
+            actualizarCarga(_myAddress, -eliminados);
             rollback(servidores, Data.MSG_INSERTAR);
+        }
+        return commit;
+    }
+
+
+    /** 
+      * Método que concatena una lista de servidores en un String
+      * 
+      * @param ti Tupla en forma de lista
+      * @return la tupla en un String
+      */
+    private String concatenarTupla(List<String> ti) {
+        String tupla = "";
+        for (String t : ti) {
+            tupla += t + Data.SUBSPLIT;
+        }
+        return tupla;
+    }
+    /**
+     * Método que inserta una tupla cuando su conjunto es de tipo replicado 
+     *
+     * @param tuplaServidores Lista de servidores en los que está segmentado
+     *                        el conjunto de la tupla.
+     * @param nombre Identificador del conjunto de tuplas
+     * @param ti Tupla a insertar
+     * @return true si se agrega la tupla, false en caso de fallas.
+     */
+    private boolean insertarReplicado(String nombre, List<String> ti, List<String> servidores, String msg) {
+        int insertados = 0;
+        List<String> servidoresExitosos = new ArrayList<String>();
+
+        for (String s: servidores) {
+            try {
+                if (!s.equals(_myAddress)) {
+                    Coordinador g = socket_servidor.get(s);
+                    insertados = Integer.parseInt(g.getAction(msg));
+                } else {
+                    writeLog(msg);
+                    insertados = _tuplas.add(nombre, ti); 
+                }
+                servidoresExitosos.add(s);
+                actualizarCarga(s, insertados);
+            } catch(NumberFormatException e) {
+                carga.remove(s);
+                socket_servidor.remove(s);
+
+                int eliminados = _tuplas.rollback(nombre, ti);
+                actualizarCarga(_myAddress, -eliminados);
+                rollback (servidoresExitosos, Data.MSG_INSERTAR);
+                return false; 
+            }
         }
         return true;
     }
 
+    /**
+     * Método que inserta una tupla cuando su conjunto es de tipo particionado 
+     *
+     * @param tuplaServidores Lista de servidores en los que está segmentado
+     *                        el conjunto de la tupla.
+     * @param nombre Identificador del conjunto de tuplas
+     * @param ti Tupla a insertar
+     * @return true si se agrega la tupla, false en caso de fallas.
+     */
+    private boolean insertarParticionado(String nombre, List<String> ti, List<String> servidores, String msg) {
+        int insertados = 0;
+        List<String> servidorExitoso = new ArrayList<String>();
+
+        String servidor = servidorMenosCargado(servidores);
+
+        try {
+            if (!servidor.equals(_myAddress)) {
+                Coordinador g = socket_servidor.get(servidor);
+                insertados = Integer.parseInt(g.getAction(msg));
+            } else {
+                writeLog(msg);
+                insertados = _tuplas.add(nombre, ti);
+            }
+            servidorExitoso.add(servidor);
+            actualizarCarga(servidor, insertados);
+        } catch (NumberFormatException e) {
+            carga.remove(servidor);
+            socket_servidor.remove(servidor);
+
+            if (servidor.equals(_myAddress)) {
+                int eliminados = _tuplas.rollback(nombre, ti);
+                actualizarCarga(_myAddress, -eliminados);
+            } else {
+                rollback (servidorExitoso, Data.MSG_INSERTAR);
+            }
+            return false; 
+        }
+        return true;
+    }
 
     /**
      * Método que inserta una tupla.
@@ -226,60 +312,33 @@ public class TuplaD implements TuplaDInterfaz {
     public String insertar (String nombre, List<String> ti) {
         boolean commit = true;
         int tipo = _tuplas.tipo(nombre);
-        List<String> tuplaServidores = _tuplas.servidores(nombre); 
-        String tupla = "";
-        for (String t : ti) {
-            tupla += t + Data.SUBSPLIT;
-        }
+        String tupla = concatenarTupla(ti);
         String msg = Data.SUBJECT_INSERTAR + Data.SPLIT + nombre + Data.SPLIT + tupla;
 
-        if (tipo == Data.REPLICADO) {
-            int cargaServidor = ti.size() - 1;
-            int insertados = 0;
-            for (String s: tuplaServidores) {
-                if (!s.equals(_myAddress)) {
-                    Coordinador g = socket_servidor.get(s);
-                    try {
-                        insertados = Integer.parseInt(g.getAction(msg));
-                    } catch (NumberFormatException e) {
-                        commit = false;
-                    }
-                } else {
-                    writeLog(msg);
-                    insertados = _tuplas.add(nombre, ti); 
-                }
-                actualizarCarga(s, insertados);
+        List<String> tuplaServidores = _tuplas.servidores(nombre); 
+        List<String> servidoresExitosos = new ArrayList<String>();
 
-            }
+        int insertados = 0;
+        if (tipo == Data.REPLICADO) {
+            commit = insertarReplicado(nombre, ti, tuplaServidores, msg);
         } else if (tipo == Data.PARTICIONADO) {
-            int insertados = 0;
-            String servidor = servidorMenosCargado(tuplaServidores);
-            if (!servidor.equals(_myAddress)) {
-                try {
-                    Coordinador g = socket_servidor.get(servidor);
-                    insertados = Integer.parseInt(g.getAction(msg));
-                } catch(NumberFormatException e) {
-                    commit = false;
-                }
-            } else {
-                writeLog(msg);
-                insertados = _tuplas.add(nombre, ti);
-            }
-            actualizarCarga(servidor, insertados);
+            commit = insertarParticionado(nombre, ti, tuplaServidores, msg);
         } else if (tipo == Data.SEGMENTADO) {
             commit = insertarSegmentado(nombre, ti, tuplaServidores);
         }
 
-        if (! commit ) {
-            int eliminados = _tuplas.rollback(nombre, ti);
-            actualizarCarga(_myAddress, -eliminados);
-            rollback (tuplaServidores, Data.MSG_INSERTAR);
+        if (! commit ) 
             return Data.ERR_INSERTAR;
-        }
         Data.print(Data.EXITO_INSERTAR); 
         return Data.EXITO_INSERTAR; 
     }
 
+    /**
+      * Método que hace rollback de una transacción.
+      *
+      * @param servidores Servidores que deben hacer rollback
+      * @param msg Contenido que debe hacerse rollback
+      */
     public void rollback(List<String> servidores, String msg) {
         for (String s : servidores) {
             try {
@@ -302,7 +361,7 @@ public class TuplaD implements TuplaDInterfaz {
      * @param clave Clave de la tupla a borrar.
      * @return true si se agrega la tupla, false en caso de fallas.
      */
-    public boolean borrar (String nombre, String clave) {
+    public String borrar (String nombre, String clave) {
         List<String> tuplaServidores = _tuplas.servidores(nombre); 
         String msg = Data.SUBJECT_BORRAR + Data.SPLIT + nombre + Data.SUBSPLIT + clave;
         int borrados = 0;
@@ -312,17 +371,18 @@ public class TuplaD implements TuplaDInterfaz {
                 try {
                     Coordinador g = socket_servidor.get(s);
                     borrados = Integer.parseInt(g.getAction(msg));
-                    Data.print("Eliminando conjunto " + nombre); 
                 } catch(NumberFormatException e) {
+                    carga.remove(s);
+                    socket_servidor.remove(s);
                     commit = false;
                 }
             } else {
                 writeLog(msg + Data.SPLIT + _tuplas.getElements(nombre, clave));
                 borrados = _tuplas.remove(nombre, clave);
-                Data.print("Eliminando conjunto " + nombre); 
             }
             actualizarCarga(s, borrados);
         }
+
         if (! commit) {
             String lastEntry = log.readEntry();
             String[] msgAnterior = lastEntry.split(Data.SPLIT);
@@ -334,7 +394,8 @@ public class TuplaD implements TuplaDInterfaz {
             }
             rollback(tuplaServidores, Data.MSG_BORRAR);
         }
-        return true;
+        Data.print(Data.EXITO_BORRAR); 
+        return Data.EXITO_BORRAR;
     }
 
     /**
