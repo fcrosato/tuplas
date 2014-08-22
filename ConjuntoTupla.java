@@ -31,6 +31,10 @@ public class ConjuntoTupla implements Serializable {
         _servidores = servidores;
     }
 
+    public void delServer(String s) {
+        _servidores.remove(s);
+    }
+
     public String nombre() {
         return _nombre;
     }

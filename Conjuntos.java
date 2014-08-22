@@ -18,6 +18,13 @@ public class Conjuntos {
 
     }
 
+    public synchronized void delServer(String s) {
+        for (String nombre : _conjuntos.keySet()) {
+            _conjuntos.get(nombre).delServer(s);
+        }
+    }
+
+
     public synchronized ConjuntoTupla get(String nombre) {
         return _conjuntos.get(nombre);
     }

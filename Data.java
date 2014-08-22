@@ -49,15 +49,17 @@ public class Data {
 
     public static final String LOG_PATH          = "tuplas.log";
 
-    public static final String ERR_DIMENSION     = "El número de elementos de una tupla debe ser mayor o igual a 2.";
-    public static final String ERR_INTENTOS      = "Demasiados intentos fallidos. Intente de nuevo";
-    public static final String ERR_TIPO          = "Tipo inválido. Opciones -\n\t1 - segmentado\n\t2 - replicado\n\t3 - particionado";
     public static final String ERR_CREAR         = "No se pudo crear la tupla - no hay servidores disponibles";
-    public static final String ERR_ELIMINAR      = "No se pudo eliminar la tupla - ocurrió un problema en los servidores.";
+    public static final String ERR_DIMENSION     = "El número de elementos de una tupla debe ser mayor o igual a 2.";
+    public static final String ERR_ELIMINAR      = "No se pudo eliminar la tupla - ocurrió un problema en los servidores";
+    public static final String ERR_INSERTAR      = "No se pudo insertar la tupla - ocurrió un problema en los servidores";
+    public static final String ERR_INTENTOS      = "Demasiados intentos fallidos. Intente de nuevo";
     public static final String ERR_SERVIDOR      = "No se encontró disponible al servidor ";
+    public static final String ERR_TIPO          = "Tipo inválido. Opciones -\n\t1 - segmentado\n\t2 - replicado\n\t3 - particionado";
 
     public static final String EXITO_CREAR       = "El conjunto se creó satisfactoriamente.";
     public static final String EXITO_ELIMINAR    = "El conjunto se eliminó satisfactoriamente.";
+    public static final String EXITO_INSERTAR    = "La tupla se agregó satisfactoriamente.";
 
     public static final int SEGMENTADO   = 1;
     public static final int REPLICADO    = 2;

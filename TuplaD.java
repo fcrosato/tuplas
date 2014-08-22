@@ -59,19 +59,25 @@ public class TuplaD implements TuplaDInterfaz {
      */
     public String crear(String nombre, int tipo) {
         List<String> servidores = new ArrayList<String>();
+        List<String> servidoresFallidos = new ArrayList<String>();
 
         String msg = Data.SUBJECT_CREAR + Data.SPLIT + nombre + Data.SUBSPLIT + tipo; 
 
         for (String s : socket_servidor.keySet()) {
+            Coordinador c = null;
             try {
-                Coordinador c = socket_servidor.get(s);
+                c = socket_servidor.get(s);
                 int exito = Integer.parseInt(c.getAction(msg));
                 servidores.add(s);
             } catch (NumberFormatException e) {
-                socket_servidor.remove(s);
+                if (c != null) c.leave();
+                servidoresFallidos.add(s);
                 Data.printErr(Data.ERR_SERVIDOR + s);
             }
         }
+
+        for (String s : servidoresFallidos)
+            socket_servidor.remove(s);
 
         if (servidores.isEmpty()) {
             return Data.ERR_CREAR;
@@ -86,6 +92,7 @@ public class TuplaD implements TuplaDInterfaz {
         int cargaServidor = carga.get(servidor) + delta;
         carga.put(servidor, cargaServidor);
     }
+
 
     /**
      * Método que elimina un conjunto de tuplas.
@@ -103,13 +110,15 @@ public class TuplaD implements TuplaDInterfaz {
 
         int eliminados = 0;
         for (String s : tuplaServidores) {
+            Coordinador c = null;
             if (!s.equals(_myAddress)) {
                 try {
-                    Coordinador g = socket_servidor.get(s);
-                    eliminados = Integer.parseInt(g.getAction(msg));
+                    c = socket_servidor.get(s);
+                    eliminados = Integer.parseInt(c.getAction(msg));
                 } catch (NumberFormatException e) {
-                    socket_servidor.remove(s);
                     Data.printErr(Data.ERR_SERVIDOR + s);
+                    if (c != null) c.leave();
+                    socket_servidor.remove(s);
                 }
             } else {
                 eliminados = _tuplas.clear(nombre);
@@ -141,6 +150,21 @@ public class TuplaD implements TuplaDInterfaz {
         return minServidor;
     }
 
+
+    private String armarTupla(List<String> ti, int modConjuntos, 
+            int tamConjuntos, int numeroServidores, int tuplaIndex, int index) {
+        String tupla = (ti.get(0) + Data.SUBSPLIT);
+        int tam = modConjuntos != 0 && index == (numeroServidores - 1) ? 
+            tamConjuntos + modConjuntos : tamConjuntos;
+        for (int j = 1; j < tam; j++) {
+            tupla += (ti.get(tuplaIndex++) + Data.SUBSPLIT);
+            if (tuplaIndex == ti.size()) {
+                break;
+            }
+        }
+        return tupla;
+    }
+
     /**
      * Método que inserta una tupla cuando su conjunto es de tipo segmentado     
      *
@@ -152,40 +176,33 @@ public class TuplaD implements TuplaDInterfaz {
      */
     public boolean insertarSegmentado(String nombre, List<String> ti, List<String> tuplaServidores) {
         String msg = Data.SUBJECT_INSERTAR + Data.SPLIT + nombre + Data.SPLIT;
-        int elementos = ti.size() - 1;
+
+        int i = 0, tuplaIndex = 1, elementos = ti.size() - 1;
         int numeroServidores = tuplaServidores.size();
         int tamConjuntos = elementos / numeroServidores + 1;
         int modConjuntos = elementos % numeroServidores;
-        List<String> servidores = new ArrayList<String>();
-
-        if (tamConjuntos == 1) {
-            numeroServidores = 1;
-        }
-
+        if (tamConjuntos == 1) numeroServidores = 1; 
         boolean commit = true;
 
-        int i = 0;
-        int tuplaIndex = 1;
+        List<String> servidores = new ArrayList<String>();
+
         String tupla = "";
         for (String s : tuplaServidores) {
-            tupla = (ti.get(0) + Data.SUBSPLIT);
-            int tam = modConjuntos != 0 && i == (numeroServidores - 1) ? 
-                tamConjuntos + modConjuntos : tamConjuntos;
-            for (int j = 1; j < tam; j++) {
-                tupla += (ti.get(tuplaIndex++) + Data.SUBSPLIT);
-                if (tuplaIndex == ti.size()) {
-                    break;
-                }
-            }
+            tupla = armarTupla(ti, modConjuntos, tamConjuntos, numeroServidores, tuplaIndex, i);
+            tuplaIndex += tupla.length();
             i++;
 
             int insertados = 0;
             if (!s.equals(_myAddress)) {
+                Coordinador g = null;
                 try {
-                    Coordinador g = socket_servidor.get(s);
+                    g = socket_servidor.get(s);
                     insertados = Integer.parseInt(g.getAction(msg + tupla));
                 } catch (NumberFormatException e) {
                     commit = false;
+                    Data.printErr(Data.ERR_SERVIDOR + s);
+                    socket_servidor.remove(s);
+                    if (g != null) g.leave();
                 }
             } else {
                 String[] t = tupla.split(Data.SUBSPLIT);
@@ -193,7 +210,6 @@ public class TuplaD implements TuplaDInterfaz {
                 for (int j=0; j<t.length; j++) {
                     listaTupla.add(t[j]);
                 }
-                Data.print("Insertando conjunto " + nombre + "> " + listaTupla.toString()); 
                 writeLog(msg + tupla);
                 insertados = _tuplas.add(nombre, listaTupla); 
             }
@@ -268,9 +284,10 @@ public class TuplaD implements TuplaDInterfaz {
             int eliminados = _tuplas.rollback(nombre, ti);
             actualizarCarga(_myAddress, -eliminados);
             rollback (tuplaServidores, Data.MSG_INSERTAR);
-            return "Ocurrió alguna falla en nuestros servidores. Intente de nuevo más tarde.";
+            return Data.ERR_INSERTAR;
         }
-        return "La tupla se agregó satisfactoriamente";
+        Data.print(Data.EXITO_INSERTAR); 
+        return Data.EXITO_INSERTAR; 
     }
 
     public void rollback(List<String> servidores, String msg) {

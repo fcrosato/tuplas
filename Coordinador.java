@@ -29,6 +29,10 @@ class Coordinador implements Runnable {
         in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
     }
 
+    public void leave() {
+        System.exit(0);
+    }
+
     /**
      * Método que dado un mensaje, realiza una acción
      *
