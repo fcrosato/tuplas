@@ -108,19 +108,16 @@ public class TuplaD implements TuplaDInterfaz {
                     Coordinador g = socket_servidor.get(s);
                     eliminados = Integer.parseInt(g.getAction(msg));
                 } catch (NumberFormatException e) {
-                    commit = false || tipo != Data.REPLICADO;
+                    socket_servidor.remove(s);
+                    Data.printErr(Data.ERR_SERVIDOR + s);
                 }
             } else {
                 eliminados = _tuplas.clear(nombre);
                 writeLog(Data.SUBJECT_ELIMINAR + Data.SPLIT + nombre + Data.SUBSPLIT + cjto.log());
             }
-            if (! commit) {
-                _tuplas.addNew(cjto.nombre(), cjto.dimension(), cjto.tipo(), cjto.servidores());
-                rollback(cjto.servidores(), Data.MSG_ELIMINAR);
-                return Data.ERR_ELIMINAR; 
-            }
             actualizarCarga(s, -eliminados);
         }
+
         Data.print(Data.EXITO_ELIMINAR);
         return Data.EXITO_ELIMINAR; 
     }
