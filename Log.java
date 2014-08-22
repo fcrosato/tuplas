@@ -50,11 +50,16 @@ public class Log {
         return -1;
     }
 
-    public String readEntry(long offset) throws IOException {
-        log.seek(offset);
-        String entry = log.readLine();
-        System.out.println(entry);
-        return entry;
+    public String readEntry() {
+        try {
+            long offset = nextLogEntryPosition();
+            log.seek(offset);
+            String entry = log.readLine();
+            System.out.println(entry);
+            return entry;
+        } catch(IOException e) {
+        }
+        return "IOException";
     }
 
     public void removeEntry(long offset) throws IOException {

@@ -1,6 +1,7 @@
 import java.util.List;
 import java.util.HashMap;
 import java.util.ArrayList;
+import java.util.Arrays;
 
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
@@ -76,9 +77,13 @@ public class TuplaD implements TuplaDInterfaz {
             }
         }
 
+        if (! commit) {
+            rollback(servidores);
+            return "La operación falló: Ocurrió un problema en los servidores.";
+        }
         Data.print("Creando conjunto " + nombre);
         ConjuntoTupla cjto = _tuplas.addNew(nombre, 0, tipo, servidores);
-        writeLog(Data.SUBJECT_CREAR + Data.SPLIT + cjto.log());
+        writeLog(Data.SUBJECT_CREAR + Data.SPLIT + nombre + Data.SUBSPLIT + cjto.log());
         return "Tupla " + nombre + " fue creada satisfactoriamente";
     }
 
@@ -111,7 +116,7 @@ public class TuplaD implements TuplaDInterfaz {
                 }
             } else {
                 eliminados = _tuplas.clear(nombre);
-                writeLog(Data.SUBJECT_ELIMINAR + Data.SPLIT + cjto.log());
+                writeLog(Data.SUBJECT_ELIMINAR + Data.SPLIT + nombre + Data.SUBSPLIT + cjto.log());
                 Data.print("Eliminando conjunto " + nombre); 
             }
             if (! commit) {
@@ -158,22 +163,23 @@ public class TuplaD implements TuplaDInterfaz {
         int numeroServidores = tuplaServidores.size();
         int tamConjuntos = elementos / numeroServidores + 1;
         int modConjuntos = elementos % numeroServidores;
+        List<String> servidores = new ArrayList<String>();
 
         if (tamConjuntos == 1) {
             numeroServidores = 1;
         }
 
+        boolean commit = true;
+
         int i = 0;
         int tuplaIndex = 1;
         String tupla = "";
         for (String s : tuplaServidores) {
-            int cargaServidor = 0;
             tupla = (ti.get(0) + Data.SUBSPLIT);
             int tam = modConjuntos != 0 && i == (numeroServidores - 1) ? 
                 tamConjuntos + modConjuntos : tamConjuntos;
             for (int j = 1; j < tam; j++) {
                 tupla += (ti.get(tuplaIndex++) + Data.SUBSPLIT);
-                cargaServidor++;
                 if (tuplaIndex == ti.size()) {
                     break;
                 }
@@ -182,8 +188,12 @@ public class TuplaD implements TuplaDInterfaz {
 
             int insertados = 0;
             if (!s.equals(_myAddress)) {
-                Coordinador g = socket_servidor.get(s);
-                insertados = Integer.parseInt(g.getAction(msg + tupla));
+                try {
+                    Coordinador g = socket_servidor.get(s);
+                    insertados = Integer.parseInt(g.getAction(msg + tupla));
+                } catch (NumberFormatException e) {
+                    commit = false;
+                }
             } else {
                 String[] t = tupla.split(Data.SUBSPLIT);
                 List<String> listaTupla = new ArrayList<String>();
@@ -191,9 +201,15 @@ public class TuplaD implements TuplaDInterfaz {
                     listaTupla.add(t[j]);
                 }
                 Data.print("Insertando conjunto " + nombre + "> " + listaTupla.toString()); 
+                writeLog(msg + tupla);
                 insertados = _tuplas.add(nombre, listaTupla); 
             }
             actualizarCarga(s, insertados);
+        }
+        if (! commit) {
+            rollback(servidores);
+            int eliminados = _tuplas.rollback(nombre, ti);
+            actualizarCarga(_myAddress, -eliminados);
         }
         return true;
     }
@@ -218,7 +234,7 @@ public class TuplaD implements TuplaDInterfaz {
 
         if (tipo == Data.REPLICADO) {
             int cargaServidor = ti.size() - 1;
-            int insertados;
+            int insertados = 0;
             for (String s: tuplaServidores) {
                 if (!s.equals(_myAddress)) {
                     Coordinador g = socket_servidor.get(s);
@@ -226,10 +242,10 @@ public class TuplaD implements TuplaDInterfaz {
                         insertados = Integer.parseInt(g.getAction(msg));
                     } catch (NumberFormatException e) {
                         commit = false;
-                        break;
                     }
                 } else {
                     Data.print("Insertando conjunto " + nombre); 
+                    writeLog(msg);
                     insertados = _tuplas.add(nombre, ti); 
                 }
                 actualizarCarga(s, insertados);
@@ -239,16 +255,20 @@ public class TuplaD implements TuplaDInterfaz {
             int insertados = 0;
             String servidor = servidorMenosCargado(tuplaServidores);
             if (!servidor.equals(_myAddress)) {
-                Coordinador g = socket_servidor.get(servidor);
-                insertados = Integer.parseInt(g.getAction(msg));
+                try {
+                    Coordinador g = socket_servidor.get(servidor);
+                    insertados = Integer.parseInt(g.getAction(msg));
+                } catch(NumberFormatException e) {
+                    commit = false;
+                }
             } else {
                 Data.print("Insertando conjunto " + nombre); 
+                writeLog(msg);
                 insertados = _tuplas.add(nombre, ti);
             }
             actualizarCarga(servidor, insertados);
         } else if (tipo == Data.SEGMENTADO) {
-            insertarSegmentado(nombre, ti, tuplaServidores);
-
+            commit = insertarSegmentado(nombre, ti, tuplaServidores);
         }
 
         if (! commit ) {
@@ -283,16 +303,33 @@ public class TuplaD implements TuplaDInterfaz {
         List<String> tuplaServidores = _tuplas.servidores(nombre); 
         String msg = Data.SUBJECT_BORRAR + Data.SPLIT + nombre + Data.SUBSPLIT + clave;
         int borrados = 0;
+        boolean commit = true;
         for (String s : tuplaServidores) {
             if (!s.equals(_myAddress)) {
-                Coordinador g = socket_servidor.get(s);
-                borrados = Integer.parseInt(g.getAction(msg));
-                Data.print("Eliminando conjunto " + nombre); 
+                try {
+                    Coordinador g = socket_servidor.get(s);
+                    borrados = Integer.parseInt(g.getAction(msg));
+                    Data.print("Eliminando conjunto " + nombre); 
+                } catch(NumberFormatException e) {
+                    commit = false;
+                }
             } else {
+                writeLog(msg + Data.SPLIT + _tuplas.getElements(nombre, clave));
                 borrados = _tuplas.remove(nombre, clave);
                 Data.print("Eliminando conjunto " + nombre); 
             }
             actualizarCarga(s, borrados);
+        }
+        if (! commit) {
+            String lastEntry = log.readEntry();
+            String[] msgAnterior = lastEntry.split(Data.SPLIT);
+            if (msgAnterior[0].equals(Data.SUBJECT_BORRAR)) {
+                String[] elementos = msgAnterior[2].split(Data.SUBSPLIT);
+                for (int i = 0; i < elementos.length; i++) {
+                    _tuplas.add(nombre, Arrays.asList(elementos));
+                }
+            }
+            rollback(tuplaServidores);
         }
         return true;
     }
@@ -349,6 +386,7 @@ public class TuplaD implements TuplaDInterfaz {
         String msg = Data.SUBJECT_ACTUALIZAR + Data.SPLIT + nombre + Data.SUBSPLIT + clave + 
             Data.SUBSPLIT + posicion + Data.SUBSPLIT + valor;
 
+        boolean commit = true;
         int tipo = _tuplas.tipo(nombre);
         List<String> tuplaServidores = _tuplas.servidores(nombre); 
         if (tipo == Data.REPLICADO || tipo == Data.PARTICIONADO) {
@@ -366,13 +404,16 @@ public class TuplaD implements TuplaDInterfaz {
                 nombre + Data.SUBSPLIT + clave;
             for (String s : tuplaServidores) {
                 if (!s.equals(_myAddress)) {
-                    Coordinador g = socket_servidor.get(s);
-                    int cardinalidad = Integer.parseInt(g.getAction(getCantidad));
-                    offset += cardinalidad;
-                    if (posicion < offset) {
-                        msg += Data.SUBSPLIT + (offset - cardinalidad);
-                        g.getAction(msg);
-                        break;
+                    try {
+                        Coordinador g = socket_servidor.get(s);
+                        int cardinalidad = Integer.parseInt(g.getAction(getCantidad));
+                        offset += cardinalidad;
+                        if (posicion < offset) {
+                            msg += Data.SUBSPLIT + (offset - cardinalidad);
+                            g.getAction(msg);
+                            break;
+                        }
+                    } catch(NumberFormatException e) {
                     }
                 } else {
                     int cardinalidad =  _tuplas.cardinalidad(nombre, clave);
