@@ -68,6 +68,7 @@ public class TuplaD implements TuplaDInterfaz {
                 int exito = Integer.parseInt(c.getAction(msg));
                 servidores.add(s);
             } catch (NumberFormatException e) {
+                socket_servidor.remove(s);
                 Data.printErr(Data.ERR_SERVIDOR + s);
             }
         }
@@ -77,6 +78,7 @@ public class TuplaD implements TuplaDInterfaz {
         }
         ConjuntoTupla cjto = _tuplas.addNew(nombre, 0, tipo, servidores);
         writeLog(Data.SUBJECT_CREAR + Data.SPLIT + nombre + Data.SUBSPLIT + cjto.log());
+        Data.print(Data.EXITO_CREAR);
         return Data.EXITO_CREAR; 
     }
 
@@ -93,33 +95,34 @@ public class TuplaD implements TuplaDInterfaz {
      */
     public String eliminar (String nombre) {
         ConjuntoTupla cjto = _tuplas.get(nombre);
-        String msg = Data.SUBJECT_ELIMINAR + Data.SPLIT + nombre;
-        int tipo = _tuplas.tipo(nombre);
+        List<String> tuplaServidores = cjto.servidores(); 
+        int tipo = cjto.tipo();
         boolean commit = true;
-        List<String> tuplaServidores = _tuplas.servidores(nombre); 
+
+        String msg = Data.SUBJECT_ELIMINAR + Data.SPLIT + nombre;
+
         int eliminados = 0;
         for (String s : tuplaServidores) {
             if (!s.equals(_myAddress)) {
                 try {
                     Coordinador g = socket_servidor.get(s);
                     eliminados = Integer.parseInt(g.getAction(msg));
-                    Data.print("Eliminando conjunto " + nombre); 
                 } catch (NumberFormatException e) {
                     commit = false || tipo != Data.REPLICADO;
                 }
             } else {
                 eliminados = _tuplas.clear(nombre);
                 writeLog(Data.SUBJECT_ELIMINAR + Data.SPLIT + nombre + Data.SUBSPLIT + cjto.log());
-                Data.print("Eliminando conjunto " + nombre); 
             }
             if (! commit) {
                 _tuplas.addNew(cjto.nombre(), cjto.dimension(), cjto.tipo(), cjto.servidores());
-                rollback(cjto.servidores());
-                return "La operación falló: Ocurrió un problema en los servidores.";
+                rollback(cjto.servidores(), Data.MSG_ELIMINAR);
+                return Data.ERR_ELIMINAR; 
             }
             actualizarCarga(s, -eliminados);
         }
-        return "Se eliminó satisfactoriamente la tupla " + nombre;
+        Data.print(Data.EXITO_ELIMINAR);
+        return Data.EXITO_ELIMINAR; 
     }
 
     /**
@@ -200,7 +203,7 @@ public class TuplaD implements TuplaDInterfaz {
             actualizarCarga(s, insertados);
         }
         if (! commit) {
-            rollback(servidores);
+            rollback(servidores, Data.MSG_INSERTAR);
             int eliminados = _tuplas.rollback(nombre, ti);
             actualizarCarga(_myAddress, -eliminados);
         }
@@ -267,17 +270,20 @@ public class TuplaD implements TuplaDInterfaz {
         if (! commit ) {
             int eliminados = _tuplas.rollback(nombre, ti);
             actualizarCarga(_myAddress, -eliminados);
-            rollback (tuplaServidores);
+            rollback (tuplaServidores, Data.MSG_INSERTAR);
             return "Ocurrió alguna falla en nuestros servidores. Intente de nuevo más tarde.";
         }
         return "La tupla se agregó satisfactoriamente";
     }
 
-    public void rollback(List<String> servidores) {
+    public void rollback(List<String> servidores, String msg) {
         for (String s : servidores) {
             try {
                 Coordinador g = socket_servidor.get(s);
-                int eliminados = Integer.parseInt(g.getAction(Data.SUBJECT_ROLLBACK));
+
+                int eliminados = Integer.parseInt(
+                        g.getAction(Data.SUBJECT_ROLLBACK + Data.SPLIT + msg));
+
                 actualizarCarga(s, -eliminados);
             } catch (NumberFormatException e) {
                 System.err.println("Falla en el servidor: " + s);
@@ -322,7 +328,7 @@ public class TuplaD implements TuplaDInterfaz {
                     _tuplas.add(nombre, Arrays.asList(elementos));
                 }
             }
-            rollback(tuplaServidores);
+            rollback(tuplaServidores, Data.MSG_BORRAR);
         }
         return true;
     }
