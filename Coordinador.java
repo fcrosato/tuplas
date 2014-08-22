@@ -65,6 +65,8 @@ class Coordinador implements Runnable {
                     subject.equals(Data.SUBJECT_ACTUALIZAR)) { 
                 System.out.println("Enviando> " + msg);
                 out.println(msg);
+                String inputLine = in.readLine();
+                return inputLine;
             } else if (subject.equals(Data.SUBJECT_ELIMINAR) ||
                     subject.equals(Data.SUBJECT_BORRAR) ||
                     subject.equals(Data.SUBJECT_INSERTAR)) {

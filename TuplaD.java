@@ -60,31 +60,24 @@ public class TuplaD implements TuplaDInterfaz {
     public String crear(String nombre, int tipo) {
         List<String> servidores = new ArrayList<String>();
 
-        boolean commit = true;
-        String tuplaServidores = "";
-        for (Servidor s : _servidores) {
-            servidores.add(s.ip);
-            tuplaServidores += (s.ip + Data.SUBSPLIT); 
-        }
+        String msg = Data.SUBJECT_CREAR + Data.SPLIT + nombre + Data.SUBSPLIT + tipo; 
 
-        String msg = (nombre + Data.SUBSPLIT + tipo + Data.SUBSPLIT + tuplaServidores);
-
-        for (Coordinador g : socket_servidor.values()) {
+        for (String s : socket_servidor.keySet()) {
             try {
-                int exito = Integer.parseInt(g.getAction(Data.SUBJECT_CREAR + Data.SPLIT + msg));
+                Coordinador c = socket_servidor.get(s);
+                int exito = Integer.parseInt(c.getAction(msg));
+                servidores.add(s);
             } catch (NumberFormatException e) {
-                commit = false;
+                Data.printErr(Data.ERR_SERVIDOR + s);
             }
         }
 
-        if (! commit) {
-            rollback(servidores);
-            return "La operación falló: Ocurrió un problema en los servidores.";
+        if (servidores.isEmpty()) {
+            return Data.ERR_CREAR;
         }
-        Data.print("Creando conjunto " + nombre);
         ConjuntoTupla cjto = _tuplas.addNew(nombre, 0, tipo, servidores);
         writeLog(Data.SUBJECT_CREAR + Data.SPLIT + nombre + Data.SUBSPLIT + cjto.log());
-        return "Tupla " + nombre + " fue creada satisfactoriamente";
+        return Data.EXITO_CREAR; 
     }
 
     private void actualizarCarga(String servidor, int delta) {

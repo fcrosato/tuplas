@@ -230,12 +230,9 @@ public class Nodo implements Runnable {
             String nombre = crear[0];
             int tipo      = Integer.parseInt(crear[1]);
 
-            List<String> servidores = new ArrayList<String>();
-            for (int i = 3; i < crear.length; i++) {
-                servidores.add(crear[i]);
-            }
-            ConjuntoTupla cjto = crear(nombre, 0, tipo, servidores);
+            ConjuntoTupla cjto = crear(nombre, 0, tipo, new ArrayList<String>());
             TuplaD.writeLog(Data.SUBJECT_CREAR + Data.SPLIT + cjto.log());
+            out.println(Data.ACK);
 
         } else if (subject.equals(Data.SUBJECT_ELIMINAR)) {
             ConjuntoTupla cjto = TuplaD._tuplas.get(action);
