@@ -18,6 +18,11 @@ public class Conjuntos {
 
     }
 
+    public synchronized String getValue(String nombre, String clave, int posicion) {
+        ConjuntoTupla cjto = _conjuntos.get(nombre);
+        return cjto.getValue(clave, posicion);
+    }
+
     public synchronized void delServer(String s) {
         for (String nombre : _conjuntos.keySet()) {
             _conjuntos.get(nombre).delServer(s);

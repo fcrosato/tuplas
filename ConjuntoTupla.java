@@ -31,6 +31,14 @@ public class ConjuntoTupla implements Serializable {
         _servidores = servidores;
     }
 
+    public String getValue(String clave, int posicion) {
+        if (! exists(clave) )
+            return "";
+
+        List<String> elementos = _tuplas.get(clave);
+        return elementos.get(posicion);
+    }
+
     public void delServer(String s) {
         _servidores.remove(s);
     }
@@ -112,6 +120,8 @@ public class ConjuntoTupla implements Serializable {
     public boolean exists(String key) {
         return _tuplas.containsKey(key);
     }
+
+
 
     /**
       * Método que agrega una tupla al conjunto.

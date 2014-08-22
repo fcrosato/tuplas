@@ -208,6 +208,7 @@ public class TuplaD implements TuplaDInterfaz {
             actualizarCarga(_myAddress, -eliminados);
             rollback(servidores, Data.MSG_INSERTAR);
         }
+        writeLog(msg);
         return commit;
     }
 
@@ -259,6 +260,7 @@ public class TuplaD implements TuplaDInterfaz {
                 return false; 
             }
         }
+        writeLog(msg);
         return true;
     }
 
@@ -299,6 +301,7 @@ public class TuplaD implements TuplaDInterfaz {
             }
             return false; 
         }
+        writeLog(msg);
         return true;
     }
 
@@ -362,6 +365,8 @@ public class TuplaD implements TuplaDInterfaz {
      * @return true si se agrega la tupla, false en caso de fallas.
      */
     public String borrar (String nombre, String clave) {
+        List<String> tuplaAnterior = _tuplas.getElements(nombre, clave);
+
         List<String> tuplaServidores = _tuplas.servidores(nombre); 
         String msg = Data.SUBJECT_BORRAR + Data.SPLIT + nombre + Data.SUBSPLIT + clave;
         int borrados = 0;
@@ -387,10 +392,7 @@ public class TuplaD implements TuplaDInterfaz {
             String lastEntry = log.readEntry();
             String[] msgAnterior = lastEntry.split(Data.SPLIT);
             if (msgAnterior[0].equals(Data.SUBJECT_BORRAR)) {
-                String[] elementos = msgAnterior[2].split(Data.SUBSPLIT);
-                for (int i = 0; i < elementos.length; i++) {
-                    _tuplas.add(nombre, Arrays.asList(elementos));
-                }
+                _tuplas.add(clave, tuplaAnterior);
             }
             rollback(tuplaServidores, Data.MSG_BORRAR);
         }
@@ -446,20 +448,32 @@ public class TuplaD implements TuplaDInterfaz {
      false en caso contrario.
      */
     public boolean actualizar (String nombre, String clave, int posicion, String valor) {
+        String valorAnterior = _tuplas.getValue(nombre, clave, posicion);
+        List<String> servidoresExitosos = new ArrayList<String>();
+        int tipo = _tuplas.tipo(nombre);
+        boolean commit = true;
 
         String msg = Data.SUBJECT_ACTUALIZAR + Data.SPLIT + nombre + Data.SUBSPLIT + clave + 
             Data.SUBSPLIT + posicion + Data.SUBSPLIT + valor;
 
-        boolean commit = true;
-        int tipo = _tuplas.tipo(nombre);
+        int miPosicion = -1;
         List<String> tuplaServidores = _tuplas.servidores(nombre); 
         if (tipo == Data.REPLICADO || tipo == Data.PARTICIONADO) {
             for (String s : tuplaServidores) {
                 if (!s.equals(_myAddress)) {
-                    Coordinador g = socket_servidor.get(s);
-                    g.getAction(msg);
+                    try {
+                        Coordinador g = socket_servidor.get(s);
+                        g.getAction(msg);
+                        servidoresExitosos.add(s);
+                    } catch(NumberFormatException e) {
+                        carga.remove(s);
+                        socket_servidor.remove(s);
+                        commit = false;
+                    }
                 } else {
+                    miPosicion = posicion;
                     _tuplas.set(nombre, clave, posicion, valor);
+                    servidoresExitosos.add(s);
                 }
             }
         } else if (tipo == Data.SEGMENTADO) {
@@ -475,20 +489,32 @@ public class TuplaD implements TuplaDInterfaz {
                         if (posicion < offset) {
                             msg += Data.SUBSPLIT + (offset - cardinalidad);
                             g.getAction(msg);
+                            servidoresExitosos.add(s);
                             break;
                         }
                     } catch(NumberFormatException e) {
+                        carga.remove(s);
+                        socket_servidor.remove(s);
+                        commit = false;
                     }
                 } else {
                     int cardinalidad =  _tuplas.cardinalidad(nombre, clave);
                     offset += cardinalidad;
 
                     if (posicion < offset) {
-                        _tuplas.set(nombre, clave, posicion - (offset - cardinalidad), valor);
+                        miPosicion = posicion - (offset - cardinalidad);
+                        _tuplas.set(nombre, clave, miPosicion, valor);
+                        servidoresExitosos.add(s);
                         break;
                     }
                 }
             }
+        }
+
+        if (! commit ) {
+            if (miPosicion != -1) 
+                _tuplas.set(nombre, clave, miPosicion, valorAnterior);
+            rollback(servidoresExitosos, (msg + Data.SUBSPLIT + valorAnterior));
         }
         return true;
     }
