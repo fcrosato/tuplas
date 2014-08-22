@@ -207,12 +207,12 @@ public class TuplaAdmin {
      * @param in Scanner para obtener la entrada del usuario
      * @return true si se crea satisfactoriamente, false en caso contrario.
      */
-    public static boolean crear(TuplaDInterfaz tuplad, Scanner in) throws RemoteException {
+    public static String crear(TuplaDInterfaz tuplad, Scanner in) throws RemoteException {
         println(Data.MSG_CREAR);
         String nombre = getNombre(in);
         int tipo = getTipo(in);
         if (tipo == -1) {
-            return false;
+            return "";
         }
         return tuplad.crear(nombre, tipo);
     }
@@ -224,7 +224,7 @@ public class TuplaAdmin {
      * @param in Scanner para obtener la entrada del usuario
      * @return true si se elimina la tupla, false en caso de que no exista.
      */
-    public static boolean eliminar (TuplaDInterfaz tuplad, Scanner in) throws RemoteException {
+    public static String eliminar (TuplaDInterfaz tuplad, Scanner in) throws RemoteException {
         println(Data.MSG_ELIMINAR);
         String nombre = getNombre(in);
         return tuplad.eliminar(nombre);
