@@ -227,7 +227,9 @@ public class TuplaAdmin {
     public static String eliminar (TuplaDInterfaz tuplad, Scanner in) throws RemoteException {
         println(Data.MSG_ELIMINAR);
         String nombre = getNombre(in);
-        return tuplad.eliminar(nombre);
+        String msg = tuplad.eliminar(nombre);
+        println(msg);
+        return msg;
     } 
 
 
@@ -242,7 +244,9 @@ public class TuplaAdmin {
         println(Data.MSG_INSERTAR);
         String nombre = getNombre(in);
         List<String> tupla = getLista(in, Data.MSG_ELEMENTO); 
-        return tuplad.insertar(nombre, tupla); 
+        String msg = tuplad.insertar(nombre, tupla); 
+        println(msg);
+        return msg;
     }
 
 
