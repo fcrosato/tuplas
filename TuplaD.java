@@ -463,7 +463,7 @@ public class TuplaD implements TuplaDInterfaz {
                 if (!s.equals(_myAddress)) {
                     try {
                         Coordinador g = socket_servidor.get(s);
-                        g.getAction(msg);
+                        int ack = Integer.parseInt(g.getAction(msg));
                         servidoresExitosos.add(s);
                     } catch(NumberFormatException e) {
                         carga.remove(s);
@@ -488,7 +488,7 @@ public class TuplaD implements TuplaDInterfaz {
                         offset += cardinalidad;
                         if (posicion < offset) {
                             msg += Data.SUBSPLIT + (offset - cardinalidad);
-                            g.getAction(msg);
+                            int ack = Integer.parseInt(g.getAction(msg));
                             servidoresExitosos.add(s);
                             break;
                         }
