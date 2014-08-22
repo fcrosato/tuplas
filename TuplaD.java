@@ -190,16 +190,19 @@ public class TuplaD implements TuplaDInterfaz {
                 try {
                     g = socket_servidor.get(s);
                     insertados = Integer.parseInt(g.getAction(msg + tupla));
+                    servidores.add(s);
                 } catch (NumberFormatException e) {
                     commit = false;
                     socket_servidor.remove(s);
                     carga.remove(s);
                     Data.printErr(Data.ERR_SERVIDOR + s);
+                    break;
                 }
             } else {
                 writeLog(msg + tupla);
                 String[] t = tupla.split(Data.SUBSPLIT);
                 insertados = _tuplas.add(nombre, Arrays.asList(t)); 
+                servidores.add(s);
             }
             actualizarCarga(s, insertados);
         }
