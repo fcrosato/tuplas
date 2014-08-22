@@ -115,7 +115,7 @@ public class Nodo implements Runnable {
      * Método que busca una tupla dentro de un conjunto de tuplas.
      *
      * @param nombre Identificador del conjunto de tuplas
-     * @param clave Clave de la tupla a actualizar
+     * @param clave Clave de la tupla a buscar 
      * @return El conjunto de valores de la tupla.
      */
     public List<String> buscar (String nombre, String clave) {
@@ -137,16 +137,17 @@ public class Nodo implements Runnable {
      * @return true si el valor se actualizó satisfactoriamente, 
      false en caso contrario.
      */
-    public boolean actualizar (String nombre, String clave, int posicion, String valor) {
+    public String actualizar (String nombre, String clave, int posicion, String valor) {
         if (TuplaD._tuplas.exists(nombre)) {
             Data.print("Actualizando: "+
                     "\tconjunto "+nombre +
                     "\tclave: "+clave +
                     "\tposicion: "+posicion +
                     "\tvalor: "+valor);
-            TuplaD._tuplas.set(nombre, clave, posicion, valor);
+            String anterior = TuplaD._tuplas.set(nombre, clave, posicion, valor);
+            return anterior;
         }
-        return true;
+        return "";
     }
 
     /**
@@ -249,12 +250,21 @@ public class Nodo implements Runnable {
             }
             int insertados = insertar(nombre, tupla);
             out.println(insertados);
+
+            TuplaD.writeLog(Data.SUBJECT_INSERTAR + Data.SPLIT + msg_split[2]);
         } else if (subject.equals(Data.SUBJECT_BORRAR)) {
             String borrar[] = action.split(Data.SUBSPLIT);
             String nombre = borrar[0];
             String clave = borrar[1];
+
+            List<String> elementosAnteriores = TuplaD._tuplas.getElements(nombre, clave);
+            String elementosBorrados = "";
+            for (int i = 0; i < elementosAnteriores.size(); i++) 
+                elementosBorrados += elementosAnteriores.get(i) + Data.SUBSPLIT;
+
             int borrados = borrar(nombre, clave);
             out.println(borrados);
+            TuplaD.writeLog(Data.SUBJECT_BORRAR + Data.SPLIT + elementosBorrados);
         } else if (subject.equals(Data.SUBJECT_BUSCAR)) {
             String buscar[] = action.split(Data.SUBSPLIT);
             String nombre = buscar[0];
@@ -271,6 +281,7 @@ public class Nodo implements Runnable {
             }
             out.println(tupla);
         } else if (subject.equals(Data.SUBJECT_ACTUALIZAR)) {
+
             String[] actualizar = action.split(Data.SUBSPLIT);
             String nombre = actualizar[0];
             String clave = actualizar[1];
@@ -280,7 +291,8 @@ public class Nodo implements Runnable {
             if (actualizar.length > 4) {
                 offset = Integer.parseInt(actualizar[4]);
             }
-            actualizar(nombre, clave, posicion - offset, valor);
+            String valorAnterior = actualizar(nombre, clave, posicion - offset, valor);
+            TuplaD.writeLog(msg + Data.SPLIT + valorAnterior);
         } else if (subject.equals(Data.SUBJECT_INICIO)) {
             // No hacer nada.
         } else if (subject.equals(Data.SUBJECT_ROLLBACK)) {
@@ -293,24 +305,11 @@ public class Nodo implements Runnable {
     public int rollback(String msg) {
         lastMsg = msg;
         String[] msg_split = msg.split(Data.SPLIT);
-        String subject = msg_split[0];
+        String subject = msg_split[1];
         System.out.println("Subject> " + subject);
-        String action = msg_split[1];
+        String action = msg_split[2];
 
-        if (subject.equals(Data.SUBJECT_LEAVING)) {
-
-        } else if (subject.equals(Data.SUBJECT_CARDINALIDAD)) {
-        } else if (subject.equals(Data.SUBJECT_JOINING)) {
-        } else if (subject.equals(Data.SUBJECT_CREAR)) {
-            String[] rollbackCrear = action.split(Data.SUBSPLIT);
-            String nombre = rollbackCrear[0];
-            eliminar(nombre);
-
-        } else if (subject.equals(Data.SUBJECT_ELIMINAR)) {
-            // buscar en el log el valor de la tupla;
-            // return dimension de la tupla;
-
-        } else if (subject.equals(Data.SUBJECT_INSERTAR)) {
+        if (subject.equals(Data.SUBJECT_INSERTAR)) {
             String nombre = action;
             String[] elementos = msg_split[2].split(Data.SUBSPLIT);
             List<String> tupla = new ArrayList<String>();
@@ -329,7 +328,6 @@ public class Nodo implements Runnable {
             int borrados = 0; // buscar en el log aquí.
             out.println(borrados);
 
-        } else if (subject.equals(Data.SUBJECT_BUSCAR)) {
         } else if (subject.equals(Data.SUBJECT_ACTUALIZAR)) {
             String[] actualizar = action.split(Data.SUBSPLIT);
             String nombre = actualizar[0];

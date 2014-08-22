@@ -130,11 +130,13 @@ public class Conjuntos {
       * @param posicion Posicion de la tupla a actualizar
       * @param valor Valor nuevo del elemento
       */  
-    public synchronized void set(String nombre, String clave, int posicion, String valor) {
+    public synchronized String set(String nombre, String clave, int posicion, String valor) {
         ConjuntoTupla cjto = _conjuntos.get(nombre);
         if (cjto.exists(clave)) {
-            cjto.set(clave, posicion, valor);
+            String e = cjto.set(clave, posicion, valor);
+            return e;
         }
+        return "";
     }
 
       /**

@@ -196,13 +196,15 @@ public class ConjuntoTupla implements Serializable {
       * @param posicion Posición de la tupla a modificar
       * @param valor El nuevo valor del elemento
       */
-    public void set(String clave, int posicion, String valor) {
+    public String set(String clave, int posicion, String valor) {
         List<String> elementos = _tuplas.get(clave);
         System.out.println("\nELEMENTOS " + elementos + " // posicion " + posicion);
         if (0 <= posicion && posicion < elementos.size()) {
             String e = elementos.set(posicion, valor);
             System.out.println("\tPrevious: " + e + " | now: " + valor);
+            return e;
         }
+        return "";
     }
 
     /**

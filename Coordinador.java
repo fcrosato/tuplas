@@ -45,6 +45,12 @@ class Coordinador implements Runnable {
             String[] msg_split = msg.split(Data.SPLIT);
             String subject = msg_split[0];
             System.out.println("Subject> " + subject);
+
+            if (subject.equals(Data.SUBJECT_ROLLBACK)) {
+                out.println(msg);
+                return "";    
+            }
+
             String action = msg_split[1];
 
             if (subject.equals(Data.SUBJECT_LEAVING)) {
