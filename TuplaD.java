@@ -69,7 +69,7 @@ public class TuplaD implements TuplaDInterfaz {
                 c = socket_servidor.get(s);
                 int exito = Integer.parseInt(c.getAction(msg));
                 servidores.add(s);
-            } catch (NumberFormatException e) {
+            } catch (NumberFormatException | NullPointerException e) {
                 Data.printErr(Data.ERR_CREAR);
                 Data.printErr(Data.ERR_SERVIDOR + s);
             }
@@ -112,7 +112,7 @@ public class TuplaD implements TuplaDInterfaz {
                 try {
                     c = socket_servidor.get(s);
                     eliminados = Integer.parseInt(c.getAction(msg));
-                } catch (NumberFormatException e) {
+                } catch (NumberFormatException | NullPointerException e) {
                     Data.printErr(Data.ERR_SERVIDOR + s);
                     socket_servidor.remove(s);
                 }
@@ -193,7 +193,7 @@ public class TuplaD implements TuplaDInterfaz {
                     g = socket_servidor.get(s);
                     insertados = Integer.parseInt(g.getAction(msg + tupla));
                     servidores.add(s);
-                } catch (NumberFormatException e) {
+                } catch (NumberFormatException | NullPointerException e) {
                     commit = false;
                     socket_servidor.remove(s);
                     carga.remove(s);
@@ -260,7 +260,7 @@ public class TuplaD implements TuplaDInterfaz {
                 }
                 servidoresExitosos.add(s);
                 actualizarCarga(s, insertados);
-            } catch(NumberFormatException e) {
+            } catch(NumberFormatException | NullPointerException e) {
                 carga.remove(s);
                 socket_servidor.remove(s);
 
@@ -299,7 +299,7 @@ public class TuplaD implements TuplaDInterfaz {
             }
             servidorExitoso.add(servidor);
             actualizarCarga(servidor, insertados);
-        } catch (NumberFormatException e) {
+        } catch (NumberFormatException | NullPointerException e) {
             carga.remove(servidor);
             socket_servidor.remove(servidor);
 
@@ -364,7 +364,7 @@ public class TuplaD implements TuplaDInterfaz {
                         g.getAction(Data.SUBJECT_ROLLBACK + Data.SPLIT + msg));
 
                 actualizarCarga(s, -eliminados);
-            } catch (NumberFormatException e) {
+            } catch (NumberFormatException | NullPointerException e) {
                 Data.printErr("Falla en el servidor: " + s);
             }
         }
@@ -392,7 +392,7 @@ public class TuplaD implements TuplaDInterfaz {
                 try {
                     Coordinador g = socket_servidor.get(s);
                     borrados = Integer.parseInt(g.getAction(msg));
-                } catch(NumberFormatException e) {
+                } catch(NumberFormatException | NullPointerException e) {
                     carga.remove(s);
                     socket_servidor.remove(s);
                     commit = false;
@@ -491,7 +491,7 @@ public class TuplaD implements TuplaDInterfaz {
                         Coordinador g = socket_servidor.get(s);
                         int ack = Integer.parseInt(g.getAction(msg));
                         servidoresExitosos.add(s);
-                    } catch(NumberFormatException e) {
+                    } catch(NumberFormatException | NullPointerException e) {
                         carga.remove(s);
                         socket_servidor.remove(s);
                         commit = false;
@@ -519,7 +519,7 @@ public class TuplaD implements TuplaDInterfaz {
                             servidoresExitosos.add(s);
                             break;
                         }
-                    } catch(NumberFormatException e) {
+                    } catch(NumberFormatException | NullPointerException e) {
                         Data.printErr(Data.ERR_SERVIDOR + s);
                         carga.remove(s);
                         socket_servidor.remove(s);
