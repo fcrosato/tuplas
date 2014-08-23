@@ -532,7 +532,7 @@ public class TuplaD implements TuplaDInterfaz {
                     if (posicion < offset) {
                         System.out.println("Enviando a " + s + " | p:" + posicion + ", o:" + offset);
                         miPosicion = posicion - (offset - cardinalidad);
-                        valorAnterior = _tuplas.getValue(nombre, clave, posicion);
+                        valorAnterior = _tuplas.getValue(nombre, clave, miPosicion);
                         writeLog(msg + Data.SUBSPLIT + valorAnterior);
                         _tuplas.set(nombre, clave, miPosicion, valor);
                         servidoresExitosos.add(s);
