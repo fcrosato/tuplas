@@ -538,11 +538,13 @@ public class TuplaD implements TuplaDInterfaz {
             }
         }
 
+        /*
         if (! commit ) {
             if (miPosicion != -1) 
                 _tuplas.set(nombre, clave, miPosicion, valorAnterior);
             rollback(servidoresExitosos, (msg + Data.SUBSPLIT + valorAnterior));
         }
+        */
         Data.print(Data.EXITO_ACTUALIZAR);
         return Data.EXITO_ACTUALIZAR;
     }
