@@ -72,6 +72,7 @@ public class TuplaD implements TuplaDInterfaz {
                 servidores.add(s);
             } catch (NumberFormatException e) {
                 servidoresFallidos.add(s);
+                Data.printErr(Data.ERR_CREAR);
                 Data.printErr(Data.ERR_SERVIDOR + s);
             }
         }
@@ -634,6 +635,7 @@ public class TuplaD implements TuplaDInterfaz {
             byte[] localIp = InetAddress.getLocalHost().getAddress();
             _myAddress = InetAddress.getByAddress(localIp).getHostAddress();
             _servidores.add(new Servidor(_myAddress, 0));
+            socket_servidor.put(_myAddress, null);
             carga.put(_myAddress, 0);
             Data.print(_myAddress);
 
