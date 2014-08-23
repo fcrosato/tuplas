@@ -137,18 +137,17 @@ public class Nodo implements Runnable {
      * @return true si el valor se actualizó satisfactoriamente, 
      false en caso contrario.
      */
-    public String actualizar (String nombre, String clave, int posicion, String valor) {
-        if (TuplaD._tuplas.exists(nombre)) {
-            Data.print("Actualizando: "+
-                    "\tconjunto "+nombre +
-                    "\tclave: "+clave +
-                    "\tposicion: "+posicion +
-                    "\tvalor: "+valor);
-            String anterior = TuplaD._tuplas.set(nombre, clave, posicion, valor);
-            out.println(anterior);
-            return anterior;
+    public void actualizar (String nombre, String clave, int posicion, String valor) {
+        if (!TuplaD._tuplas.existsTuple(nombre, clave)) {
+            return;
         }
-        return "";
+        Data.print("Actualizando: "+
+                "\tconjunto "+nombre +
+                "\tclave: "+clave +
+                "\tposicion: "+posicion +
+                "\tvalor: "+valor);
+        TuplaD._tuplas.set(nombre, clave, posicion, valor);
+        return;
     }
 
     /**
@@ -316,8 +315,10 @@ public class Nodo implements Runnable {
                 return 0;
             }
 
-            String valorAnterior = actualizar(nombre, clave, posicion - offset, valor);
-            //TuplaD.writeLog(msg + Data.SPLIT + valorAnterior);
+            int miPosicion = posicion - offset;
+            String valorAnterior = TuplaD._tuplas.getValue(nombre, clave, miPosicion);
+            actualizar(nombre, clave, miPosicion, valor);
+            TuplaD.writeLog(msg + Data.SPLIT + valorAnterior);
             out.println(1);
         } else if (subject.equals(Data.SUBJECT_INICIO)) {
             // No hacer nada.
