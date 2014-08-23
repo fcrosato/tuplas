@@ -56,6 +56,7 @@ public class Data {
     public static final String ERR_INTENTOS      = "Demasiados intentos fallidos. Intente de nuevo";
     public static final String ERR_SERVIDOR      = "No se encontró disponible al servidor ";
     public static final String ERR_TIPO          = "Tipo inválido. Opciones -\n\t1 - segmentado\n\t2 - replicado\n\t3 - particionado";
+    public static final String ERR_EXISTE        = "No existe el conjunto "; 
 
     public static final String EXITO_CREAR       = "El conjunto se creó satisfactoriamente.";
     public static final String EXITO_ELIMINAR    = "El conjunto se eliminó satisfactoriamente.";

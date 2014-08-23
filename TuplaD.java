@@ -101,6 +101,9 @@ public class TuplaD implements TuplaDInterfaz {
      * @return true si se elimina la tupla, false en caso de que no exista.
      */
     public String eliminar (String nombre) {
+        if (! _tuplas.exists(nombre)) {
+            return Data.ERR_EXISTE + nombre;
+        }
         ConjuntoTupla cjto = _tuplas.get(nombre);
         List<String> tuplaServidores = cjto.servidores(); 
         int tipo = cjto.tipo();
@@ -317,6 +320,9 @@ public class TuplaD implements TuplaDInterfaz {
      * @return true si se agrega la tupla, false en caso de fallas.
      */
     public String insertar (String nombre, List<String> ti) {
+        if (! _tuplas.exists(nombre)) {
+            return Data.ERR_EXISTE + nombre;
+        }
         boolean commit = true;
         int tipo = _tuplas.tipo(nombre);
         String tupla = concatenarTupla(ti);
@@ -369,6 +375,9 @@ public class TuplaD implements TuplaDInterfaz {
      * @return true si se agrega la tupla, false en caso de fallas.
      */
     public String borrar (String nombre, String clave) {
+        if (! _tuplas.exists(nombre)) {
+            return Data.ERR_EXISTE + nombre;
+        }
         List<String> tuplaAnterior = _tuplas.getElements(nombre, clave);
 
         List<String> tuplaServidores = _tuplas.servidores(nombre); 
@@ -412,6 +421,9 @@ public class TuplaD implements TuplaDInterfaz {
      * @return El conjunto de valores de la tupla.
      */
     public List<String> buscar (String nombre, String clave) {
+        if (! _tuplas.exists(nombre)) {
+            return Data.ERR_EXISTE + nombre;
+        }
         int tipo = _tuplas.tipo(nombre);
         String tupla = "";
         List<String> tuplaServidores = _tuplas.servidores(nombre); 
@@ -452,6 +464,9 @@ public class TuplaD implements TuplaDInterfaz {
      false en caso contrario.
      */
     public boolean actualizar (String nombre, String clave, int posicion, String valor) {
+        if (! _tuplas.exists(nombre)) {
+            return Data.ERR_EXISTE + nombre;
+        }
         String valorAnterior = _tuplas.getValue(nombre, clave, posicion);
         List<String> servidoresExitosos = new ArrayList<String>();
         int tipo = _tuplas.tipo(nombre);
@@ -530,6 +545,9 @@ public class TuplaD implements TuplaDInterfaz {
      * @return Información de configuración del conjunto de tuplas.
      */
     public String configuracion (String nombre) {
+        if (! _tuplas.exists(nombre)) {
+            return Data.ERR_EXISTE + nombre;
+        }
         String conf = _tuplas.config(nombre);
         return conf;
     }
