@@ -513,6 +513,7 @@ public class TuplaD implements TuplaDInterfaz {
                         int cardinalidad = Integer.parseInt(g.getAction(getCantidad));
                         offset += cardinalidad;
                         if (posicion < offset) {
+                            System.out.println("Enviando a " + s + " | p:" + posicion + ", o:" + offset);
                             msg += Data.SUBSPLIT + (offset - cardinalidad);
                             int ack = Integer.parseInt(g.getAction(msg));
                             servidoresExitosos.add(s);
@@ -529,6 +530,7 @@ public class TuplaD implements TuplaDInterfaz {
                     offset += cardinalidad;
 
                     if (posicion < offset) {
+                        System.out.println("Enviando a " + s + " | p:" + posicion + ", o:" + offset);
                         miPosicion = posicion - (offset - cardinalidad);
                         _tuplas.set(nombre, clave, miPosicion, valor);
                         servidoresExitosos.add(s);
