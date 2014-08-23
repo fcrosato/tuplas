@@ -172,6 +172,9 @@ public class Nodo implements Runnable {
      * @return la cardinalidad de la tupla
      */
     public int cardinalidad (String nombre, String clave) {
+        if (!TuplaD._tuplas.exists(nombre)) {
+            return 0;
+        }
         return TuplaD._tuplas.cardinalidad(nombre, clave);
     }
 
@@ -260,12 +263,18 @@ public class Nodo implements Runnable {
             String nombre = borrar[0];
             String clave = borrar[1];
 
+            int borrados = 0;
+            if (TuplaD._tuplas.exists(nombre)) {
+                out.println(borrados);
+                return 0;
+            }
+
             List<String> elementosAnteriores = TuplaD._tuplas.getElements(nombre, clave);
             String elementosBorrados = "";
             for (int i = 0; i < elementosAnteriores.size(); i++) 
                 elementosBorrados += elementosAnteriores.get(i) + Data.SUBSPLIT;
 
-            int borrados = borrar(nombre, clave);
+            borrados = borrar(nombre, clave);
             out.println(borrados);
             TuplaD.writeLog(Data.SUBJECT_BORRAR + Data.SPLIT + elementosBorrados);
         } else if (subject.equals(Data.SUBJECT_BUSCAR)) {
