@@ -342,7 +342,10 @@ public class Nodo implements Runnable {
                 offset = Integer.parseInt(actualizar[4]);
             }
             // buscar posicion - valor anterior en el log
+            Data.print("Empezando a actualizar...");
             actualizar(nombre, clave, posicion - offset, valor);
+            Data.print("Tupla actualizada");
+            return 0;
         } else if (subject.equals(Data.SUBJECT_INICIO)) {
             // 
         } else if (subject.equals(Data.SUBJECT_ROLLBACK)) {
