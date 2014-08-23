@@ -148,7 +148,6 @@ public class Nodo implements Runnable {
             out.println(anterior);
             return anterior;
         }
-        out.println("");
         return "";
     }
 
