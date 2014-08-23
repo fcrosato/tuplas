@@ -474,7 +474,7 @@ public class TuplaD implements TuplaDInterfaz {
         if (! _tuplas.exists(nombre)) {
             return Data.ERR_EXISTE + nombre; 
         }
-        String valorAnterior = _tuplas.getValue(nombre, clave, posicion);
+        String valorAnterior = "";
         List<String> servidoresExitosos = new ArrayList<String>();
         int tipo = _tuplas.tipo(nombre);
         boolean commit = true;
@@ -532,6 +532,8 @@ public class TuplaD implements TuplaDInterfaz {
                     if (posicion < offset) {
                         System.out.println("Enviando a " + s + " | p:" + posicion + ", o:" + offset);
                         miPosicion = posicion - (offset - cardinalidad);
+                        valorAnterior = _tuplas.getValue(nombre, clave, posicion);
+                        writeLog(msg + Data.SUBSPLIT + valorAnterior);
                         _tuplas.set(nombre, clave, miPosicion, valor);
                         servidoresExitosos.add(s);
                         break;
