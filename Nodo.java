@@ -264,7 +264,7 @@ public class Nodo implements Runnable {
             String clave = borrar[1];
 
             int borrados = 0;
-            if (TuplaD._tuplas.exists(nombre)) {
+            if (!TuplaD._tuplas.exists(nombre)) {
                 out.println(borrados);
                 return 0;
             }
