@@ -184,6 +184,7 @@ public class TuplaD implements TuplaDInterfaz {
                 }
             }
             i++;
+            System.out.println(tupla);
 
             int insertados = 0;
             if (!s.equals(_myAddress)) {
@@ -202,6 +203,7 @@ public class TuplaD implements TuplaDInterfaz {
             } else {
                 writeLog(msg + tupla);
                 String[] elementosTi = tupla.split(Data.SUBSPLIT);
+                System.out.println("Elementos ti: " + elementosTi);
                 List<String> tiLocal = new ArrayList<String>(); 
                 for (int j = 0; j < elementosTi.length; j++) {
                     tiLocal.add(elementosTi[i]);
