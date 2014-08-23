@@ -75,7 +75,7 @@ public class TuplaD implements TuplaDInterfaz {
             }
         }
 
-
+        servidores.add(_myAddress);
         ConjuntoTupla cjto = _tuplas.addNew(nombre, 0, tipo, servidores);
         writeLog(Data.SUBJECT_CREAR + Data.SPLIT + nombre + Data.SUBSPLIT + cjto.log());
         Data.print(Data.EXITO_CREAR);

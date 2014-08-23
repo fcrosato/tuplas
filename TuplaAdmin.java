@@ -214,7 +214,9 @@ public class TuplaAdmin {
         if (tipo == -1) {
             return "";
         }
-        return tuplad.crear(nombre, tipo);
+        String c = tuplad.crear(nombre, tipo);
+        println(c);
+        return c;
     }
 
     /**
