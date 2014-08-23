@@ -422,7 +422,7 @@ public class TuplaD implements TuplaDInterfaz {
      */
     public List<String> buscar (String nombre, String clave) {
         if (! _tuplas.exists(nombre)) {
-            return Data.ERR_EXISTE + nombre;
+            return new ArrayList<String>();
         }
         int tipo = _tuplas.tipo(nombre);
         String tupla = "";
@@ -465,7 +465,7 @@ public class TuplaD implements TuplaDInterfaz {
      */
     public boolean actualizar (String nombre, String clave, int posicion, String valor) {
         if (! _tuplas.exists(nombre)) {
-            return Data.ERR_EXISTE + nombre;
+            return false; 
         }
         String valorAnterior = _tuplas.getValue(nombre, clave, posicion);
         List<String> servidoresExitosos = new ArrayList<String>();
