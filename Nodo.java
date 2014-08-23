@@ -317,7 +317,7 @@ public class Nodo implements Runnable {
                 return 0;
             }
 
-            //String valorAnterior = actualizar(nombre, clave, posicion - offset, valor);
+            String valorAnterior = actualizar(nombre, clave, posicion - offset, valor);
             //TuplaD.writeLog(msg + Data.SPLIT + valorAnterior);
             out.println(1);
         } else if (subject.equals(Data.SUBJECT_INICIO)) {
