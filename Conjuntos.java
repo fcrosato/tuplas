@@ -110,6 +110,19 @@ public class Conjuntos {
       * @param nombre Nombre del conjunto
       * @return true si la tupla existe, false en caso contrario
       */
+    public synchronized boolean existsTuple(String nombre, String clave) {
+        if (!exists(nombre)) {
+            return false;
+        }
+        ConjuntoTupla cjto = get(nombre);
+        return cjto.exists(clave);
+    }
+    /**
+      * Método que determina si un conjunto de tuplas existe
+      *
+      * @param nombre Nombre del conjunto
+      * @return true si la tupla existe, false en caso contrario
+      */
     public synchronized boolean exists(String nombre) {
         return _conjuntos.containsKey(nombre);
     }
