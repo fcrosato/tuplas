@@ -205,8 +205,7 @@ public class TuplaD implements TuplaDInterfaz {
                 String[] elementosTi = tupla.split(Data.SUBSPLIT);
                 List<String> tiLocal = new ArrayList<String>(); 
                 for (int j = 0; j < elementosTi.length; j++) {
-                    System.out.println("Elementos ti: " + elementosTi[i]);
-                    tiLocal.add(elementosTi[i]);
+                    tiLocal.add(elementosTi[j]);
                 }
                 insertados = _tuplas.add(nombre, tiLocal); 
                 servidores.add(s);
