@@ -343,6 +343,7 @@ public class Nodo implements Runnable {
             }
             // buscar posicion - valor anterior en el log
             Data.print("Empezando a actualizar...");
+            System.out.println("HELLOOOOOO");
             actualizar(nombre, clave, posicion - offset, valor);
             Data.print("Tupla actualizada");
             return 0;
