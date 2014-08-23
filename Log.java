@@ -1,18 +1,16 @@
 import java.io.RandomAccessFile;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.BufferedWriter;
-import java.io.FileWriter;
-import java.io.File;
+import java.io.PrintWriter;
 
 
 public class Log {
     private static RandomAccessFile log;
-    private static BufferedWriter logWriter;
+    private static PrintWriter pw;
 
     Log() throws FileNotFoundException {
         try {
-            logWriter = new BufferedWriter(new FileWriter(new File(Data.LOG_PATH), true));
+            pw = new PrintWriter(Data.LOG_PATH);
             log = new RandomAccessFile(Data.LOG_PATH, "rw");
         } catch (Exception e) {
             e.printStackTrace();
@@ -20,13 +18,8 @@ public class Log {
     }
 
     public void writeLog(String logEntry) throws IOException {
-        /*
-        long length = log.length();
-        log.seek(length);
-        log.writeUTF(logEntry);
-        */
-        logWriter.write(logEntry);
-        logWriter.newLine();
+        pw.write(logEntry);
+        pw.flush();
     }
 
     public void redoLog() {
