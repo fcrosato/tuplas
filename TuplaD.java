@@ -255,6 +255,7 @@ public class TuplaD implements TuplaDInterfaz {
                     insertados = Integer.parseInt(g.getAction(msg));
                 } else {
                     writeLog(msg);
+                    System.out.println("Agregando en tuplas!! " + ti.toString());
                     insertados = _tuplas.add(nombre, ti); 
                 }
                 servidoresExitosos.add(s);
