@@ -356,7 +356,7 @@ public class Nodo implements Runnable {
             out.println(borrados);
 
         } else if (subject.equals(Data.SUBJECT_ACTUALIZAR)) {
-            String[] actualizar = action.split(Data.SUBSPLIT);
+            String[] actualizar = subject.split(Data.SUBSPLIT);
             String nombre = actualizar[0];
             String clave = actualizar[1];
             int posicion = Integer.parseInt(actualizar[2]);
@@ -366,7 +366,7 @@ public class Nodo implements Runnable {
                 offset = Integer.parseInt(actualizar[4]);
             }
             // buscar posicion - valor anterior en el log
-            actualizar(nombre, clave, posicion - offset, valor);
+            actualizar(nombre, clave, posicion - offset, action);
             return 0;
         } else if (subject.equals(Data.SUBJECT_INICIO)) {
             // 
