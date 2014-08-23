@@ -343,7 +343,7 @@ public class TuplaD implements TuplaDInterfaz {
 
         if (! commit ) 
             return Data.ERR_INSERTAR;
-        Data.print(Data.EXITO_INSERTAR); 
+        Data.print(Data.EXITO_INSERTAR + _tuplas.getElements(nombre, ti.get(0))); 
         return Data.EXITO_INSERTAR; 
     }
 
@@ -436,7 +436,9 @@ public class TuplaD implements TuplaDInterfaz {
                 tupla += g.getAction(msg);
             } else {
                 List<String> tuplaLocal = _tuplas.getElements(nombre, clave);
+                System.out.println("Antes del null");
                 if (tuplaLocal != null) {
+                    System.out.println("despues del null");
                     for (String t : tuplaLocal) {
                         tupla += t + Data.SUBSPLIT;
                     }
