@@ -64,6 +64,7 @@ public class TuplaD implements TuplaDInterfaz {
 
         String msg = Data.SUBJECT_CREAR + Data.SPLIT + nombre + Data.SUBSPLIT + tipo; 
 
+        Data.print("Antes del for");
         for (String s : socket_servidor.keySet()) {
             Coordinador c = null;
             try {
@@ -77,15 +78,21 @@ public class TuplaD implements TuplaDInterfaz {
             }
         }
 
+        Data.print("Despues del for");
         for (String s : servidoresFallidos)
             socket_servidor.remove(s);
 
+        Data.print("Antes de isEmpty");
         if (servidores.isEmpty()) {
             return Data.ERR_CREAR;
         }
+        Data.print("Despues de isEmpty");
         ConjuntoTupla cjto = _tuplas.addNew(nombre, 0, tipo, servidores);
-        //writeLog(Data.SUBJECT_CREAR + Data.SPLIT + nombre + Data.SUBSPLIT + cjto.log());
+        Data.print("Antes de LOG");
+        writeLog(Data.SUBJECT_CREAR + Data.SPLIT + nombre + Data.SUBSPLIT + cjto.log());
+        Data.print("Despues de LOG");
         Data.print(Data.EXITO_CREAR);
+        Data.print("Fin");
         return Data.EXITO_CREAR; 
     }
 
