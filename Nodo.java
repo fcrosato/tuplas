@@ -218,7 +218,12 @@ public class Nodo implements Runnable {
             String[] cardinalidad = action.split(Data.SUBSPLIT);
             String nombre = cardinalidad[0];
             String clave = cardinalidad[1];
-            int card = cardinalidad(nombre, clave);
+            int card = 0;
+            if (! TuplaD._tuplas.existsTuple(nombre, clave)) {
+                out.println(card);
+                return 0;
+            }
+            card = cardinalidad(nombre, clave);
             Data.print("Enviando cardinalidad de " + nombre + ": " + card);
             out.println(card);
         } else if (subject.equals(Data.SUBJECT_JOINING)) {
@@ -308,17 +313,13 @@ public class Nodo implements Runnable {
             }
 
             if (!TuplaD._tuplas.existsTuple(nombre, clave)) {
-                out.println(Data.ACK);
+                out.println(0);
                 return 0;
             }
 
-            Data.print("Empezando a actualizar...");
-            System.out.println("HELLOOOOOO");
-            String valorAnterior = actualizar(nombre, clave, posicion - offset, valor);
-            Data.print("Tupla actualizada");
-            TuplaD.writeLog(msg + Data.SPLIT + valorAnterior);
-            Data.print("Despues del log");
-            out.println(Data.ACK);
+            //String valorAnterior = actualizar(nombre, clave, posicion - offset, valor);
+            //TuplaD.writeLog(msg + Data.SPLIT + valorAnterior);
+            out.println(1);
         } else if (subject.equals(Data.SUBJECT_INICIO)) {
             // No hacer nada.
         } else if (subject.equals(Data.SUBJECT_ROLLBACK)) {
