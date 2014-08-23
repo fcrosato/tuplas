@@ -12,9 +12,10 @@ public class Log {
 
     Log() throws FileNotFoundException {
         try {
-        logWriter = new BufferedWriter(new FileWriter(new File(Data.LOG_PATH), true));
-        log = new RandomAccessFile(Data.LOG_PATH, "rw");
+            logWriter = new BufferedWriter(new FileWriter(new File(Data.LOG_PATH), true));
+            log = new RandomAccessFile(Data.LOG_PATH, "rw");
         } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 
