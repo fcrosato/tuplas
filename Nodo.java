@@ -294,8 +294,13 @@ public class Nodo implements Runnable {
             if (actualizar.length > 4) {
                 offset = Integer.parseInt(actualizar[4]);
             }
+            Data.print("Empezando a actualizar...");
+            System.out.println("HELLOOOOOO");
             String valorAnterior = actualizar(nombre, clave, posicion - offset, valor);
+            Data.print("Tupla actualizada");
             TuplaD.writeLog(msg + Data.SPLIT + valorAnterior);
+            Data.print("Despues del log");
+            return 0;
         } else if (subject.equals(Data.SUBJECT_INICIO)) {
             // No hacer nada.
         } else if (subject.equals(Data.SUBJECT_ROLLBACK)) {
@@ -342,10 +347,7 @@ public class Nodo implements Runnable {
                 offset = Integer.parseInt(actualizar[4]);
             }
             // buscar posicion - valor anterior en el log
-            Data.print("Empezando a actualizar...");
-            System.out.println("HELLOOOOOO");
             actualizar(nombre, clave, posicion - offset, valor);
-            Data.print("Tupla actualizada");
             return 0;
         } else if (subject.equals(Data.SUBJECT_INICIO)) {
             // 
