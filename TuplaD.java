@@ -423,6 +423,7 @@ public class TuplaD implements TuplaDInterfaz {
      */
     public List<String> buscar (String nombre, String clave) {
         if (! _tuplas.exists(nombre)) {
+            Data.print(Data.ERR_BUSCAR);
             return new ArrayList<String>();
         }
         int tipo = _tuplas.tipo(nombre);
@@ -450,6 +451,7 @@ public class TuplaD implements TuplaDInterfaz {
         for (int i = 0; i < elementos.length; i++) {
             resultado.add(elementos[i]);
         }
+        Data.print(Data.EXITO_BUSCAR);
         return resultado;
     }
 
