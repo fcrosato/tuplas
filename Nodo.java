@@ -306,13 +306,19 @@ public class Nodo implements Runnable {
             if (actualizar.length > 4) {
                 offset = Integer.parseInt(actualizar[4]);
             }
+
+            if (!TuplaD._tuplas.existsTuple(nombre, clave)) {
+                out.println(Data.ACK);
+                return 0;
+            }
+
             Data.print("Empezando a actualizar...");
             System.out.println("HELLOOOOOO");
             String valorAnterior = actualizar(nombre, clave, posicion - offset, valor);
             Data.print("Tupla actualizada");
             TuplaD.writeLog(msg + Data.SPLIT + valorAnterior);
             Data.print("Despues del log");
-            return 0;
+            out.println(Data.ACK);
         } else if (subject.equals(Data.SUBJECT_INICIO)) {
             // No hacer nada.
         } else if (subject.equals(Data.SUBJECT_ROLLBACK)) {
