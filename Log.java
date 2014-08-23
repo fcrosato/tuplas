@@ -1,18 +1,31 @@
 import java.io.RandomAccessFile;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.BufferedWriter;
+import java.io.FileWriter;
+import java.io.File;
+
 
 public class Log {
     private static RandomAccessFile log;
+    private static BufferedWriter logWriter;
 
     Log() throws FileNotFoundException {
+        try {
+        logWriter = new BufferedWriter(new FileWriter(new File(Data.LOG_PATH), true));
         log = new RandomAccessFile(Data.LOG_PATH, "rw");
+        } catch (Exception e) {
+        }
     }
 
     public void writeLog(String logEntry) throws IOException {
+        /*
         long length = log.length();
         log.seek(length);
         log.writeUTF(logEntry);
+        */
+        logWriter.write(logEntry);
+        logWriter.newLine();
     }
 
     public void redoLog() {

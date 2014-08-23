@@ -5,7 +5,7 @@ classes = $(sources:.java=.class)
 all: $(classes)
 
 clean :
-	rm -f *.class
+	rm -f *.class *.log
 
 %.class : %.java
 	$(JAVAC) $<
