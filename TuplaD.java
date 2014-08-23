@@ -7,7 +7,7 @@ import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
-import java.net.ConnectException;
+import java.rmi.ConnectException;
 
 import java.net.InetAddress;
 import java.net.UnknownHostException;
@@ -674,8 +674,10 @@ public class TuplaD implements TuplaDInterfaz {
             uso();
         } catch (ConnectException e) {
             Data.printErr("Problema creando la conexión RMI");
-        } catch (Exception e) {
-            e.printStackTrace();
+        } catch (UnknownHostException e) {
+            Data.printErr("Host desconocido");
+        } catch (IOException e) {
+            Data.printErr("Excepción de entrada/salida");
         }
     }
 }
