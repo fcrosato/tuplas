@@ -41,7 +41,7 @@ public class TuplaD implements TuplaDInterfaz {
         try {
             log.writeLog(accion);
         } catch(IOException e) {
-            System.err.println("Error escribiendo en el log.");
+            Data.printErr("Error escribiendo en el log.");
         }
     }
     /**
@@ -355,7 +355,7 @@ public class TuplaD implements TuplaDInterfaz {
 
                 actualizarCarga(s, -eliminados);
             } catch (NumberFormatException e) {
-                System.err.println("Falla en el servidor: " + s);
+                Data.printErr("Falla en el servidor: " + s);
             }
         }
     }
@@ -539,7 +539,7 @@ public class TuplaD implements TuplaDInterfaz {
     private static void uso() {
         String uso = "java TuplaD -s [nombre] -p [puerto] -c \n" +
             "java TuplaD -s [nombre] -p [puerto] -n [coordinador]";
-        System.err.println(uso);
+        Data.printErr(uso);
     }
 
 
@@ -552,7 +552,7 @@ public class TuplaD implements TuplaDInterfaz {
             (TuplaDInterfaz) UnicastRemoteObject.exportObject(tuplad, 0);
         Registry registry = LocateRegistry.getRegistry();
         registry.rebind(_nombre, stub);
-        System.out.println("TuplaD registrado");
+        Data.print("TuplaD registrado");
         return tuplad;
     }
 

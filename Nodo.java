@@ -180,12 +180,11 @@ public class Nodo implements Runnable {
     public void join() throws IOException {
         out.println(Data.SUBJECT_JOINING + Data.SPLIT + TuplaD._myAddress);
         String fromServer = in.readLine();
-        System.out.println("Joining> " + fromServer);
+        Data.print("Joining: " + fromServer);
 
         String[] all_servers = fromServer.split(Data.SPLIT);
 
         for (int i = 0; i < all_servers.length; i+=2) {
-            System.out.println(i+">");
             String ip = all_servers[i];
             int carga = Integer.parseInt(all_servers[i+1]);
             TuplaD._servidores.add(new Servidor(ip, carga));
@@ -204,7 +203,7 @@ public class Nodo implements Runnable {
         lastMsg = msg;
         String[] msg_split = msg.split(Data.SPLIT);
         String subject = msg_split[0];
-        System.out.println("Subject> " + subject);
+        Data.print("Subject: " + subject);
         String action = msg_split[1];
 
         if (subject.equals(Data.SUBJECT_LEAVING)) {
@@ -215,7 +214,7 @@ public class Nodo implements Runnable {
             String nombre = cardinalidad[0];
             String clave = cardinalidad[1];
             int card = cardinalidad(nombre, clave);
-            System.out.println("CARDINALIDAD> " + card);
+            Data.print("Enviando cardinalidad de " + nombre + ": " + card);
             out.println(card);
         } else if (subject.equals(Data.SUBJECT_JOINING)) {
             // TuplaD.socket_servidor.put(action, this);
@@ -276,7 +275,7 @@ public class Nodo implements Runnable {
                 out.println("");
                 return 0;
             }
-            System.out.println("RESPUESTA> " + respuesta);
+            Data.print("Enviando respuesta: " + respuesta);
             String tupla = "";
             for (int i=0; i<respuesta.size(); i++) {
                 tupla += respuesta.get(i) + Data.SUBSPLIT;
@@ -308,7 +307,7 @@ public class Nodo implements Runnable {
         lastMsg = msg;
         String[] msg_split = msg.split(Data.SPLIT);
         String subject = msg_split[1];
-        System.out.println("Subject> " + subject);
+        Data.print("Subject: " + subject);
         String action = msg_split[2];
 
         if (subject.equals(Data.SUBJECT_INSERTAR)) {
@@ -361,11 +360,11 @@ public class Nodo implements Runnable {
             join();
 
             while ((fromServer = in.readLine()) != null) {
-                System.out.println("Server: " + fromServer);
+                Data.print("Server: " + fromServer);
                 getAction(fromServer, in, out);
             }
         } catch (Exception e) {
-            System.err.println("TuplaD exception:");
+            Data.printErr("TuplaD exception:");
             e.printStackTrace();
         }
     }

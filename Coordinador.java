@@ -44,7 +44,7 @@ class Coordinador implements Runnable {
         try {
             String[] msg_split = msg.split(Data.SPLIT);
             String subject = msg_split[0];
-            System.out.println("Subject> " + subject);
+            Data.print("Subject: " + subject);
 
             if (subject.equals(Data.SUBJECT_ROLLBACK)) {
                 out.println(msg);
@@ -64,33 +64,33 @@ class Coordinador implements Runnable {
                     all_servers.append(s.ip).append(Data.SPLIT).append(s.carga).append(Data.SPLIT);
                 }
                 TuplaD._servidores.add(new Servidor(action, 0));
-                System.out.println("Joining> Enviando " + all_servers.toString());
+                Data.print("Enviando " + all_servers.toString());
                 out.println(all_servers.toString());
                 TuplaD.carga.put(action, 0);
                 for (String s : TuplaD.carga.keySet()) {
-                    System.out.println("serv> " + s + " | " + TuplaD.carga.get(s));
+                    Data.print("servidor: " + s + " | carga: " + TuplaD.carga.get(s));
                 }
 
             } else if (subject.equals(Data.SUBJECT_CREAR) || 
                     subject.equals(Data.SUBJECT_ACTUALIZAR)) { 
-                System.out.println("Enviando> " + msg);
+                Data.print("Enviando: " + msg);
                 out.println(msg);
                 String inputLine = in.readLine();
                 return inputLine;
             } else if (subject.equals(Data.SUBJECT_ELIMINAR) ||
                     subject.equals(Data.SUBJECT_BORRAR) ||
                     subject.equals(Data.SUBJECT_INSERTAR)) {
-                System.out.println("Enviando> " + msg);
+                Data.print("Enviando: " + msg);
                 out.println(msg);
                 String modificados = in.readLine();
                 return modificados;
             } else if (subject.equals(Data.SUBJECT_CARDINALIDAD)) {
-                System.out.println("Enviando> " + msg);
+                Data.print("Enviando> " + msg);
                 out.println(msg);
                 String card = in.readLine();
                 return card;
             } else if (subject.equals(Data.SUBJECT_BUSCAR)) {
-                System.out.println("Enviando> " + msg);
+                Data.print("Enviando> " + msg);
                 out.println(msg);
                 String inputLine = in.readLine();
                 return inputLine;
@@ -107,9 +107,9 @@ class Coordinador implements Runnable {
         try { 
             String inputLine, outputLine;
 
-            System.err.println("Starting socket server");
+            Data.print("Starting socket server");
             inputLine = in.readLine();
-            System.err.println("Client says: " + inputLine);
+            Data.print("Client says: " + inputLine);
             getAction(inputLine); 
             while(true) {}
         } catch (IOException e) {

@@ -46,7 +46,6 @@ public class Log {
             String entrada = log.readLine();
 
             while (!entrada.isEmpty() && i != length) {
-                System.out.println(i);
                 log.seek(log.length() - (++i));
                 entrada = log.readLine();
             }
@@ -55,10 +54,10 @@ public class Log {
             return result;
 
         } catch (FileNotFoundException e) {
-            System.out.println("No se encontró el archivo.");
+            Data.printErr("No se encontró el archivo.");
         } catch (IOException e) {
             e.printStackTrace();
-            System.out.println("Problemas leyendo el log.");
+            Data.printErr("Problemas leyendo el log.");
         }
         return -1;
     }
@@ -68,7 +67,7 @@ public class Log {
             long offset = nextLogEntryPosition();
             log.seek(offset);
             String entry = log.readLine();
-            System.out.println(entry);
+            Data.printErr(entry);
             return entry;
         } catch(IOException e) {
         }

@@ -69,11 +69,11 @@ public class Data {
     public static final int ACK = 1;
 
     public static void print(Object msg) {
-        System.out.println("\t> " + msg.toString());
+        System.out.println("> " + msg.toString());
     }
 
     public static void printErr(String msg) {
-        System.err.println("\t> " + msg);
+        System.err.println("> " + msg);
     }
 
 
