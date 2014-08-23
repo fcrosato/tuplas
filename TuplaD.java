@@ -84,7 +84,7 @@ public class TuplaD implements TuplaDInterfaz {
             return Data.ERR_CREAR;
         }
         ConjuntoTupla cjto = _tuplas.addNew(nombre, 0, tipo, servidores);
-        writeLog(Data.SUBJECT_CREAR + Data.SPLIT + nombre + Data.SUBSPLIT + cjto.log());
+        //writeLog(Data.SUBJECT_CREAR + Data.SPLIT + nombre + Data.SUBSPLIT + cjto.log());
         Data.print(Data.EXITO_CREAR);
         return Data.EXITO_CREAR; 
     }
@@ -635,7 +635,6 @@ public class TuplaD implements TuplaDInterfaz {
             byte[] localIp = InetAddress.getLocalHost().getAddress();
             _myAddress = InetAddress.getByAddress(localIp).getHostAddress();
             _servidores.add(new Servidor(_myAddress, 0));
-            socket_servidor.put(_myAddress, null);
             carga.put(_myAddress, 0);
             Data.print(_myAddress);
 
