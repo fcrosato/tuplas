@@ -519,6 +519,7 @@ public class TuplaD implements TuplaDInterfaz {
                             break;
                         }
                     } catch(NumberFormatException e) {
+                        Data.printErr(Data.ERR_EXISTE + s);
                         carga.remove(s);
                         socket_servidor.remove(s);
                         commit = false;
