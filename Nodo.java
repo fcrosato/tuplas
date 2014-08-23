@@ -236,6 +236,8 @@ public class Nodo implements Runnable {
             out.println(Data.ACK);
 
         } else if (subject.equals(Data.SUBJECT_ELIMINAR)) {
+            if (TuplaD._tuplas.exists(action)) 
+                return 0;
             ConjuntoTupla cjto = TuplaD._tuplas.get(action);
             int eliminados = eliminar(action);
             out.println(eliminados);
