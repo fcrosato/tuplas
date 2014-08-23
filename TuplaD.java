@@ -158,6 +158,9 @@ public class TuplaD implements TuplaDInterfaz {
      * @return true si se agrega la tupla, false en caso de fallas.
      */
     public boolean insertarSegmentado(String nombre, List<String> ti, List<String> tuplaServidores) {
+        if (tuplaServidores.isEmpty()) {
+            return false;
+        }
         String msg = Data.SUBJECT_INSERTAR + Data.SPLIT + nombre + Data.SPLIT;
 
         int i = 0, tuplaIndex = 1, elementos = ti.size() - 1;
@@ -198,8 +201,12 @@ public class TuplaD implements TuplaDInterfaz {
                 }
             } else {
                 writeLog(msg + tupla);
-                String[] t = tupla.split(Data.SUBSPLIT);
-                insertados = _tuplas.add(nombre, Arrays.asList(t)); 
+                String[] elementosTi = tupla.split(Data.SUBSPLIT);
+                List<String> tiLocal = new ArrayList<String>(); 
+                for (int j = 0; j < elementosTi.length; j++) {
+                    tiLocal.add(elementosTi[i]);
+                }
+                insertados = _tuplas.add(nombre, tiLocal); 
                 servidores.add(s);
             }
             actualizarCarga(s, insertados);
