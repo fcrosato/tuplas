@@ -296,14 +296,15 @@ public class TuplaAdmin {
       * @return true si el valor se actualizó satisfactoriamente, 
                 false en caso contrario.
       */
-    public static boolean actualizar (TuplaDInterfaz tuplad, Scanner in) throws RemoteException {
+    public static String actualizar (TuplaDInterfaz tuplad, Scanner in) throws RemoteException {
         println(Data.MSG_ACTUALIZAR);
         String nombre = getNombre(in);
         String clave = getClave(in);
         int posicion = getPosicion(in);
         String valor = getValor(in);
-        System.out.println("Actualizando");
-        return tuplad.actualizar(nombre, clave, posicion, valor);
+        String a = tuplad.actualizar(nombre, clave, posicion, valor);
+        println(a);
+        return a;
     }
 
     /**

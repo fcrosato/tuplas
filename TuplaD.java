@@ -469,9 +469,9 @@ public class TuplaD implements TuplaDInterfaz {
      * @return true si el valor se actualizó satisfactoriamente, 
      false en caso contrario.
      */
-    public boolean actualizar (String nombre, String clave, int posicion, String valor) {
+    public String actualizar (String nombre, String clave, int posicion, String valor) {
         if (! _tuplas.exists(nombre)) {
-            return false; 
+            return Data.ERR_EXISTE + nombre; 
         }
         String valorAnterior = _tuplas.getValue(nombre, clave, posicion);
         List<String> servidoresExitosos = new ArrayList<String>();
@@ -541,7 +541,8 @@ public class TuplaD implements TuplaDInterfaz {
                 _tuplas.set(nombre, clave, miPosicion, valorAnterior);
             rollback(servidoresExitosos, (msg + Data.SUBSPLIT + valorAnterior));
         }
-        return true;
+        Data.print(Data.EXITO_ACTUALIZAR);
+        return Data.EXITO_ACTUALIZAR;
     }
 
     /**

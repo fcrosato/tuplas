@@ -67,7 +67,7 @@ public interface TuplaDInterfaz extends Remote
       * @return true si el valor se actualizó satisfactoriamente, 
                 false en caso contrario.
       */
-    public boolean actualizar (String nombre, String clave, int posicion, 
+    public String actualizar (String nombre, String clave, int posicion, 
             String valor) throws RemoteException;
 
     /**
