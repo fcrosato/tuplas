@@ -520,10 +520,11 @@ public class TuplaD implements TuplaDInterfaz {
                             break;
                         }
                     } catch(NumberFormatException e) {
-                        Data.printErr(Data.ERR_EXISTE + s);
+                        Data.printErr(Data.ERR_SERVIDOR + s);
                         carga.remove(s);
                         socket_servidor.remove(s);
                         commit = false;
+                        break;
                     }
                 } else {
                     int cardinalidad =  _tuplas.cardinalidad(nombre, clave);
