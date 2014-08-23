@@ -18,7 +18,7 @@ public class Log {
     }
 
     public void writeLog(String logEntry) throws IOException {
-        pw.write(logEntry);
+        pw.println(logEntry);
         pw.flush();
     }
 
