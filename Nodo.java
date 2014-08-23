@@ -145,8 +145,10 @@ public class Nodo implements Runnable {
                     "\tposicion: "+posicion +
                     "\tvalor: "+valor);
             String anterior = TuplaD._tuplas.set(nombre, clave, posicion, valor);
+            out.println(anterior);
             return anterior;
         }
+        out.println("");
         return "";
     }
 
