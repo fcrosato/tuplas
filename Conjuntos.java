@@ -41,6 +41,10 @@ public class Conjuntos {
       * @return el tipo del conjunto
       */
     public synchronized int tipo(String nombre) {
+        if (! exists(nombre) ) {
+            return -1;
+        }
+
         return _conjuntos.get(nombre).tipo();
     }
     
