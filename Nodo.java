@@ -181,7 +181,7 @@ public class Nodo implements Runnable {
      * Método para realizar el protocolo de ingreso al sistema distribuido.
      */
     public void join() throws IOException {
-        out.println(Data.SUBJECT_JOINING + Data.SPLIT + TuplaD._myAddress);
+        out.println(Data.SUBJECT_JOINING + Data.SPLIT + TuplaD._myName);
         String fromServer = in.readLine();
         Data.print(TuplaD._myName, "Joining: " + fromServer);
 

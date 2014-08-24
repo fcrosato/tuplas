@@ -34,7 +34,7 @@ public class TuplaD implements TuplaDInterfaz {
     public static List<Servidor> _servidores;
 
     private static String _hostCoordinador = "";
-    private static String _nombre          = "";
+    private static String _nombre          = "TuplaD";
     public static Conjuntos _tuplas        = new Conjuntos();
     public static boolean _coordinador     = false;
     private static int _puerto;
@@ -76,7 +76,7 @@ public class TuplaD implements TuplaDInterfaz {
             }
         }
 
-        servidores.add(_myAddress);
+        servidores.add(_myName);
         ConjuntoTupla cjto = _tuplas.addNew(nombre, 0, tipo, servidores);
         writeLog(Data.SUBJECT_CREAR + Data.SPLIT + nombre + Data.SUBSPLIT + cjto.log());
         Data.print(_myName, Data.EXITO_CREAR);
@@ -624,7 +624,7 @@ public class TuplaD implements TuplaDInterfaz {
         try {
             for (int i = 0; i < args.length; i++) {
                 if (args[i].equals("-s")) {
-                    _nombre = args[i+1];
+                    _myName = args[i+1];
                     i++;
 
                 } else if (args[i].equals("-c")) {
@@ -669,7 +669,7 @@ public class TuplaD implements TuplaDInterfaz {
             carga.put(_myAddress, 0);
 
             InetAddress addr = InetAddress.getByName(_myAddress);
-            _myName = addr.getHostName();
+            //_myName = addr.getHostName();
 
             Data.print(_myName, Data.MSG_STARTUP);
 
