@@ -275,7 +275,7 @@ public class TuplaD implements TuplaDInterfaz {
 
                 int eliminados = _tuplas.rollback(nombre, ti);
                 actualizarCarga(_myAddress, -eliminados);
-                rollback (servidoresExitosos, Data.MSG_INSERTAR);
+                rollback (servidoresExitosos, Data.SUBJECT_INSERTAR);
                 return false; 
             }
         }
