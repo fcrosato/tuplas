@@ -407,7 +407,7 @@ public class TuplaD implements TuplaDInterfaz {
         List<String> tuplaAnterior = new ArrayList<String>();
         tuplaAnterior.add(clave);
         List<String> elementos = _tuplas.getElements(nombre, clave);
-        if (!elementos.isEmpty()) {
+        if (elementos != null && !elementos.isEmpty()) {
             for (String a : elementos) {
                 tuplaAnterior.add(new String(a));
             }
