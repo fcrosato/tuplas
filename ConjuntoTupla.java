@@ -174,9 +174,10 @@ public class ConjuntoTupla implements Serializable {
       */
     public String listarElementos() {
         String result = "";
+        int i = 0;
         for (String key : _tuplas.keySet()) {
             //result += (key + ">" + listar(_tuplas.get(key)) + "\n");
-            result += ("\t\t" + key + ":" + _tuplas.get(key).toString() + "\n"); 
+            result += ("\n\t\t" + i + ") (" + key + ":" + _tuplas.get(key).toString() + ")"); 
         }
         return result;
     }
@@ -229,7 +230,7 @@ public class ConjuntoTupla implements Serializable {
         String tupla = "\n" +
             "\tDimensión:  " + _dimension + "\n" +
             "\tTipo:       " + nombreTipo(_tipo) + "\n" +
-            "\tElementos:\n" + listarElementos() + "\n" +
+            "\tElementos:  " + listarElementos() + "\n" +
             "\tServidores: " + listarServidores();
 
         return tupla;
