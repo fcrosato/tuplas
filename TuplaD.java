@@ -113,7 +113,7 @@ public class TuplaD implements TuplaDInterfaz {
         int eliminados = 0;
         for (String s : tuplaServidores) {
             Coordinador c = null;
-            if (!s.equals(_myAddress)) {
+            if (!s.equals(_myName)) {
                 try {
                     c = socket_servidor.get(s);
                     eliminados = Integer.parseInt(c.getAction(msg));
@@ -196,7 +196,7 @@ public class TuplaD implements TuplaDInterfaz {
             System.out.println(tupla);
 
             int insertados = 0;
-            if (!s.equals(_myAddress)) {
+            if (!s.equals(_myName)) {
                 Coordinador g = null;
                 try {
                     g = socket_servidor.get(s);
@@ -223,7 +223,7 @@ public class TuplaD implements TuplaDInterfaz {
         }
         if (! commit) {
             int eliminados = _tuplas.rollback(nombre, ti);
-            actualizarCarga(_myAddress, -eliminados);
+            actualizarCarga(_myName, -eliminados);
             rollback(servidores, Data.SUBJECT_INSERTAR);
         }
         writeLog(msg);
@@ -259,7 +259,7 @@ public class TuplaD implements TuplaDInterfaz {
 
         for (String s: servidores) {
             try {
-                if (!s.equals(_myAddress)) {
+                if (!s.equals(_myName)) {
                     Coordinador g = socket_servidor.get(s);
                     insertados = Integer.parseInt(g.getAction(msg));
                 } else {
@@ -274,7 +274,7 @@ public class TuplaD implements TuplaDInterfaz {
                 socket_servidor.remove(s);
 
                 int eliminados = _tuplas.rollback(nombre, ti);
-                actualizarCarga(_myAddress, -eliminados);
+                actualizarCarga(_myName, -eliminados);
                 rollback (servidoresExitosos, Data.SUBJECT_INSERTAR);
                 return false; 
             }
@@ -302,7 +302,7 @@ public class TuplaD implements TuplaDInterfaz {
         }
 
         try {
-            if (!servidor.equals(_myAddress)) {
+            if (!servidor.equals(_myName)) {
                 Coordinador g = socket_servidor.get(servidor);
                 insertados = Integer.parseInt(g.getAction(msg));
             } else {
@@ -315,9 +315,9 @@ public class TuplaD implements TuplaDInterfaz {
             carga.remove(servidor);
             socket_servidor.remove(servidor);
 
-            if (servidor.equals(_myAddress)) {
+            if (servidor.equals(_myName)) {
                 int eliminados = _tuplas.rollback(nombre, ti);
-                actualizarCarga(_myAddress, -eliminados);
+                actualizarCarga(_myName, -eliminados);
             } else {
                 rollback (servidorExitoso, Data.SUBJECT_INSERTAR);
             }
@@ -400,7 +400,7 @@ public class TuplaD implements TuplaDInterfaz {
         int borrados = 0;
         boolean commit = true;
         for (String s : tuplaServidores) {
-            if (!s.equals(_myAddress)) {
+            if (!s.equals(_myName)) {
                 try {
                     Coordinador g = socket_servidor.get(s);
                     borrados = Integer.parseInt(g.getAction(msg));
@@ -445,7 +445,7 @@ public class TuplaD implements TuplaDInterfaz {
         List<String> tuplaServidores = _tuplas.servidores(nombre); 
         String msg = Data.SUBJECT_BUSCAR + Data.SPLIT + nombre + Data.SUBSPLIT + clave;
         for (String s : tuplaServidores) {
-            if (!s.equals(_myAddress)) {
+            if (!s.equals(_myName)) {
                 Coordinador g = socket_servidor.get(s);
                 try {
                     tupla += g.getAction(msg);
@@ -502,7 +502,7 @@ public class TuplaD implements TuplaDInterfaz {
         List<String> tuplaServidores = _tuplas.servidores(nombre); 
         if (tipo == Data.REPLICADO || tipo == Data.PARTICIONADO) {
             for (String s : tuplaServidores) {
-                if (!s.equals(_myAddress)) {
+                if (!s.equals(_myName)) {
                     try {
                         Coordinador g = socket_servidor.get(s);
                         int ack = Integer.parseInt(g.getAction(msg));
@@ -523,7 +523,7 @@ public class TuplaD implements TuplaDInterfaz {
             String getCantidad = Data.SUBJECT_CARDINALIDAD + Data.SPLIT + 
                 nombre + Data.SUBSPLIT + clave;
             for (String s : tuplaServidores) {
-                if (!s.equals(_myAddress)) {
+                if (!s.equals(_myName)) {
                     try {
                         Coordinador g = socket_servidor.get(s);
                         int cardinalidad = Integer.parseInt(g.getAction(getCantidad));
@@ -665,8 +665,8 @@ public class TuplaD implements TuplaDInterfaz {
             _servidores = new ArrayList<Servidor>();
             byte[] localIp = InetAddress.getLocalHost().getAddress();
             _myAddress = InetAddress.getByAddress(localIp).getHostAddress();
-            _servidores.add(new Servidor(_myAddress, 0));
-            carga.put(_myAddress, 0);
+            _servidores.add(new Servidor(_myName, 0));
+            carga.put(_myName, 0);
 
             InetAddress addr = InetAddress.getByName(_myAddress);
             //_myName = addr.getHostName();
