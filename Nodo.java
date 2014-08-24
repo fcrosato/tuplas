@@ -363,7 +363,7 @@ public class Nodo implements Runnable {
             String[] msgAnterior = lastEntry.split(Data.SPLIT);
             String tuplaAnterior = msgAnterior[2];
 
-            String[] elementos = tuplaAnterior.substring(1, tuplaAnterior.length() - 2).split(Data.SUBSPLIT);
+            String[] elementos = tuplaAnterior.split(Data.SUBSPLIT);
             List<String> tupla = new ArrayList<String>();
             for (int i = 0; i < elementos.length; i++) 
                 tupla.add(elementos[i]);
