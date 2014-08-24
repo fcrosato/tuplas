@@ -373,7 +373,7 @@ public class Nodo implements Runnable {
                 }
             }
 
-            String tuplaAnterior = msgAnterior[3];
+            String tuplaAnterior = msgAnterior[2];
 
             String[] elementos = tuplaAnterior.split(Data.SUBSPLIT);
             List<String> tupla = new ArrayList<String>();
