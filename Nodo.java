@@ -361,7 +361,7 @@ public class Nodo implements Runnable {
 
             String lastEntry = TuplaD.log.readEntry();
             String[] msgAnterior = lastEntry.split(Data.SPLIT);
-            String tuplaAnterior = msgAnterior[2];
+            String tuplaAnterior = msgAnterior[3];
 
             String[] elementos = tuplaAnterior.split(Data.SUBSPLIT);
             List<String> tupla = new ArrayList<String>();
