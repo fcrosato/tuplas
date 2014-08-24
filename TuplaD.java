@@ -555,6 +555,8 @@ public class TuplaD implements TuplaDInterfaz {
             if (miPosicion != -1) 
                 _tuplas.set(nombre, clave, miPosicion, valorAnterior);
             rollback(servidoresExitosos, (msg + Data.SUBSPLIT + valorAnterior));
+            Data.print(Data.ERR_ACTUALIZAR);
+            return Data.ERR_ACTUALIZAR;
         }
         Data.print(Data.EXITO_ACTUALIZAR);
         return Data.EXITO_ACTUALIZAR;
