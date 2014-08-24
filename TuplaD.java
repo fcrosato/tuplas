@@ -405,6 +405,7 @@ public class TuplaD implements TuplaDInterfaz {
             return Data.ERR_EXISTE + nombre;
         }
         List<String> tuplaAnterior = _tuplas.getElements(nombre, clave);
+        System.out.println("La tupla anterior es: " + tuplaAnterior);
 
         List<String> tuplaServidores = _tuplas.servidores(nombre); 
         String msg = Data.SUBJECT_BORRAR + Data.SPLIT + nombre + Data.SUBSPLIT + clave;
@@ -434,7 +435,7 @@ public class TuplaD implements TuplaDInterfaz {
             if (msgAnterior[0].equals(Data.SUBJECT_BORRAR)) {
                 _tuplas.add(clave, tuplaAnterior);
             }
-            rollback(tuplaServidores, Data.MSG_BORRAR);
+            rollback(tuplaServidores, Data.MSG_BORRAR + Data.SPLIT + nombre + Data.SUBSPLIT + clave);
         }
         Data.print(_myName, Data.EXITO_BORRAR); 
         Data.print(TuplaD._myName, _tuplas.get(nombre).toString());
