@@ -285,7 +285,7 @@ public class Nodo implements Runnable {
 
             borrados = borrar(nombre, clave);
             out.println(borrados);
-            TuplaD.writeLog(Data.SUBJECT_BORRAR + Data.SPLIT + elementosBorrados);
+            TuplaD.writeLog(Data.SUBJECT_BORRAR + Data.SPLIT + nombre + Data.SPLIT + clave + Data.SPLIT + elementosBorrados);
         } else if (subject.equals(Data.SUBJECT_BUSCAR)) {
             String buscar[] = action.split(Data.SUBSPLIT);
             String nombre = buscar[0];
@@ -358,7 +358,17 @@ public class Nodo implements Runnable {
             String rollbackBorrar[] = action.split(Data.SUBSPLIT);
             String nombre = rollbackBorrar[0];
             String clave = rollbackBorrar[1];
-            int borrados = 0; // buscar en el log aquí.
+
+            String lastEntry = TuplaD.log.readEntry();
+            String[] msgAnterior = lastEntry.split(Data.SPLIT);
+            String tuplaAnterior = msgAnterior[2];
+
+            String[] elementos = tuplaAnterior.substring(1, tuplaAnterior.length() - 2).split(Data.SUBSPLIT);
+            List<String> tupla = new ArrayList<String>();
+            for (int i = 0; i < elementos.length; i++) 
+                tupla.add(elementos[i]);
+
+            int borrados = insertar(nombre, tupla); // buscar en el log aquí.
             out.println(borrados);
 
         } else if (subject.equals(Data.SUBJECT_ACTUALIZAR)) {

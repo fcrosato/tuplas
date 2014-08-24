@@ -440,7 +440,7 @@ public class TuplaD implements TuplaDInterfaz {
                 Data.print(TuplaD._myName, "Rollback: Agregando " + tuplaAnterior + " en el conjunto " + nombre);
                 _tuplas.add(nombre, tuplaAnterior);
             }
-            rollback(tuplaServidores, Data.MSG_BORRAR + Data.SPLIT + nombre + Data.SUBSPLIT + clave);
+            rollback(tuplaServidores, Data.SUBJECT_BORRAR + Data.SPLIT + nombre + Data.SUBSPLIT + clave);
         }
         Data.print(_myName, Data.EXITO_BORRAR); 
         Data.print(TuplaD._myName, _tuplas.get(nombre).toString());

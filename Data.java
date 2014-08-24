@@ -51,10 +51,11 @@ public class Data {
     public static final String LOG_PATH          = "tuplas.log";
 
     public static final String ERR_ACTUALIZAR    = "La tupla no pudo ser modificada - ocurrió algún problema en los servidores";
+    public static final String ERR_BORRAR        = "No se pudo borrar la tupla - ocurrió un problema en los servidores";
     public static final String ERR_BUSCAR        = "No se encontró la tupla";
     public static final String ERR_CREAR         = "No se pudo crear la tupla - no hay servidores disponibles";
     public static final String ERR_DIMENSION     = "El número de elementos de una tupla debe ser mayor o igual a 2.";
-    public static final String ERR_ELIMINAR      = "No se pudo eliminar la tupla - ocurrió un problema en los servidores";
+    public static final String ERR_ELIMINAR      = "No se pudo eliminar el conjunto - ocurrió un problema en los servidores";
     public static final String ERR_INSERTAR      = "No se pudo insertar la tupla - ocurrió un problema en los servidores";
     public static final String ERR_INTENTOS      = "Demasiados intentos fallidos. Intente de nuevo";
     public static final String ERR_SERVIDOR      = "No se encontró disponible al servidor ";
