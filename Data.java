@@ -35,6 +35,7 @@ public class Data {
     public static final String MSG_NOMBRE        = "Nombre del conjunto de tuplas:";
     public static final String MSG_POSICION      = "Posición a actualizar:";
     public static final String MSG_SERVIDOR      = "La lista de servidores en las que se ubicará la tupla (escriba \"done\" para terminar)";
+    public static final String MSG_STARTUP       = "Iniciando servidor ";
     public static final String MSG_TIPO          = "Ingrese 1 si es segmentado, 2 si es replicado o 3 si es particionado.";
     public static final String MSG_VALOR         = "Valor nuevo:";
     public static final String MSG_MENU = "Ingrese el número de la acción a realizar:\n" +
@@ -74,12 +75,12 @@ public class Data {
 
     public static final int ACK = 1;
 
-    public static void print(Object msg) {
-        System.out.println("> " + msg.toString());
+    public static void print(String id, String msg) {
+        System.out.println(id + "> " + msg);
     }
 
-    public static void printErr(String msg) {
-        System.err.println("> " + msg);
+    public static void printErr(String id, String msg) {
+        System.err.println(id + "> " + msg);
     }
 
 

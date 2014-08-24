@@ -30,6 +30,7 @@ public class TuplaD implements TuplaDInterfaz {
     public static Log log;
 
     public static String _myAddress;
+    public static String _myName;
     public static List<Servidor> _servidores;
 
     private static String _hostCoordinador = "";
@@ -42,7 +43,7 @@ public class TuplaD implements TuplaDInterfaz {
         try {
             log.writeLog(accion);
         } catch(IOException e) {
-            Data.printErr("Error escribiendo en el log.");
+            Data.printErr(_myName, "Error escribiendo en el log.");
         }
     }
     /**
@@ -70,15 +71,15 @@ public class TuplaD implements TuplaDInterfaz {
                 int exito = Integer.parseInt(c.getAction(msg));
                 servidores.add(s);
             } catch (NumberFormatException | NullPointerException e) {
-                Data.printErr(Data.ERR_CREAR);
-                Data.printErr(Data.ERR_SERVIDOR + s);
+                Data.printErr(_myName, Data.ERR_CREAR);
+                Data.printErr(_myName, Data.ERR_SERVIDOR + s);
             }
         }
 
         servidores.add(_myAddress);
         ConjuntoTupla cjto = _tuplas.addNew(nombre, 0, tipo, servidores);
         writeLog(Data.SUBJECT_CREAR + Data.SPLIT + nombre + Data.SUBSPLIT + cjto.log());
-        Data.print(Data.EXITO_CREAR);
+        Data.print(_myName, Data.EXITO_CREAR);
         return Data.EXITO_CREAR; 
     }
 
@@ -117,7 +118,7 @@ public class TuplaD implements TuplaDInterfaz {
                     c = socket_servidor.get(s);
                     eliminados = Integer.parseInt(c.getAction(msg));
                 } catch (NumberFormatException | NullPointerException e) {
-                    Data.printErr(Data.ERR_SERVIDOR + s);
+                    Data.printErr(_myName, Data.ERR_SERVIDOR + s);
                     socket_servidor.remove(s);
                 }
             } else {
@@ -127,7 +128,7 @@ public class TuplaD implements TuplaDInterfaz {
             actualizarCarga(s, -eliminados);
         }
 
-        Data.print(Data.EXITO_ELIMINAR);
+        Data.print(_myName, Data.EXITO_ELIMINAR);
         return Data.EXITO_ELIMINAR; 
     }
 
@@ -205,7 +206,7 @@ public class TuplaD implements TuplaDInterfaz {
                     commit = false;
                     socket_servidor.remove(s);
                     carga.remove(s);
-                    Data.printErr(Data.ERR_SERVIDOR + s);
+                    Data.printErr(_myName, Data.ERR_SERVIDOR + s);
                     break;
                 }
             } else {
@@ -356,7 +357,7 @@ public class TuplaD implements TuplaDInterfaz {
 
         if (! commit ) 
             return Data.ERR_INSERTAR;
-        Data.print(Data.EXITO_INSERTAR + _tuplas.getElements(nombre, ti.get(0))); 
+        Data.print(_myName, Data.EXITO_INSERTAR + _tuplas.getElements(nombre, ti.get(0))); 
         return Data.EXITO_INSERTAR; 
     }
 
@@ -376,7 +377,7 @@ public class TuplaD implements TuplaDInterfaz {
 
                 actualizarCarga(s, -eliminados);
             } catch (NumberFormatException | NullPointerException e) {
-                Data.printErr("Falla en el servidor: " + s);
+                Data.printErr(_myName, "Falla en el servidor: " + s);
             }
         }
     }
@@ -423,7 +424,7 @@ public class TuplaD implements TuplaDInterfaz {
             }
             rollback(tuplaServidores, Data.MSG_BORRAR);
         }
-        Data.print(Data.EXITO_BORRAR); 
+        Data.print(_myName, Data.EXITO_BORRAR); 
         return Data.EXITO_BORRAR;
     }
 
@@ -436,7 +437,7 @@ public class TuplaD implements TuplaDInterfaz {
      */
     public List<String> buscar (String nombre, String clave) {
         if (! _tuplas.exists(nombre)) {
-            Data.print(Data.ERR_BUSCAR);
+            Data.print(_myName, Data.ERR_BUSCAR);
             return new ArrayList<String>();
         }
         int tipo = _tuplas.tipo(nombre);
@@ -470,7 +471,7 @@ public class TuplaD implements TuplaDInterfaz {
         for (int i = 0; i < elementos.length; i++) {
             resultado.add(elementos[i]);
         }
-        Data.print(Data.EXITO_BUSCAR);
+        Data.print(_myName, Data.EXITO_BUSCAR);
         return resultado;
     }
 
@@ -535,7 +536,7 @@ public class TuplaD implements TuplaDInterfaz {
                             break;
                         }
                     } catch(NumberFormatException | NullPointerException e) {
-                        Data.printErr(Data.ERR_SERVIDOR + s);
+                        Data.printErr(_myName, Data.ERR_SERVIDOR + s);
                         carga.remove(s);
                         socket_servidor.remove(s);
                         commit = false;
@@ -562,10 +563,10 @@ public class TuplaD implements TuplaDInterfaz {
             if (miPosicion != -1) 
                 _tuplas.set(nombre, clave, miPosicion, valorAnterior);
             rollback(servidoresExitosos, (msg + Data.SUBSPLIT + valorAnterior));
-            Data.print(Data.ERR_ACTUALIZAR);
+            Data.print(_myName, Data.ERR_ACTUALIZAR);
             return Data.ERR_ACTUALIZAR;
         }
-        Data.print(Data.EXITO_ACTUALIZAR);
+        Data.print(_myName, Data.EXITO_ACTUALIZAR);
         return Data.EXITO_ACTUALIZAR;
     }
 
@@ -589,7 +590,7 @@ public class TuplaD implements TuplaDInterfaz {
     private static void uso() {
         String uso = "java TuplaD -s [nombre] -p [puerto] -c \n" +
             "java TuplaD -s [nombre] -p [puerto] -n [coordinador]";
-        Data.printErr(uso);
+        Data.printErr(_myName, uso);
     }
 
 
@@ -602,7 +603,7 @@ public class TuplaD implements TuplaDInterfaz {
             (TuplaDInterfaz) UnicastRemoteObject.exportObject(tuplad, 0);
         Registry registry = LocateRegistry.getRegistry();
         registry.rebind(_nombre, stub);
-        Data.print("TuplaD registrado");
+        Data.print(_myName, "TuplaD registrado");
         return tuplad;
     }
 
@@ -666,21 +667,26 @@ public class TuplaD implements TuplaDInterfaz {
             _myAddress = InetAddress.getByAddress(localIp).getHostAddress();
             _servidores.add(new Servidor(_myAddress, 0));
             carga.put(_myAddress, 0);
-            Data.print(_myAddress);
+
+            InetAddress addr = InetAddress.getByName(_myAddress);
+            _myName = addr.getHostName();
+
+            Data.print(_myName, Data.MSG_STARTUP);
+
 
             if (_coordinador) {
                 registrarse();
                 while (true) {
                     try (ServerSocket serverSocket = new ServerSocket(_puerto)) { 
                         while (true) {
-                            Data.print("Esperando conexión");
+                            Data.print(_myName, "Esperando conexión");
                             Socket service = serverSocket.accept();
-                            Data.print("Conexión aceptada");
+                            Data.print(_myName, "Conexión aceptada");
                             Thread c = new Thread(new Coordinador(service));
                             c.start();
                         }
                     } catch (IOException e) {
-                        Data.printErr("Error escuchando por el puerto " + _puerto);
+                        Data.printErr(_myName, "Error escuchando por el puerto " + _puerto);
                         System.exit(-1);
                     }                
                 }
@@ -693,11 +699,11 @@ public class TuplaD implements TuplaDInterfaz {
         } catch (ArrayIndexOutOfBoundsException e) {
             uso();
         } catch (ConnectException e) {
-            Data.printErr("Problema creando la conexión RMI");
+            Data.printErr(_myName, "Problema creando la conexión RMI");
         } catch (UnknownHostException e) {
-            Data.printErr("Host desconocido");
+            Data.printErr(_myName, "Host desconocido");
         } catch (IOException e) {
-            Data.printErr("Excepción de entrada/salida");
+            Data.printErr(_myName, "Excepción de entrada/salida");
         }
     }
 }
