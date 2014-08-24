@@ -90,7 +90,7 @@ public class Nodo implements Runnable {
             Data.print(TuplaD._myName, "Insertando " + ti.toString() + " en el conjunto " + nombre);
             int agregados = TuplaD._tuplas.add(nombre, ti); 
             Data.print(TuplaD._myName, "Total elementos insertados: " + agregados);
-            Data.print(TuplaD._myName, TuplaD._tuplas.toString());
+            Data.print(TuplaD._myName, TuplaD._tuplas.get(nombre).toString());
             return agregados; 
         }
         return 0;
@@ -108,7 +108,7 @@ public class Nodo implements Runnable {
         if (TuplaD._tuplas.exists(nombre)) {
             Data.print(TuplaD._myName, "Eliminando tupla "+clave+" en el conjunto "+nombre);
             int borrados = TuplaD._tuplas.remove(nombre, clave);
-            Data.print(TuplaD._myName, TuplaD._tuplas.toString());
+            Data.print(TuplaD._myName, TuplaD._tuplas.get(nombre).toString());
             return borrados;
         }
         return 0;
@@ -149,7 +149,7 @@ public class Nodo implements Runnable {
                 "\tclave: "+clave +
                 "\tposicion: "+posicion +
                 "\tvalor: "+valor);
-        Data.print(TuplaD._myName, TuplaD._tuplas.toString());
+        Data.print(TuplaD._myName, TuplaD._tuplas.get(nombre)toString());
         TuplaD._tuplas.set(nombre, clave, posicion, valor);
     }
 
