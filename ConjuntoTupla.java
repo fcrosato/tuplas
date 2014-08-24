@@ -177,7 +177,7 @@ public class ConjuntoTupla implements Serializable {
         int i = 0;
         for (String key : _tuplas.keySet()) {
             //result += (key + ">" + listar(_tuplas.get(key)) + "\n");
-            result += ("\n\t\t" + i + ") (" + key + ":" + _tuplas.get(key).toString() + ")"); 
+            result += ("\n\t\t" + (i++) + ") (" + key + ":" + _tuplas.get(key).toString() + ")"); 
         }
         return result;
     }
