@@ -79,6 +79,7 @@ public class TuplaD implements TuplaDInterfaz {
         servidores.add(_myName);
         ConjuntoTupla cjto = _tuplas.addNew(nombre, 0, tipo, servidores);
         writeLog(Data.SUBJECT_CREAR + Data.SPLIT + nombre + Data.SUBSPLIT + cjto.log());
+        Data.print(_myName, "Creando conjunto " + nombre); 
         Data.print(_myName, Data.EXITO_CREAR);
         return Data.EXITO_CREAR; 
     }
@@ -128,6 +129,7 @@ public class TuplaD implements TuplaDInterfaz {
             actualizarCarga(s, -eliminados);
         }
 
+        Data.print(TuplaD._myName, "Eliminando conjunto " + nombre); 
         Data.print(_myName, Data.EXITO_ELIMINAR);
         return Data.EXITO_ELIMINAR; 
     }
@@ -210,6 +212,7 @@ public class TuplaD implements TuplaDInterfaz {
                     break;
                 }
             } else {
+                Data.print(TuplaD._myName, "Insertando " + tupla + " en el conjunto " + nombre);
                 writeLog(msg + tupla);
                 String[] elementosTi = tupla.split(Data.SUBSPLIT);
                 List<String> tiLocal = new ArrayList<String>(); 
@@ -264,7 +267,7 @@ public class TuplaD implements TuplaDInterfaz {
                     insertados = Integer.parseInt(g.getAction(msg));
                 } else {
                     writeLog(msg);
-                    System.out.println("Agregando en tuplas!! " + ti.toString());
+                    Data.print(TuplaD._myName, "Insertando " + ti.toString() + " en el conjunto " + nombre);
                     insertados = _tuplas.add(nombre, ti); 
                 }
                 servidoresExitosos.add(s);
@@ -306,6 +309,7 @@ public class TuplaD implements TuplaDInterfaz {
                 Coordinador g = socket_servidor.get(servidor);
                 insertados = Integer.parseInt(g.getAction(msg));
             } else {
+                Data.print(TuplaD._myName, "Insertando " + ti.toString() + " en el conjunto " + nombre);
                 writeLog(msg);
                 insertados = _tuplas.add(nombre, ti);
             }
@@ -358,6 +362,7 @@ public class TuplaD implements TuplaDInterfaz {
         if (! commit ) 
             return Data.ERR_INSERTAR;
         Data.print(_myName, Data.EXITO_INSERTAR + _tuplas.getElements(nombre, ti.get(0))); 
+        Data.print(TuplaD._myName, _tuplas.get(nombre).toString());
         return Data.EXITO_INSERTAR; 
     }
 
@@ -410,6 +415,7 @@ public class TuplaD implements TuplaDInterfaz {
                     commit = false;
                 }
             } else {
+                Data.print(TuplaD._myName, "Eliminando tupla "+clave+" en el conjunto "+nombre);
                 writeLog(msg + Data.SPLIT + _tuplas.getElements(nombre, clave));
                 borrados = _tuplas.remove(nombre, clave);
             }
@@ -425,6 +431,7 @@ public class TuplaD implements TuplaDInterfaz {
             rollback(tuplaServidores, Data.MSG_BORRAR);
         }
         Data.print(_myName, Data.EXITO_BORRAR); 
+        Data.print(TuplaD._myName, _tuplas.get(nombre).toString());
         return Data.EXITO_BORRAR;
     }
 
@@ -567,6 +574,7 @@ public class TuplaD implements TuplaDInterfaz {
             return Data.ERR_ACTUALIZAR;
         }
         Data.print(_myName, Data.EXITO_ACTUALIZAR);
+        Data.print(TuplaD._myName, _tuplas.get(nombre).toString());
         return Data.EXITO_ACTUALIZAR;
     }
 
