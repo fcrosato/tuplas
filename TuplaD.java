@@ -227,7 +227,7 @@ public class TuplaD implements TuplaDInterfaz {
         if (! commit) {
             int eliminados = _tuplas.rollback(nombre, ti);
             actualizarCarga(_myName, -eliminados);
-            rollback(servidores, Data.SUBJECT_INSERTAR);
+            rollback(servidores, Data.SUBJECT_INSERTAR + Data.SPLIT + nombre + Data.SUBSPLIT + tupla);
         }
         writeLog(msg);
         return commit;
@@ -278,7 +278,10 @@ public class TuplaD implements TuplaDInterfaz {
 
                 int eliminados = _tuplas.rollback(nombre, ti);
                 actualizarCarga(_myName, -eliminados);
-                rollback (servidoresExitosos, Data.SUBJECT_INSERTAR);
+                String tupla = "";
+                for (String elemento : ti)
+                    tupla += elemento + Data.SUBSPLIT;
+                rollback (servidoresExitosos, Data.SUBJECT_INSERTAR + Data.SPLIT + nombre + Data.SUBSPLIT + tupla);
                 return false; 
             }
         }
@@ -323,7 +326,10 @@ public class TuplaD implements TuplaDInterfaz {
                 int eliminados = _tuplas.rollback(nombre, ti);
                 actualizarCarga(_myName, -eliminados);
             } else {
-                rollback (servidorExitoso, Data.SUBJECT_INSERTAR);
+                String tupla = "";
+                for (String t : ti) 
+                    tupla += t + Data.SUBSPLIT;
+                rollback (servidorExitoso, Data.SUBJECT_INSERTAR + Data.SPLIT + nombre + Data.SUBSPLIT + tupla);
             }
             return false; 
         }
@@ -461,9 +467,7 @@ public class TuplaD implements TuplaDInterfaz {
                 }
             } else {
                 List<String> tuplaLocal = _tuplas.getElements(nombre, clave);
-                System.out.println("Antes del null");
                 if (tuplaLocal != null) {
-                    System.out.println("despues del null");
                     for (String t : tuplaLocal) {
                         tupla += t + Data.SUBSPLIT;
                     }

@@ -149,7 +149,7 @@ public class Nodo implements Runnable {
                 "\tclave: "+clave +
                 "\tposicion: "+posicion +
                 "\tvalor: "+valor);
-        Data.print(TuplaD._myName, TuplaD._tuplas.get(nombre)toString());
+        Data.print(TuplaD._myName, TuplaD._tuplas.get(nombre).toString());
         TuplaD._tuplas.set(nombre, clave, posicion, valor);
     }
 
