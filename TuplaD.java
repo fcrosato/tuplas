@@ -139,15 +139,19 @@ public class TuplaD implements TuplaDInterfaz {
      * @return un String con la dirección del servidor menos cargado 
      */
     private String servidorMenosCargado(List<String> servidores) {
-        String minServidor = servidores.get(0);
-        int minCarga = carga.get(minServidor);
-        for (String s : servidores) {
-            if (carga.get(s) < minCarga) {
-                minCarga = carga.get(s);
-                minServidor = s;
+        try {
+            String minServidor = servidores.get(0);
+            int minCarga = carga.get(minServidor);
+            for (String s : servidores) {
+                if (carga.get(s) < minCarga) {
+                    minCarga = carga.get(s);
+                    minServidor = s;
+                }
             }
+            return minServidor;
+        }catch(NullPointerException e) {
+            return "";
         }
-        return minServidor;
     }
 
 
@@ -292,6 +296,9 @@ public class TuplaD implements TuplaDInterfaz {
         List<String> servidorExitoso = new ArrayList<String>();
 
         String servidor = servidorMenosCargado(servidores);
+        if (servidor.equals("")) {
+            return false;
+        }
 
         try {
             if (!servidor.equals(_myAddress)) {
