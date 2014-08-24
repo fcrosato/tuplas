@@ -336,17 +336,20 @@ public class Nodo implements Runnable {
         lastMsg = msg;
         String[] msg_split = msg.split(Data.SPLIT);
         String subject = msg_split[1];
-        Data.print(TuplaD._myName, "Subject: " + subject);
+        Data.print(TuplaD._myName, msg);
         String action = msg_split[2];
 
         if (subject.equals(Data.SUBJECT_INSERTAR)) {
             String[] rollbackInsertar = action.split(Data.SUBSPLIT);
-            String nombre = rollbackInsertar[0];
-            List<String> tupla = new ArrayList<String>();
-            for (int i=1; i < rollbackInsertar.length; i++) {
-                tupla.add(rollbackInsertar[i]);
+            int eliminados = 0;
+            if (rollbackInsertar.length < 2) {
+                out.println(eliminados);
+                return 0;
             }
-            int eliminados = TuplaD._tuplas.rollback(nombre, tupla);
+            String nombre = rollbackInsertar[0];
+            String clave = rollbackInsertar[1];
+            
+            eliminados = borrar(nombre, clave);
             out.println(eliminados);
 
         } else if (subject.equals(Data.SUBJECT_BORRAR)) {
