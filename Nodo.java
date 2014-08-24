@@ -55,9 +55,9 @@ public class Nodo implements Runnable {
      * @return true si se crea satisfactoriamente, false en caso contrario.
      */
     public ConjuntoTupla crear(String nombre, int dimension, int tipo, List<String> servidores) {
-        Data.print("Creando conjunto " + nombre); 
+        Data.print(TuplaD._myName, "Creando conjunto " + nombre); 
         ConjuntoTupla cjto = TuplaD._tuplas.addNew(nombre, dimension, tipo, servidores);
-        Data.print(TuplaD._tuplas);
+        Data.print(TuplaD._myName, TuplaD._tuplas.toString());
         return cjto;    
     }
 
@@ -70,7 +70,7 @@ public class Nodo implements Runnable {
      */
     public int eliminar (String nombre) {
         if (TuplaD._tuplas.exists(nombre)) {
-            Data.print("Eliminando conjunto " + nombre); 
+            Data.print(TuplaD._myName, "Eliminando conjunto " + nombre); 
             return TuplaD._tuplas.clear(nombre);
         }
         return 0;
@@ -87,8 +87,8 @@ public class Nodo implements Runnable {
     public int insertar (String nombre, List<String> ti) {
 
         if (TuplaD._tuplas.exists(nombre)) {
-            Data.print("Insertando tupla en el conjunto " + nombre);
-            Data.print(ti);
+            Data.print(TuplaD._myName, "Insertando tupla en el conjunto " + nombre);
+            Data.print(TuplaD._myName, ti.toString());
             return TuplaD._tuplas.add(nombre, ti); 
         }
         return 0;
@@ -104,7 +104,7 @@ public class Nodo implements Runnable {
      */
     public int borrar (String nombre, String clave) {
         if (TuplaD._tuplas.exists(nombre)) {
-            Data.print("Eliminando tupla "+clave+" en el conjunto "+nombre);
+            Data.print(TuplaD._myName, "Eliminando tupla "+clave+" en el conjunto "+nombre);
             int borrados = TuplaD._tuplas.remove(nombre, clave);
             return borrados;
         }
@@ -121,7 +121,7 @@ public class Nodo implements Runnable {
     public List<String> buscar (String nombre, String clave) {
         List<String> result = new ArrayList<String>();
         if (TuplaD._tuplas.exists(nombre)) {
-            Data.print("Buscando elementos de la tupla "+clave+" en el conjunto "+nombre);
+            Data.print(TuplaD._myName, "Buscando elementos de la tupla "+clave+" en el conjunto "+nombre);
             result = TuplaD._tuplas.getElements(nombre, clave);
         }
         return result;
@@ -141,7 +141,7 @@ public class Nodo implements Runnable {
         if (!TuplaD._tuplas.existsTuple(nombre, clave)) {
             return;
         }
-        Data.print("Actualizando: "+
+        Data.print(TuplaD._myName, "Actualizando: "+
                 "\tconjunto "+nombre +
                 "\tclave: "+clave +
                 "\tposicion: "+posicion +
@@ -183,7 +183,7 @@ public class Nodo implements Runnable {
     public void join() throws IOException {
         out.println(Data.SUBJECT_JOINING + Data.SPLIT + TuplaD._myAddress);
         String fromServer = in.readLine();
-        Data.print("Joining: " + fromServer);
+        Data.print(TuplaD._myName, "Joining: " + fromServer);
 
         String[] all_servers = fromServer.split(Data.SPLIT);
 
@@ -206,7 +206,7 @@ public class Nodo implements Runnable {
         lastMsg = msg;
         String[] msg_split = msg.split(Data.SPLIT);
         String subject = msg_split[0];
-        Data.print("Subject: " + subject);
+        Data.print(TuplaD._myName, "Subject: " + subject);
         String action = msg_split[1];
 
         if (subject.equals(Data.SUBJECT_LEAVING)) {
@@ -222,7 +222,7 @@ public class Nodo implements Runnable {
                 return 0;
             }
             card = cardinalidad(nombre, clave);
-            Data.print("Enviando cardinalidad de " + nombre + ": " + card);
+            Data.print(TuplaD._myName, "Enviando cardinalidad de " + nombre + ": " + card);
             out.println(card);
         } else if (subject.equals(Data.SUBJECT_JOINING)) {
             // TuplaD.socket_servidor.put(action, this);
@@ -292,7 +292,7 @@ public class Nodo implements Runnable {
                 out.println("");
                 return 0;
             }
-            Data.print("Enviando respuesta: " + respuesta);
+            Data.print(TuplaD._myName, "Enviando respuesta: " + respuesta);
             String tupla = "";
             for (int i=0; i<respuesta.size(); i++) {
                 tupla += respuesta.get(i) + Data.SUBSPLIT;
@@ -333,7 +333,7 @@ public class Nodo implements Runnable {
         lastMsg = msg;
         String[] msg_split = msg.split(Data.SPLIT);
         String subject = msg_split[1];
-        Data.print("Subject: " + subject);
+        Data.print(TuplaD._myName, "Subject: " + subject);
         String action = msg_split[2];
 
         if (subject.equals(Data.SUBJECT_INSERTAR)) {
@@ -387,11 +387,11 @@ public class Nodo implements Runnable {
             join();
 
             while ((fromServer = in.readLine()) != null) {
-                Data.print("Server: " + fromServer);
+                Data.print(TuplaD._myName, "Server: " + fromServer);
                 getAction(fromServer, in, out);
             }
         } catch (Exception e) {
-            Data.printErr("TuplaD exception:");
+            Data.printErr(TuplaD._myName, "TuplaD exception:");
             e.printStackTrace();
         }
     }

@@ -198,10 +198,10 @@ public class ConjuntoTupla implements Serializable {
       */
     public String set(String clave, int posicion, String valor) {
         List<String> elementos = _tuplas.get(clave);
-        System.out.println("\nELEMENTOS " + elementos + " // posicion " + posicion);
+        Data.print("Tuplas", "\nElementos de la tupla: " + elementos + " | Posición a buscar: " + posicion);
         if (0 <= posicion && posicion < elementos.size()) {
             String e = elementos.set(posicion, valor);
-            System.out.println("\tPrevious: " + e + " | now: " + valor);
+            Data.print("Tuplas", "\tAnterior: " + e + " | Actual: " + valor);
             return e;
         }
         return "";

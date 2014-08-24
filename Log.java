@@ -48,10 +48,10 @@ public class Log {
             return result;
 
         } catch (FileNotFoundException e) {
-            Data.printErr("No se encontró el archivo.");
+            Data.printErr("Log", "No se encontró el archivo.");
         } catch (IOException e) {
             e.printStackTrace();
-            Data.printErr("Problemas leyendo el log.");
+            Data.printErr("Log", "Problemas leyendo el log.");
         }
         return -1;
     }
@@ -61,7 +61,7 @@ public class Log {
             long offset = nextLogEntryPosition();
             log.seek(offset);
             String entry = log.readLine();
-            Data.printErr(entry);
+            Data.printErr("Log", entry);
             return entry;
         } catch(IOException e) {
         }
