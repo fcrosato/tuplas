@@ -74,6 +74,8 @@ public class Conjuntos {
     }
 
     public synchronized int rollback(String nombre, List<String> ti) {
+        if (! exists(nombre) )
+            return 0;
         ConjuntoTupla cjto = _conjuntos.get(nombre);
         return cjto.del(ti);
     }
