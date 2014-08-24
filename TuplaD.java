@@ -435,11 +435,10 @@ public class TuplaD implements TuplaDInterfaz {
 
         if (! commit) {
             String lastEntry = log.readEntry();
-            Data.print(_myName, lastEntry);
             String[] msgAnterior = lastEntry.split(Data.SPLIT);
             if (msgAnterior[0].equals(Data.SUBJECT_BORRAR)) {
                 Data.print(TuplaD._myName, "Rollback: Agregando " + tuplaAnterior + " en el conjunto " + nombre);
-                _tuplas.add(clave, tuplaAnterior);
+                _tuplas.add(nombre, tuplaAnterior);
             }
             rollback(tuplaServidores, Data.MSG_BORRAR + Data.SPLIT + nombre + Data.SUBSPLIT + clave);
         }
