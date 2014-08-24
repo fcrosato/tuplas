@@ -405,7 +405,9 @@ public class TuplaD implements TuplaDInterfaz {
             return Data.ERR_EXISTE + nombre;
         }
         List<String> tuplaAnterior = new ArrayList<String>();
-        tuplaAnterior.addAll(_tuplas.getElements(nombre, clave));
+        for (String a : _tuplas.getElements(nombre, clave)) {
+            tuplaAnterior.add(new String(a));
+        }
         System.out.println("La tupla anterior es: " + tuplaAnterior);
 
         List<String> tuplaServidores = _tuplas.servidores(nombre); 
