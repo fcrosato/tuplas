@@ -187,7 +187,7 @@ public class ConjuntoTupla implements Serializable {
       * @return un string con los servidores del conjunto.
       */
     public String listarServidores() {
-        return listar(_servidores);
+        return _servidores.toString(); //listar(_servidores);
     }
 
     /**
