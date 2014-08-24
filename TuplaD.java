@@ -83,8 +83,12 @@ public class TuplaD implements TuplaDInterfaz {
     }
 
     private void actualizarCarga(String servidor, int delta) {
-        int cargaServidor = carga.get(servidor) + delta;
-        carga.put(servidor, cargaServidor);
+        try {
+            int cargaServidor = carga.get(servidor) + delta;
+            carga.put(servidor, cargaServidor);
+        } catch (NullPointerException e) {
+            carga.remove(servidor);
+        }
     }
 
 
@@ -435,7 +439,11 @@ public class TuplaD implements TuplaDInterfaz {
         for (String s : tuplaServidores) {
             if (!s.equals(_myAddress)) {
                 Coordinador g = socket_servidor.get(s);
-                tupla += g.getAction(msg);
+                try {
+                    tupla += g.getAction(msg);
+                } catch (NullPointerException e) {
+                    return new ArrayList<String>();
+                }
             } else {
                 List<String> tuplaLocal = _tuplas.getElements(nombre, clave);
                 System.out.println("Antes del null");
@@ -543,13 +551,11 @@ public class TuplaD implements TuplaDInterfaz {
             }
         }
 
-        /*
         if (! commit ) {
             if (miPosicion != -1) 
                 _tuplas.set(nombre, clave, miPosicion, valorAnterior);
             rollback(servidoresExitosos, (msg + Data.SUBSPLIT + valorAnterior));
         }
-        */
         Data.print(Data.EXITO_ACTUALIZAR);
         return Data.EXITO_ACTUALIZAR;
     }
