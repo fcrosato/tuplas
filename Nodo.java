@@ -285,7 +285,7 @@ public class Nodo implements Runnable {
 
             borrados = borrar(nombre, clave);
             out.println(borrados);
-            TuplaD.writeLog(Data.SUBJECT_BORRAR + Data.SPLIT + nombre + Data.SPLIT + clave + Data.SPLIT + elementosBorrados);
+            TuplaD.writeLog(Data.SUBJECT_BORRAR + Data.SPLIT + nombre + Data.SUBSPLIT + clave + Data.SPLIT + elementosBorrados);
         } else if (subject.equals(Data.SUBJECT_BUSCAR)) {
             String buscar[] = action.split(Data.SUBSPLIT);
             String nombre = buscar[0];
