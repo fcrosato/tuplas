@@ -441,6 +441,9 @@ public class TuplaD implements TuplaDInterfaz {
                 _tuplas.add(nombre, tuplaAnterior);
             }
             rollback(tuplaServidores, Data.SUBJECT_BORRAR + Data.SPLIT + nombre + Data.SUBSPLIT + clave);
+            Data.print(_myName, Data.ERR_BORRAR); 
+            Data.print(TuplaD._myName, _tuplas.get(nombre).toString());
+            return Data.ERR_BORRAR;
         }
         Data.print(_myName, Data.EXITO_BORRAR); 
         Data.print(TuplaD._myName, _tuplas.get(nombre).toString());
