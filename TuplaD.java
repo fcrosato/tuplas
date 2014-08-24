@@ -224,7 +224,7 @@ public class TuplaD implements TuplaDInterfaz {
         if (! commit) {
             int eliminados = _tuplas.rollback(nombre, ti);
             actualizarCarga(_myAddress, -eliminados);
-            rollback(servidores, Data.MSG_INSERTAR);
+            rollback(servidores, Data.SUBJECT_INSERTAR);
         }
         writeLog(msg);
         return commit;
@@ -319,7 +319,7 @@ public class TuplaD implements TuplaDInterfaz {
                 int eliminados = _tuplas.rollback(nombre, ti);
                 actualizarCarga(_myAddress, -eliminados);
             } else {
-                rollback (servidorExitoso, Data.MSG_INSERTAR);
+                rollback (servidorExitoso, Data.SUBJECT_INSERTAR);
             }
             return false; 
         }

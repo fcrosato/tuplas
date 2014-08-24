@@ -89,7 +89,9 @@ public class Nodo implements Runnable {
         if (TuplaD._tuplas.exists(nombre)) {
             Data.print(TuplaD._myName, "Insertando tupla en el conjunto " + nombre);
             Data.print(TuplaD._myName, ti.toString());
-            return TuplaD._tuplas.add(nombre, ti); 
+            int agregados = TuplaD._tuplas.add(nombre, ti); 
+            Data.print(TuplaD._myName, "Total elementos insertados: " + agregados);
+            return agregados; 
         }
         return 0;
     }
